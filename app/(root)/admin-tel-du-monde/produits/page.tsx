@@ -10,11 +10,12 @@ import { showAllModels } from "@/lib/actions/model.actions";
 import { currentUser } from "@/lib/auth";
 import Link from "next/link";
 
-export default async function ProductsPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function ProductsPage(
+  props: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const user = await currentUser();
 
   const page = Number(searchParams?.page) || 1;

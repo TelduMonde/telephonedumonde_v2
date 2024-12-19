@@ -11,9 +11,14 @@ import { FormError } from "@/components/shared/Form/FormError";
 import { FormSuccess } from "@/components/shared/Form/FormSucess";
 import { BottomGradient } from "@/components/ui/BottomGradient";
 import { variantFormSchema } from "@/lib/validator";
-import { addVariant, updateVariant} from "@/lib/actions/variant.actions";
+import {
+  addVariant,
+  deleteImage,
+  updateVariant,
+} from "@/lib/actions/variant.actions";
 import { getCountries } from "@/lib/actions/country.actions";
 import { useUploadThing } from "@/lib/uploadthing";
+import Image from "next/image";
 
 type VariantFormProps = {
   userId: string | undefined;
@@ -33,16 +38,29 @@ type VariantFormProps = {
   setIsModalOpen: (isOpen: boolean) => void;
 };
 
-export default function VariantForm({ userId, type, modelId, variant, setIsModalOpen }: VariantFormProps) {
+export default function VariantForm({
+  userId,
+  type,
+  modelId,
+  variant,
+  setIsModalOpen,
+}: VariantFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
-  const [countries, setCountries] = useState<{ id: string; name: string }[]>([]);
+  const [countries, setCountries] = useState<{ id: string; name: string }[]>(
+    []
+  );
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Fichiers sélectionnés
-  const { startUpload, isUploading } = useUploadThing("imageUploader");
+  const [existingImages, setExistingImages] = useState<string[]>(
+    variant?.imageUrl || []
+  );
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]); // Images à supprimer
+  const { startUpload } = useUploadThing("imageUploader");
+
+  console.log("SELECTEDFILES", selectedFiles);
 
   const variantId = variant?.id;
-
 
   useEffect(() => {
     async function fetchCountries() {
@@ -64,6 +82,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
           memory: variant?.memory,
           color: variant?.color,
           country: variant?.country,
+          countryId: variant?.country,
           description: variant?.description,
           imageUrl: variant?.imageUrl,
           stock: variant?.stock,
@@ -91,43 +110,47 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
   async function onSubmit(values: z.infer<typeof variantFormSchema>) {
     setError("");
     setSuccess("");
-  
+
     if (type === "add") {
       try {
         if (!modelId) {
           setError("modelId est requis pour ajouter une variante.");
           return;
         }
-  
+
         // Upload des fichiers
         let imageUrls: string[] = [];
         if (selectedFiles.length > 0) {
-          const uploadedImages = await startUpload(selectedFiles, { variantId: modelId });
-  
+          const uploadedImages = await startUpload(selectedFiles, {
+            variantId: modelId,
+          });
+
+          console.log("Images uploadées :", uploadedImages);
+
           if (!uploadedImages || uploadedImages.length === 0) {
             throw new Error("Échec de l'upload des images.");
           }
-  
+
           imageUrls = uploadedImages.map((file) => file.url);
           console.log("URLs des images uploadées :", imageUrls);
         }
-  
+
         if (imageUrls.length === 0) {
           setError("Aucune image n'a été uploadée.");
           return;
         }
-  
+
         // Ajoute les URLs au formulaire
         values.imageUrl = imageUrls;
-  
+
         // Crée la variante
         const newVariant = await addVariant(values, userId!, modelId);
-  
+
         if (!newVariant || !("id" in newVariant)) {
           setError("Échec lors de la création de la variante");
           return;
         }
-  
+
         setSelectedFiles([]);
         setSuccess("Variante et images ajoutées avec succès !");
         setIsModalOpen(false);
@@ -140,7 +163,6 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
 
     if (type === "edit") {
       try {
-
         if (!modelId) {
           setError("modelId est requis pour ajouter une variante.");
           return;
@@ -149,15 +171,16 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
         let imageUrls = values.imageUrl || [];
 
         if (selectedFiles.length > 0) {
-          const uploadedImages = await startUpload(selectedFiles, { variantId: modelId });
-    
+          const uploadedImages = await startUpload(selectedFiles, {
+            variantId: modelId,
+          });
+
           if (!uploadedImages || uploadedImages.length === 0) {
             throw new Error("Échec de l'upload des images.");
           }
-    
+
           const newImageUrls = uploadedImages.map((file) => file.url);
-          imageUrls = [...newImageUrls]; 
-          console.log("URLs des images après upload :", imageUrls);
+          imageUrls = [...newImageUrls];
         }
 
         values.imageUrl = imageUrls;
@@ -167,7 +190,18 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
           return;
         }
 
-        const updatedVariant = await updateVariant(variantId, values);
+        // Supprimer les images marquées pour suppression
+        if (imagesToDelete.length > 0) {
+          await deleteImage(imagesToDelete);
+        }
+
+        console.log("Valeurs à soumettre :", values);
+
+        const updatedVariant = await updateVariant(
+          variantId,
+          values,
+          imagesToDelete || []
+        );
 
         if (!updatedVariant || !("id" in updatedVariant)) {
           setError("Échec lors de l'édition de la variante.");
@@ -186,7 +220,19 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
       }
     }
   }
-  
+
+  const handleRemoveSelectedFile = (fileName: string) => {
+    setSelectedFiles((prevFiles) =>
+      prevFiles.filter((file) => file.name !== fileName)
+    );
+  };
+
+  const handleRemoveExistingImage = (imageUrl: string) => {
+    setExistingImages((prevImages) =>
+      prevImages.filter((url) => url !== imageUrl)
+    );
+    setImagesToDelete((prevImages) => [...prevImages, imageUrl]);
+  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -194,27 +240,61 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
         {type === "add" ? "Ajouter un modèle" : "Modifier un modèle"}
       </h3>
 
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col gap-4"
+      >
         <div className="flex gap-4">
-
           <div>
-            <label className="text-white text-sm" htmlFor="price">Prix</label>
-            <Input id="price" type="number" className="text-noir-900" defaultValue={initialValues.price} {...form.register("price", { valueAsNumber: true })}/>
+            <label className="text-white text-sm" htmlFor="price">
+              Prix
+            </label>
+            <Input
+              id="price"
+              type="number"
+              className="text-noir-900"
+              defaultValue={initialValues.price}
+              {...form.register("price", { valueAsNumber: true })}
+            />
           </div>
 
           <div>
-            <label className="text-white text-sm" htmlFor="memory">Stockage</label>
-            <Input id="memory" type="number" className="text-noir-900"  defaultValue={initialValues.memory} {...form.register("memory", { valueAsNumber: true })}/>
+            <label className="text-white text-sm" htmlFor="memory">
+              Stockage
+            </label>
+            <Input
+              id="memory"
+              type="number"
+              className="text-noir-900"
+              defaultValue={initialValues.memory}
+              {...form.register("memory", { valueAsNumber: true })}
+            />
           </div>
 
           <div>
-            <label className="text-white text-sm" htmlFor="color">Couleur</label>
-            <Input id="color" placeholder="Blanc Neige" type="text" className="text-noir-900"  defaultValue={initialValues.color} {...form.register("color")}/>
+            <label className="text-white text-sm" htmlFor="color">
+              Couleur
+            </label>
+            <Input
+              id="color"
+              placeholder="Blanc Neige"
+              type="text"
+              className="text-noir-900"
+              defaultValue={initialValues.color}
+              {...form.register("color")}
+            />
           </div>
 
           <div>
-            <label className="text-white text-sm" htmlFor="country">Pays de provenance</label>
-            <select id="country" {...form.register("country")} className="text-noir-900" defaultValue={initialValues.country}>
+            <label className="text-white text-sm" htmlFor="country">
+              Pays de provenance
+            </label>
+            <select
+              id="country"
+              {...form.register("country")}
+              className="text-noir-900"
+              defaultValue={initialValues.country}
+            >
               <option value="">-- Sélectionnez un pays --</option>
               {countries.map((country) => (
                 <option key={country.id} value={country.id}>
@@ -252,10 +332,9 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
         </div>
 
         {/* Upload des Images */}
-        <div className="flex flex-col gap-1">
+        <div className="flex gap-4 items-center flex-wrap font-font1">
           <label className="text-white text-sm" htmlFor="images">
             {type === "add" ? "Ajouter les images" : "Rajouter des images"}
-            
           </label>
           <input
             id="images"
@@ -268,8 +347,55 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
                 setSelectedFiles(Array.from(files));
               }
             }}
-            className="text-noir-900"
+            className="text-noir-900 text-xs rounded-md"
           />
+          <div className="flex gap-1">
+            <div className="flex gap-1">
+              {selectedFiles.map((file) => (
+                <div key={file.name} className="flex items-center gap-2 ">
+                  <Image
+                    src={URL.createObjectURL(file)}
+                    alt={file.name}
+                    className="w-16 h-16 object-cover"
+                    width={64}
+                    height={64}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSelectedFile(file.name)}
+                    className="text-red-500 text-xs"
+                  >
+                    Supp
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Afficher les images existantes */}
+          {type === "edit" && (
+            <div className="flex gap-1">
+              {existingImages.map((url) => (
+                <div key={url} className="flex items-center gap-2">
+                  <Image
+                    src={url}
+                    alt="Image existante"
+                    className="w-16 h-16 object-cover"
+                    width={64}
+                    height={64}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveExistingImage(url)}
+                    className="text-red-500 text-xs"
+                  >
+                    Supp
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <FormError message={error} />
@@ -279,7 +405,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
           className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
           type="submit"
         >
-           {type === "add" ? "Ajouter la variante →" : "Modifier la variante →"}
+          {type === "add" ? "Ajouter la variante →" : "Modifier la variante →"}
           <BottomGradient />
         </button>
       </form>

@@ -16,18 +16,18 @@ export const showVariantsByModel = async (modelId: string) => {
       include: {
         model: {
           select: {
-            name: true, 
+            name: true,
           },
         },
         images: {
           select: {
-            url: true, 
+            url: true,
           },
         },
         country: {
           select: {
             id: true,
-            name: true, 
+            name: true,
           },
         },
       },
@@ -35,7 +35,7 @@ export const showVariantsByModel = async (modelId: string) => {
 
     return variants.map((variant) => ({
       ...variant,
-      imageUrl: variant.images.length > 0 ? variant.images[0].url : null, 
+      imageUrl: variant.images.length > 0 ? variant.images[0].url : null,
     }));
   } catch (error) {
     console.log(error);
@@ -44,8 +44,11 @@ export const showVariantsByModel = async (modelId: string) => {
 };
 
 // Ajouter une variante du model
-export const addVariant = async (variante: z.infer<typeof variantFormSchema>, userId: string, modelId: string) => {
-
+export const addVariant = async (
+  variante: z.infer<typeof variantFormSchema>,
+  userId: string,
+  modelId: string
+) => {
   try {
     const result = variantFormSchema.safeParse(variante);
 
@@ -55,22 +58,25 @@ export const addVariant = async (variante: z.infer<typeof variantFormSchema>, us
     }
 
     console.log("Données validées :", variante);
-
   } catch (error) {
     console.error("Erreur lors de la validation des données :", error);
     throw new Error("Les données de la variante sont invalides.");
   }
-  
+
   const role = await currentRole();
   if (role !== "admin") {
-    return new NextResponse(null, { status: 403 });
+    return new NextResponse(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+    });
   }
   if (!userId) {
-    return new NextResponse(null, { status: 401 });
+    return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+    });
   }
 
   try {
-  // Créer la variante
+    // Créer la variante
     const newVariant = await db.phoneVariant.create({
       data: {
         modelId,
@@ -80,6 +86,7 @@ export const addVariant = async (variante: z.infer<typeof variantFormSchema>, us
         description: variante.description,
         stock: variante.stock ?? 0,
         isActive: variante.isActive,
+        countryId: variante.country ?? "",
       },
     });
 
@@ -110,17 +117,28 @@ export const addVariant = async (variante: z.infer<typeof variantFormSchema>, us
 
     console.log("Variante créée avec succès :", newVariant);
     return newVariant;
+    // return new NextResponse(JSON.stringify(newVariant), { status: 201 });
   } catch (error) {
     console.error("Erreur dans addVariant :", error);
-    throw new Error("Échec lors de l'ajout de la variante.");
+    return new NextResponse(
+      JSON.stringify({ error: "Echec lors de la création de la variante." }),
+      { status: 500 }
+    );
   }
 };
 
 // Modifier une variante
-export const updateVariant = async (variantId: string, variante: z.infer<typeof variantFormSchema>) => {
+export const updateVariant = async (
+  variantId: string,
+  variante: z.infer<typeof variantFormSchema>,
+  imagesToDelete: string[]
+) => {
+  console.log("VARIANTE EDIT", variante);
   const role = await currentRole();
   if (role !== "admin") {
-    return new NextResponse(null, { status: 403 });
+    return new NextResponse(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+    });
   }
 
   try {
@@ -131,18 +149,23 @@ export const updateVariant = async (variantId: string, variante: z.infer<typeof 
       throw new Error("Les données de la variante sont invalides.");
     }
 
-    console.log("Données validées :", variante);
-
+    console.log("Données validées :", variante, imagesToDelete);
   } catch (error) {
     console.error("Erreur lors de la validation des données :", error);
     throw new Error("Les données de la variante sont invalides.");
   }
 
   try {
-    await db.phoneVariant.update({
-      where: {
-        id: variantId,
-      },
+    const countryExists = await db.country.findUnique({
+      where: { id: variante.country },
+    });
+
+    if (!countryExists) {
+      throw new Error("Le pays spécifié n'existe pas.");
+    }
+
+    const updatedVariant = await db.phoneVariant.update({
+      where: { id: variantId },
       data: {
         price: variante.price,
         memory: variante.memory,
@@ -156,9 +179,18 @@ export const updateVariant = async (variantId: string, variante: z.infer<typeof 
     // Associer le pays
     if (variante.country) {
       await db.phoneVariant.update({
-        where: { id: variantId },
+        where: { id: updatedVariant.id },
         data: {
           country: { connect: { id: variante.country } },
+        },
+      });
+    }
+
+    // Supprimer les images marquées pour suppression
+    if (imagesToDelete && imagesToDelete.length > 0) {
+      await db.phoneImage.deleteMany({
+        where: {
+          url: { in: imagesToDelete },
         },
       });
     }
@@ -169,23 +201,29 @@ export const updateVariant = async (variantId: string, variante: z.infer<typeof 
         data: variante.imageUrl.map((url) => ({
           url,
           description: null,
-          variantId,
+          variantId: updatedVariant.id,
         })),
       });
     }
 
     console.log("Variante modifiée avec succès :", variantId);
+    return updateVariant;
   } catch (error) {
     console.error("Erreur dans updateVariant :", error);
-    throw new Error("Échec lors de la modification de la variante.");
+    return new NextResponse(
+      JSON.stringify({ error: "Echec lors de la mise à jour de la variante." }),
+      { status: 500 }
+    );
   }
 };
 
-// Supprimer une variante
+//! Supprimer une variante
 export const deleteVariant = async (variantId: string) => {
   const role = await currentRole();
   if (role !== "admin") {
-    return new NextResponse(null, { status: 403 });
+    return new NextResponse(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+    });
   }
 
   try {
@@ -196,7 +234,34 @@ export const deleteVariant = async (variantId: string) => {
     });
   } catch (error) {
     console.error("Erreur dans deleteVariant :", error);
-    throw new Error("Échec lors de la suppression de la variante.");
+    return new NextResponse(
+      JSON.stringify({ error: "Echec lors de la mise à jour de la variante." }),
+      { status: 500 }
+    );
   }
 };
 
+//! Supprimer une image d'une variante
+export const deleteImage = async (image: string[]) => {
+  console.log("imageId :", image);
+  const role = await currentRole();
+  if (role !== "admin") {
+    return new NextResponse(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+    });
+  }
+
+  try {
+    await db.phoneImage.deleteMany({
+      where: {
+        url: { in: image },
+      },
+    });
+  } catch (error) {
+    console.error("Erreur dans deleteImage :", error);
+    return new NextResponse(
+      JSON.stringify({ error: "Echec lors de la suppression de l'image." }),
+      { status: 500 }
+    );
+  }
+};
