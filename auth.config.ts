@@ -50,7 +50,6 @@ export default {
           }
         }
 
-        // Si c'est pas bon, on retourne null
         return null;
       },
     }),
