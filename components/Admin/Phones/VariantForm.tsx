@@ -38,19 +38,13 @@ type VariantFormProps = {
   setIsModalOpen: (isOpen: boolean) => void;
 };
 
-export default function VariantForm({
-  userId,
-  type,
-  modelId,
-  variant,
-  setIsModalOpen,
+export default function VariantForm({ userId, type, modelId, variant, setIsModalOpen,
 }: VariantFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
-  const [countries, setCountries] = useState<{ id: string; name: string }[]>(
-    []
-  );
+  const [isChecked, setIsChecked] = useState(false);
+  const [countries, setCountries] = useState<{ id: string; name: string }[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Fichiers sélectionnés
   const [existingImages, setExistingImages] = useState<string[]>(
     variant?.imageUrl || []
@@ -63,18 +57,33 @@ export default function VariantForm({
   const variantId = variant?.id;
 
   useEffect(() => {
-    async function fetchCountries() {
+    const fetchCountry = async () => {
       try {
-        const fetchedCountries = await getCountries();
-        setCountries(fetchedCountries);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des pays :", error);
-      }
-    }
+        const response = await fetch(
+          `http://localhost:3000/api/country`,
+          {
+            headers: {
+              method: "GET",
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-    fetchCountries();
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error("Failed to fetch models");
+        }
+
+        const data = await response.json();
+        setCountries(data);
+      } catch (error) {
+        console.error("Error fetching models:", error);
+      }
+    };
+    fetchCountry();
   }, []);
 
+ 
   const initialValues =
     variant && type === "edit"
       ? {
@@ -101,6 +110,11 @@ export default function VariantForm({
           modelId: modelId || "",
         };
 
+        useEffect(() => {
+          setIsChecked(initialValues.isActive);
+        }, [initialValues.isActive]);
+      
+
   const form = useForm<z.infer<typeof variantFormSchema>>({
     resolver: zodResolver(variantFormSchema),
     defaultValues: initialValues,
@@ -113,6 +127,7 @@ export default function VariantForm({
 
     if (type === "add") {
       try {
+
         if (!modelId) {
           setError("modelId est requis pour ajouter une variante.");
           return;
@@ -144,13 +159,32 @@ export default function VariantForm({
         values.imageUrl = imageUrls;
 
         // Crée la variante
-        const newVariant = await addVariant(values, userId!, modelId);
+        const response = await fetch(`/api/variants/${modelId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            //modelId,
+            memory: values.memory,
+            color: values.color,
+            countryId: values.country || null,
+            price: values.price,
+            description: values.description || "",
+            stock: values.stock || 0,
+            isActive: values.isActive ?? true,
+            images: values.imageUrl, 
+          }),
+        });
 
-        if (!newVariant || !("id" in newVariant)) {
-          setError("Échec lors de la création de la variante");
-          return;
-        }
-
+      // Vérifiez la réponse
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Erreur lors de la création de la variante :", errorData);
+        setError("Erreur lors de la création de la variante.");
+        return;
+      }
+       
         setSelectedFiles([]);
         setSuccess("Variante et images ajoutées avec succès !");
         setIsModalOpen(false);
@@ -191,24 +225,34 @@ export default function VariantForm({
         }
 
         // Supprimer les images marquées pour suppression
-        if (imagesToDelete.length > 0) {
-          await deleteImage(imagesToDelete);
-        }
+      
 
-        console.log("Valeurs à soumettre :", values);
+          // Modifier la variante
+          const response = await fetch(`/api/variants/${modelId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              variantId: variantId,
+              memory: values.memory,
+              color: values.color,
+              countryId: values.country || null,
+              price: values.price,
+              description: values.description || "",
+              stock: values.stock || 0,
+              isActive: values.isActive ?? true,
+              images: values.imageUrl, 
+            }),
+          });
 
-        const updatedVariant = await updateVariant(
-          variantId,
-          values,
-          imagesToDelete || []
-        );
-
-        if (!updatedVariant || !("id" in updatedVariant)) {
-          setError("Échec lors de l'édition de la variante.");
+           // Vérifiez la réponse
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Erreur lors de la création de la variante :", errorData);
+          setError("Erreur lors de la création de la variante.");
           return;
         }
-
-        console.log("Variante mise à jour :", updatedVariant);
 
         setSelectedFiles([]);
         setSuccess("Variante modifiée avec succès !");
@@ -236,8 +280,21 @@ export default function VariantForm({
 
   return (
     <div className="flex flex-col gap-8">
-      <h3 className="text-white text-xl font-font1 tracking-widest">
-        {type === "add" ? "Ajouter un modèle" : "Modifier un modèle"}
+      <h3 className="flex gap-3 text-white text-xl font-font1 tracking-widest">
+        {type === "add" ? "Ajouter un modèle |" : "Modifier un modèle |"}
+        <div className="flex gap-2">
+        <Input
+            id="isActive"
+            type="checkbox"
+            className="h-5 w-5 mt-1"
+            checked={isChecked}
+            defaultChecked={initialValues.isActive}
+            {...form.register("isActive", {
+              onChange: () => setIsChecked(!isChecked)
+            })}
+          />
+            <p>{isChecked ? "Actuellement actif" : "Actuellement desactivé"}</p>
+          </div>
       </h3>
 
       <form
@@ -285,16 +342,11 @@ export default function VariantForm({
             />
           </div>
 
-          <div>
+          <div className="">
             <label className="text-white text-sm" htmlFor="country">
               Pays de provenance
             </label>
-            <select
-              id="country"
-              {...form.register("country")}
-              className="text-noir-900"
-              defaultValue={initialValues.country}
-            >
+            <select id="country" {...form.register("country")} className="text-noir-900 w-52 h-10 rounded-md" defaultValue={initialValues.country}>
               <option value="">-- Sélectionnez un pays --</option>
               {countries.map((country) => (
                 <option key={country.id} value={country.id}>
@@ -302,6 +354,10 @@ export default function VariantForm({
                 </option>
               ))}
             </select>
+          </div>
+
+          <div>
+          
           </div>
 
           <div>

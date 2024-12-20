@@ -1,32 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddVariantBtn from "@/components/Admin/Phones/addVariantBtn";
 import EditVariantBtn from "./EditVariantBtn";
 import DeleteVariantBtn from "./DeleteVariantBtn";
+//import DeleteVariantBtn from "./DeleteVariantBtn";
 
-export default function ShowVariant({
-  userId,
-  modelId,
-  variants,
-}: {
-  userId: string | undefined;
-  modelId: string;
-  variants: Array<{
-    id: string;
-    memory: number;
-    color: string;
-    price: number;
-    description: string;
-    model: { name: string };
-    images: Array<{ url: string }>;
-    country: string;
-  }>;
-}) {
+export default function ShowVariant({ userId, modelId}: {userId: string | undefined;modelId: string;}) {
   const [isModalImageOpen, setIsModalImageOpen] = useState(false);
-  const [selectedVariantImages, setSelectedVariantImages] = useState<string[]>(
-    []
-  );
+  const [selectedVariantImages, setSelectedVariantImages] = useState<string[]>([]);
+  const [variants, setVariants] = useState<{ 
+    id: string; 
+    name: string;
+    memory: number; 
+    color: string; 
+    price: number; 
+    country: string; 
+    description: string; 
+    images: string[]; 
+    model: { id: string; name: string};
+  }[]>([]);
+  
 
   const openImageModal = (images: string[]) => {
     setSelectedVariantImages(images);
@@ -38,19 +32,30 @@ export default function ShowVariant({
     setIsModalImageOpen(false);
   };
 
-  if (!variants || variants.length === 0) {
-    return (
-      <section className="wrapper flex flex-col gap-10">
-        <div className="flex gap-12 items-center">
-          <h2 className="font-font1 text-white">Variantes du modèle</h2>
-          <AddVariantBtn userId={userId} modelId={modelId} />
-        </div>
-        <p className="text-white bg-noir-800 p-1 rounded-md text-center">
-          Il n&apos;y a pas de variantes pour ce modèle.
-        </p>
-      </section>
-    );
-  }
+  
+  useEffect(() => {
+    const fetchVariants = async () => {
+      try {
+        const response = await fetch(`/api/variants/${modelId}`, {
+          headers: {
+            method: "GET",
+            "Content-Type": "application/json",
+          },
+        });
+  
+        const data = await response.json();
+        console.log("Données des variantes :", data);
+        setVariants(data.data);
+      } catch (error) {
+        console.error("Failed to fetch variants", error);
+      }
+    };
+  
+    fetchVariants();
+  }, []);
+  
+  
+  
 
   return (
     <section className="wrapper">
@@ -61,8 +66,9 @@ export default function ShowVariant({
 
       <div className="flex flex-col gap-2">
         {variants.map((variant) => (
+          console.log("Variants", variant.country),
           <div
-            key={variant.id}
+            // key={variant.id}
             className="grid grid-cols-8 items-center gap-12 px-5 bg-noir-800 text-white font-font1 p-2 rounded-md"
           >
             <p className="flex gap-2">
@@ -98,7 +104,7 @@ export default function ShowVariant({
                   d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-16.5-3a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3m-19.5 0a4.5 4.5 0 0 1 .9-2.7L5.737 5.1a3.375 3.375 0 0 1 2.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 0 1 .9 2.7m0 0a3 3 0 0 1-3 3m0 3h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Zm-3 6h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Z"
                 />
               </svg>
-              {variant.memory} GB
+              {variant.memory} GB 
             </p>
 
             <p className="flex gap-2">
@@ -152,7 +158,7 @@ export default function ShowVariant({
                   d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
                 />
               </svg>
-              {variant.country}
+              {variant.country?.name || "Pays non spécifié"}
             </p>
 
             <p className="flex gap-2">
@@ -179,9 +185,11 @@ export default function ShowVariant({
                 modelId={variant.id}
                 variant={{
                   ...variant,
+                  model: { name: variant.model.name },
+                  country: variant.country,
                   stock: 0,
                   isActive: true,
-                  imageUrl: variant.images.map((image) => image.url),
+                  imageUrl: variant.images,
                   //country: variant.country
                 }}
               />
@@ -196,9 +204,8 @@ export default function ShowVariant({
             <button
               type="button"
               className="bg-noir-600 px-10 rounded-md text-xs"
-              onClick={() =>
-                openImageModal(variant.images.map((image) => image.url))
-              }
+              onClick={() => openImageModal(variant.images)} // Les images sont déjà des chaînes
+
             >
               Voir les images
             </button>

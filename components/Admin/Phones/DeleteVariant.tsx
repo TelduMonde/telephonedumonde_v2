@@ -1,5 +1,5 @@
-import { deleteModel } from "@/lib/actions/model.actions";
-import { deleteVariant } from "@/lib/actions/variant.actions";
+// import { deleteModel } from "@/lib/actions/model.actions";
+// import { deleteVariant } from "@/lib/actions/variant.actions";
 import { useRouter } from "next/navigation";
 
 interface DeleteVariantButtonProps {
@@ -9,31 +9,31 @@ interface DeleteVariantButtonProps {
     variantId: string;
   }
 
-export default function DeleteVariant({
-  setIsModalOpen,
-  userId,
-  variantId,
-}: DeleteVariantButtonProps) {
+export default function DeleteVariant({ setIsModalOpen, userId, variantId,}: DeleteVariantButtonProps) {
   const router = useRouter();
 
-  const handleDelete = async () => {
+  const deleteVariant = async () => {
     try {
-      if (userId) {
-        await deleteVariant(variantId);
-        setIsModalOpen(false);
-        router.refresh(); 
-      } else {
-        console.error("User ID is undefined");
+      const response = await fetch(`/api/variants/${variantId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error deleting variant:", errorData);
+        throw new Error("Failed to delete variant");
       }
+
       setIsModalOpen(false);
+      router.refresh();
     } catch (error) {
-      console.error("Erreur lors de la suppression du modèle", error);
+      console.error("Erreur lors de la suppression du variant", error);
     }
   };
 
   return (
     <button
-      onClick={handleDelete}
+      onClick={deleteVariant}
       className="bg-red-600 p-2 rounded-md hover:bg-red-700 transition-all ease-in-out duration-150 text-white"
     >
       Supprimer

@@ -132,7 +132,8 @@ model PhoneVariant {
   caract        String?
   stock         Int?          @default(0)
   isActive      Boolean       @default(true)
-  images        PhoneImage[]
+  images        String[]
+ // images        PhoneImage[]
   userWishlists UserWishlist[]
   orderItems    OrderItem[]
   Order         Order[]
@@ -140,15 +141,15 @@ model PhoneVariant {
   @@unique([modelId, memory, color, countryId])
 }
 
-model PhoneImage {
-  id          String      @id @default(cuid())
-  variantId   String?
-  url         String
-  description String?
-  PhoneVariant PhoneVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
+// model PhoneImage {
+//   id          String      @id @default(cuid())
+//   variantId   String?
+//   url         String
+//   description String?
+//   PhoneVariant PhoneVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
 
-  @@map("phone_image")
-}
+//   @@map("phone_image")
+//}
 
 model Country {
   id          String   @id @default(cuid())

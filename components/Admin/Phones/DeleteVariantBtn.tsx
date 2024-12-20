@@ -4,6 +4,7 @@ import { useState } from "react";
 import ModalAdmin from "@/components/shared/Modals/ModalAdmin";
 import { MdDeleteOutline } from "react-icons/md";
 import DeleteVariant from "./DeleteVariant";
+// import DeleteVariant from "./DeleteVariant";
 
 interface DeleteVariantButtonProps {
   setIsModalOpen: (isOpen: boolean) => void;
