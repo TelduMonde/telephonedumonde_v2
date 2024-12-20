@@ -1,3 +1,11 @@
+export type ModelPhone = {
+  id: string;
+  brand: string;
+  name: string;
+  variantCount: number;
+  isActive: boolean;
+};
+
 // ====== URL QUERY PARAMS
 export type UrlQueryParams = {
   params: string;

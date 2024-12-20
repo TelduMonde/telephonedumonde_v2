@@ -10,13 +10,12 @@ import { Input } from "@/components/ui/input";
 import { FormError } from "@/components/shared/Form/FormError";
 import { FormSuccess } from "@/components/shared/Form/FormSucess";
 
-import { cn } from "@/lib/utils/utils";
 import { BottomGradient } from "@/components/ui/BottomGradient";
 import { modelFormSchema } from "@/lib/validator";
-import { addModel, editModel } from "@/lib/actions/model.actions";
+import { useCurrentUser } from "@/lib/utils/use-current-user";
+// import { addModel, editModel } from "@/lib/actions/model.actions";
 
 type PhoneFormProps = {
-  userId: string | undefined;
   type: "add" | "edit";
   modelId?: string;
   model?: {
@@ -29,7 +28,6 @@ type PhoneFormProps = {
 };
 
 export default function ModelForm({
-  userId,
   type,
   modelId,
   model,
@@ -39,6 +37,11 @@ export default function ModelForm({
 
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
+
+  const user = useCurrentUser();
+  const userId = user?.id;
+
+  console.log("USER", user);
 
   const initialValues =
     model && type === "edit"
@@ -72,15 +75,34 @@ export default function ModelForm({
           return;
         }
 
-        const newModel = await addModel(values, userId);
+        const response = await fetch("/api/models", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            brand: values.brand,
+            name: values.name,
+            isActive: values.isActive,
+            userId,
+          }),
+        });
 
-        if (newModel && "id" in newModel) {
-          setSuccess("Modèle ajouté avec succès");
-          // Fermer la modale
-          setIsModalOpen(false);
-          // rafraichir la liste des modèles
-          router.refresh();
+        if (!response.ok) {
+          throw new Error("Failed to add model");
         }
+
+        const data = await response.json();
+
+        if (data.error) {
+          setError(data.error);
+          return;
+        }
+
+        form.reset();
+        setSuccess("Modèle ajouté avec succès");
+        setIsModalOpen(false);
+        router.refresh();
       } catch (error) {
         console.log(error);
         setError("Erreur lors de l'ajout du modèle");
@@ -96,21 +118,33 @@ export default function ModelForm({
       console.log(values);
 
       try {
-        const updateModel = await editModel(userId as string, {
-          id: modelId,
-          brand: values.brand,
-          name: values.name,
-          isActive: values.isActive,
+        const response = await fetch(`/api/models/${modelId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            brand: values.brand,
+            name: values.name,
+            isActive: values.isActive,
+          }),
         });
 
-        if (updateModel) {
-          form.reset();
-          setSuccess("Modèle modifié avec succès");
-          // Fermer la modale
-          setIsModalOpen(false);
-          // rafraichir la liste des modèles
-          router.refresh();
+        if (!response.ok) {
+          throw new Error("Failed to edit model");
         }
+
+        const data = await response.json();
+
+        if (data.error) {
+          setError(data.error);
+          return;
+        }
+
+        form.reset();
+        setSuccess("Modèle modifié avec succès");
+        setIsModalOpen(false);
+        router.refresh();
       } catch (error) {
         console.log(error);
         setError("Erreur lors de la modification du modèle");
@@ -184,17 +218,3 @@ export default function ModelForm({
     </div>
   );
 }
-
-const LabelInputContainer = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div className={cn("flex flex-col space-y-1 w-full", className)}>
-      {children}
-    </div>
-  );
-};

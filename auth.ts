@@ -26,8 +26,8 @@ declare module "next-auth" {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
-    signIn: "/auth/connexion",
-    error: "/auth/error", // Redirige vers NOTRE page d'erreur si il y a une erreur
+    signIn: "/se-connecter",
+    error: "/erreur", // Redirige vers NOTRE page d'erreur si il y a une erreur
   },
   events: {
     // Quand on se connecte avec Google, l'email est déjà vérifié donc on le met à jour directement dans la base de données
@@ -75,10 +75,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.role && session.user) {
         session.user.role = token.role as ExtentedUser["role"];
       }
-      if (session.user) {
-        session.user.isTwofactorEnabled =
-          token.isTwofactorEnabled as ExtentedUser["isTwofactorEnabled"];
-      }
+
       if (session.user) {
         session.user.name = token.name;
         session.user.email = token.email as string;
@@ -105,7 +102,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       token.email = existingUser.email;
 
       token.role = existingUser.role;
-      token.isTwofactorEnabled = existingUser.isTwofactorEnabled;
+
       return token;
     },
   },

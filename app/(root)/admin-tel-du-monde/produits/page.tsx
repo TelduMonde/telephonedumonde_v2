@@ -1,28 +1,58 @@
-import AddCountryBtn from "@/components/Admin/Phones/AddCountryBtn";
+"use client";
+// import AddCountryBtn from "@/components/Admin/Phones/AddCountryBtn";
 import AddModelButton from "@/components/Admin/Phones/addModelBtn";
 import DeleteModalButton from "@/components/Admin/Phones/DeleteModalBtn";
-import EditModelButton from "@/components/Admin/Phones/EditModelBtn";
+// import EditModelButton from "@/components/Admin/Phones/EditModelBtn";
 import FilterBrand from "@/components/Admin/Phones/FilterBrand";
 import { Search } from "@/components/Admin/Phones/Search";
-import { ShowCountry } from "@/components/Admin/Phones/ShowCountry";
 
-import { showAllModels } from "@/lib/actions/model.actions";
-import { currentUser } from "@/lib/auth";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { ModelPhone } from "@/types";
+import EditModelButton from "@/components/Admin/Phones/EditModelBtn";
+import { useCurrentUser } from "@/lib/utils/use-current-user";
 
-export default async function ProductsPage(
-  props: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-  }
-) {
-  const searchParams = await props.searchParams;
-  const user = await currentUser();
+export default function ProductsPage() {
+  const searchParams = useSearchParams();
+  const user = useCurrentUser();
 
-  const page = Number(searchParams?.page) || 1;
-  const searchText = (searchParams?.query as string) || "";
-  const brand = (searchParams?.brand as string) || "";
+  const [models, setModels] = useState<{ data: ModelPhone[] }>({ data: [] });
 
-  const models = await showAllModels({ query: searchText, brand, page });
+  const page = Number(searchParams.get("page")) || 1;
+  const searchText = searchParams.get("query") || "";
+  const brand = searchParams.get("brand") || "";
+
+  useEffect(() => {
+    const fetchModels = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/models?query=${searchText}&page=${page}&brand=${brand}`,
+          {
+            headers: {
+              method: "GET",
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Error fetching models:", errorData);
+          throw new Error("Failed to fetch models");
+        }
+
+        const data = await response.json();
+        setModels(data);
+      } catch (error) {
+        console.error("Error fetching models:", error);
+      }
+    };
+
+    fetchModels();
+  }, [page, brand, searchText]);
+
+  console.log("MODELE", models);
 
   return (
     <section className="wrapper flex flex-col gap-8">
@@ -31,16 +61,15 @@ export default async function ProductsPage(
           Tous les modèles ({models.data.length})
         </h2>
         <div className="flex gap-4">
-          <AddModelButton userId={user?.id} />
-          <AddCountryBtn userId={user?.id} />
-          <ShowCountry />
+          <AddModelButton />
+          {/* <AddCountryBtn userId={user?.id} /> */}
+          {/* <ShowCountry /> */}
         </div>
       </div>
 
       <div className="flex gap-2">
         <Search />
         <FilterBrand />
-        
       </div>
 
       {models.data.length === 0 && (
@@ -65,7 +94,7 @@ export default async function ProductsPage(
                 model={model}
                 modelId={model.id}
               />
-              <DeleteModalButton userId={user?.id} modelId={model.id} />
+              <DeleteModalButton modelId={model.id} />
             </div>
             <Link
               href={`/admin-tel-du-monde/produits/${model.id}`}

@@ -4,11 +4,7 @@ import { useState } from "react";
 import ModalAdmin from "@/components/shared/Modals/ModalAdmin";
 import ModelForm from "@/components/Admin/Phones/ModelForm";
 
-interface AddModelButtonProps {
-  userId: string | undefined;
-}
-
-const AddModelButton: React.FC<AddModelButtonProps> = ({ userId }) => {
+const AddModelButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => setIsModalOpen(true);
@@ -24,7 +20,7 @@ const AddModelButton: React.FC<AddModelButtonProps> = ({ userId }) => {
       </button>
 
       <ModalAdmin isOpen={isModalOpen} onClose={handleCloseModal}>
-        <ModelForm userId={userId} type="add" setIsModalOpen={setIsModalOpen} />
+        <ModelForm type="add" setIsModalOpen={setIsModalOpen} />
       </ModalAdmin>
     </>
   );

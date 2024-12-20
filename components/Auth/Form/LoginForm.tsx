@@ -11,7 +11,6 @@ import { login } from "@/lib/actions/auth.actions";
 
 import { CardWrapper } from "../CardWrapper";
 
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { FormError } from "@/components/shared/Form/FormError";
 import { FormSuccess } from "@/components/shared/Form/FormSucess";
@@ -32,9 +31,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
 
   //! TVa permettre d'inititer un état de chargement lors de la soumission du formulaire et permettra de désactiver les boutons au submit du formulaire
   const [isPending, startTransition] = useTransition();
-
-  // Afficher ou non le form de l'auth à deux facteurs
-  const [showTwoFactor, setShowTwoFactor] = useState(false);
 
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
@@ -59,7 +55,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
           (data?: {
             error?: string;
             success?: string;
-            twoFactor?: boolean;
+            user?: {
+              id: string;
+              firstName: string;
+              lastName: string;
+              email: string;
+            };
           }) => {
             if (data?.error) {
               form.reset();
@@ -72,10 +73,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
               if (onClose) {
                 onClose();
               }
-            }
-
-            if (data?.twoFactor) {
-              setShowTwoFactor(true);
             }
           }
         )
@@ -97,42 +94,33 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          {showTwoFactor && (
+          <>
             <div>
-              <Label htmlFor="code">Code de vérification</Label>
-              <Input id="code" placeholder="123456" type="text" />
+              <label className="text-white text-sm" htmlFor="mail">
+                Email
+              </label>
+              <Input
+                id="mail"
+                placeholder="monde@mail.com"
+                type="text"
+                className="text-noir-900"
+                {...form.register("email")}
+              />
             </div>
-          )}
 
-          {!showTwoFactor && (
-            <>
-              <div>
-                <label className="text-white text-sm" htmlFor="mail">
-                  Email
-                </label>
-                <Input
-                  id="mail"
-                  placeholder="monde@mail.com"
-                  type="text"
-                  className="text-noir-900"
-                  {...form.register("email")}
-                />
-              </div>
-
-              <div>
-                <label className="text-white text-sm" htmlFor="mail">
-                  Mot de passe
-                </label>
-                <Input
-                  id="password"
-                  placeholder="Mot de passe"
-                  type="password"
-                  className="text-noir-900"
-                  {...form.register("password")}
-                />
-              </div>
-            </>
-          )}
+            <div>
+              <label className="text-white text-sm" htmlFor="mail">
+                Mot de passe
+              </label>
+              <Input
+                id="password"
+                placeholder="Mot de passe"
+                type="password"
+                className="text-noir-900"
+                {...form.register("password")}
+              />
+            </div>
+          </>
 
           <FormError message={error || urlError} />
           <FormSuccess message={success} />

@@ -4,23 +4,33 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils/utils";
-import { showAllBrands } from "@/lib/actions/model.actions";
 
 const FilterBrand = () => {
   const router = useRouter();
-  const [brands, setBrands] = useState<any[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
 
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const getAllBrands = async () => {
-      const brandList = await showAllBrands();
-      brandList && setBrands(brandList);
+    const fetchBrands = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/models/brands");
+        if (!response.ok) {
+          throw new Error("Failed to fetch brands");
+        }
+        const data = await response.json(); // Obtenez tout l'objet
+        const brands = data.uniqueBrands;
+        setBrands(brands);
+        console.log("Fetched brands:", brands);
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
     };
-    getAllBrands();
-  }, [setBrands]);
 
-  console.log(brands);
+    fetchBrands();
+  }, []);
+
+  console.log("BRANDS", brands);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {}, 300);

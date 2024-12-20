@@ -7,14 +7,10 @@ import DeleteModel from "./DeleteModel";
 import { MdDeleteOutline } from "react-icons/md";
 
 interface DeleteModelButtonProps {
-  userId: string | undefined;
   modelId: string;
 }
 
-const DeleteModalButton: React.FC<DeleteModelButtonProps> = ({
-  userId,
-  modelId,
-}) => {
+const DeleteModalButton: React.FC<DeleteModelButtonProps> = ({ modelId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => setIsModalOpen(true);
@@ -35,11 +31,7 @@ const DeleteModalButton: React.FC<DeleteModelButtonProps> = ({
           >
             Annuler
           </button>
-          <DeleteModel
-            setIsModalOpen={setIsModalOpen}
-            userId={userId ?? ""}
-            modelId={modelId}
-          />
+          <DeleteModel setIsModalOpen={setIsModalOpen} modelId={modelId} />
         </div>
       </ModalAdmin>
     </>
