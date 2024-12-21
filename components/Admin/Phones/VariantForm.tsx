@@ -38,17 +38,14 @@ type VariantFormProps = {
   setIsModalOpen: (isOpen: boolean) => void;
 };
 
-export default function VariantForm({ userId, type, modelId, variant, setIsModalOpen,
-}: VariantFormProps) {
+export default function VariantForm({ userId, type, modelId, variant, setIsModalOpen } : VariantFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
-  const [isChecked, setIsChecked] = useState(false);
+ 
   const [countries, setCountries] = useState<{ id: string; name: string }[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Fichiers sélectionnés
-  const [existingImages, setExistingImages] = useState<string[]>(
-    variant?.imageUrl || []
-  );
+  const [existingImages, setExistingImages] = useState<string[]>(variant?.imageUrl || []);
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]); // Images à supprimer
   const { startUpload } = useUploadThing("imageUploader");
 
@@ -110,10 +107,13 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
           modelId: modelId || "",
         };
 
+
+        const [isChecked, setIsChecked] = useState(initialValues.isActive);
+    
         useEffect(() => {
           setIsChecked(initialValues.isActive);
+          console.log("initialValues.isActive", initialValues.isActive);
         }, [initialValues.isActive]);
-      
 
   const form = useForm<z.infer<typeof variantFormSchema>>({
     resolver: zodResolver(variantFormSchema),
@@ -283,17 +283,16 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
       <h3 className="flex gap-3 text-white text-xl font-font1 tracking-widest">
         {type === "add" ? "Ajouter un modèle |" : "Modifier un modèle |"}
         <div className="flex gap-2">
-        <Input
-            id="isActive"
-            type="checkbox"
-            className="h-5 w-5 mt-1"
-            checked={isChecked}
-            defaultChecked={initialValues.isActive}
-            {...form.register("isActive", {
-              onChange: () => setIsChecked(!isChecked)
-            })}
-          />
-            <p>{isChecked ? "Actuellement actif" : "Actuellement desactivé"}</p>
+      <Input
+          id="isActive"
+          type="checkbox"
+          className="h-5 w-5 mt-1"
+          checked={isChecked} 
+          {...form.register("isActive", {
+            onChange: () => setIsChecked(!isChecked), 
+          })}
+        />
+        <p>{isChecked ? "Actuellement actif" : "Actuellement désactivé"}</p>
           </div>
       </h3>
 
@@ -346,7 +345,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
             <label className="text-white text-sm" htmlFor="country">
               Pays de provenance
             </label>
-            <select id="country" {...form.register("country")} className="text-noir-900 w-52 h-10 rounded-md" defaultValue={initialValues.country}>
+            <select id="country" {...form.register("country")} className="text-noir-900 w-52 h-10 rounded-md" defaultValue={initialValues.country} >
               <option value="">-- Sélectionnez un pays --</option>
               {countries.map((country) => (
                 <option key={country.id} value={country.id}>
