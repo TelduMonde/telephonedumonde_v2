@@ -52,7 +52,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
   console.log("SELECTEDFILES", selectedFiles);
 
   const variantId = variant?.id;
-  console.log("isActive", variant?.isActive);
+  console.log("imagesToDelete", imagesToDelete);
 
   useEffect(() => {
     const fetchCountry = async () => {
@@ -108,13 +108,9 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
           modelId: modelId || "",
         };
 
-
         const [isChecked, setIsChecked] = useState(initialValues.isActive);
     
-        useEffect(() => {
-          setIsChecked(initialValues.isActive);
-          console.log("initialValues.isActive", initialValues.isActive);
-        }, [initialValues.isActive]);
+     
 
   const form = useForm<z.infer<typeof variantFormSchema>>({
     resolver: zodResolver(variantFormSchema),
@@ -122,6 +118,17 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
     mode: "onSubmit",
   });
 
+  useEffect(() => {
+    setIsChecked(initialValues.isActive);
+    console.log("initialValues.isActive", initialValues.isActive);
+  }, [initialValues.isActive]);
+
+  // useEffect(() => {
+  //   if (initialValues.country) {
+  //     form.setValue("country", initialValues.country); // Définir la valeur initiale
+  //   }
+  // }, [initialValues.country, form]);
+  
   async function onSubmit(values: z.infer<typeof variantFormSchema>) {
     setError("");
     setSuccess("");
@@ -189,7 +196,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
         setSelectedFiles([]);
         setSuccess("Variante et images ajoutées avec succès !");
         setIsModalOpen(false);
-        router.refresh();
+        window.location.href = window.location.href;
       } catch (error) {
         console.error("Erreur dans onSubmit :", error);
         setError("Erreur lors de l'ajout de la variante.");
@@ -225,9 +232,6 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
           return;
         }
 
-        // Supprimer les images marquées pour suppression
-      
-
           // Modifier la variante
           const response = await fetch(`/api/variants/${modelId}`, {
             method: "PUT",
@@ -238,12 +242,13 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
               variantId: variantId,
               memory: values.memory,
               color: values.color,
-              countryId: values.country || null,
+              countryId: values.country || initialValues.country.id,
               price: values.price,
               description: values.description || "",
               stock: values.stock || 0,
               isActive: values.isActive ?? true,
-              images: values.imageUrl, 
+              images: imageUrls,
+              imagesToDelete,
             }),
           });
 
@@ -259,6 +264,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
         setSuccess("Variante modifiée avec succès !");
         setIsModalOpen(false);
         router.refresh();
+        window.location.href = window.location.href;
       } catch (error) {
         console.error("Erreur dans onSubmit :", error);
         setError("Erreur lors de l'édition de la variante.");
@@ -344,10 +350,10 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
 
           <div className="">
             <label className="text-white text-sm" htmlFor="country">
-              Pays de provenance
+            {!initialValues.country ? "-- Pays de provenance --" : `Pays actuel : ${initialValues.country.name}`}
             </label>
             <select id="country" {...form.register("country")} className="text-noir-900 w-52 h-10 rounded-md" defaultValue={initialValues.country} >
-              <option value="">-- Sélectionnez un pays --</option>
+                <option value="">{!initialValues.country ? "-- Sélectionnez un pays --" : "Changer de pays"}</option> 
               {countries.map((country) => (
                 <option key={country.id} value={country.id}>
                   {country.name}

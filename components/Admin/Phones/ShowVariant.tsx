@@ -56,8 +56,6 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
   }, []);
   
   
-  
-
   return (
     <section className="wrapper">
       <div className="flex gap-9 mb-5 items-center">
@@ -67,7 +65,7 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
 
       <div className="flex flex-col gap-2">
         {variants.map((variant) => (
-          <div key={variant.id} className="grid grid-cols-8 items-center gap-12 px-5 bg-noir-800 text-white font-font1 p-2 rounded-md">
+          <div key={variant.id} className="grid grid-cols-9 items-center px-5 bg-noir-800 text-white font-font1 p-2 rounded-md">
             <p className="flex gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -175,6 +173,11 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
               </svg>
               {variant.description.slice(0, 20)}
             </p>
+
+            <p className="flex gap-2">
+              {variant.isActive ? "Actif : Oui" : "Actif : Non"}
+            </p>
+
 
             <div className="flex gap-2">
               <EditVariantBtn

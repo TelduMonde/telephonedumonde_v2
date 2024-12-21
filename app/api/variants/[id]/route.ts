@@ -122,16 +122,42 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: string }
       );
     }
 
-    const { variantId, memory, color, countryId, price, description,  stock, isActive, images } = await req.json();
+    const { variantId, memory, color, countryId, price, description, stock, isActive, images, imagesToDelete } = await req.json();
 
-    if ( !variantId || !modelId || !memory || !color || !price || !images || images.length === 0) {
+    if (!variantId || !modelId || !memory || !color || !price) {
       return NextResponse.json(
         { error: "Paramètres obligatoires manquants." },
         { status: 400 }
       );
     }
 
-  // Mettre à jour la variante avec Prisma
+    // Récupérer les images existantes
+    const variant = await prisma.phoneVariant.findUnique({
+      where: { id: variantId },
+      select: { images: true },
+    });
+
+    if (!variant) {
+      return NextResponse.json(
+        { error: "Variante introuvable." },
+        { status: 404 }
+      );
+    }
+
+    // console.log("Images existantes :", variant.images);
+    // console.log("Images à supprimer :", imagesToDelete);
+
+    // Supprimer les images marquées pour suppression
+    const remainingImages = variant.images.filter((url) => !imagesToDelete.includes(url));
+    //console.log("Images restantes après suppression :", remainingImages);
+
+    // Ajouter uniquement les nouvelles images qui ne sont pas à supprimer
+    const filteredNewImages: string[] = (images || []).filter((url: string) => !imagesToDelete.includes(url));
+    const updatedImages = [...new Set([...remainingImages, ...filteredNewImages])];
+
+    //console.log("Images mises à jour :", updatedImages);
+
+    // Mettre à jour la variante
     const updatedVariant = await prisma.phoneVariant.update({
       where: { id: variantId },
       data: {
@@ -142,20 +168,22 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: string }
         description: description || "",
         stock: stock || 0,
         isActive: isActive ?? true,
-        images,
+        images: updatedImages, // Mise à jour avec les images restantes et les nouvelles
       },
     });
-;
 
-    return NextResponse.json(updatedVariant, { status: 200  });
+    return NextResponse.json(updatedVariant, { status: 200 });
   } catch (error) {
-    console.error("Erreur lors de la création de la variante :", error);
+    console.error("Erreur lors de la mise à jour de la variante :", error);
     return NextResponse.json(
-      { error: "Echec lors de la création de la variante.", details: error },
+      { error: "Échec lors de la mise à jour de la variante.", details: error },
       { status: 500 }
     );
   }
 };
+
+
+
 
 export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
   try {
