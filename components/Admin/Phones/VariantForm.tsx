@@ -52,6 +52,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
   console.log("SELECTEDFILES", selectedFiles);
 
   const variantId = variant?.id;
+  console.log("isActive", variant?.isActive);
 
   useEffect(() => {
     const fetchCountry = async () => {

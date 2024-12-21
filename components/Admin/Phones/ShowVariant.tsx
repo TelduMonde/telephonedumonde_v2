@@ -17,6 +17,7 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
     price: number; 
     country: string; 
     description: string; 
+    isActive: boolean;
     images: string[]; 
     model: { id: string; name: string};
   }[]>([]);
@@ -66,11 +67,7 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
 
       <div className="flex flex-col gap-2">
         {variants.map((variant) => (
-          console.log("Variants", variant.country),
-          <div
-            // key={variant.id}
-            className="grid grid-cols-8 items-center gap-12 px-5 bg-noir-800 text-white font-font1 p-2 rounded-md"
-          >
+          <div key={variant.id} className="grid grid-cols-8 items-center gap-12 px-5 bg-noir-800 text-white font-font1 p-2 rounded-md">
             <p className="flex gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -188,7 +185,7 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
                   model: { name: variant.model.name },
                   country: variant.country,
                   stock: 0,
-                  isActive: true,
+                  isActive: variant.isActive,
                   imageUrl: variant.images,
                   //country: variant.country
                 }}
