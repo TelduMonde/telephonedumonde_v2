@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { BottomGradient } from "@/components/ui/BottomGradient";
 import { FormError } from "@/components/shared/Form/FormError";
 import { FormSuccess } from "@/components/shared/Form/FormSucess";
+import { toast } from "sonner";
 
 export default function ResetForm() {
   const [isPending, startTransition] = useTransition();
@@ -38,6 +39,9 @@ export default function ResetForm() {
       reset(values).then((data) => {
         setError(data?.error);
         setSuccess(data?.success);
+        toast.success(
+          "Un email de réinitialisation a été envoyé avec succès !"
+        );
       });
     });
   };

@@ -18,11 +18,15 @@ type EditVariantButtonProps = {
     isActive: boolean;
     imageUrl: string[];
     model: { name: string };
-    country: string; 
+    country: string;
   };
 };
 
-const EditVariantBtn: React.FC<EditVariantButtonProps> = ({ userId, modelId, variant }) => {
+const EditVariantBtn: React.FC<EditVariantButtonProps> = ({
+  userId,
+  modelId,
+  variant,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -30,7 +34,7 @@ const EditVariantBtn: React.FC<EditVariantButtonProps> = ({ userId, modelId, var
   return (
     <>
       <button onClick={handleOpenModal}>
-       <FaEdit size={20} className="text-white hover:text-white/80" />
+        <FaEdit size={15} className="text-white hover:text-white/80" />
       </button>
 
       <ModalAdmin isOpen={isModalOpen} onClose={handleCloseModal}>

@@ -1,5 +1,5 @@
 import FilterBrand from "@/components/Admin/Phones/FilterBrand";
-import CardModel from "@/components/Cards/CardModel";
+import ProductList from "@/components/Boutique/ProductList";
 
 export default function page() {
   return (
@@ -17,16 +17,7 @@ export default function page() {
       </div>
 
       <div className="flex justify-center items-center w-full">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
-          <CardModel />
-          <CardModel />
-          <CardModel />
-          <CardModel />
-          <CardModel />
-          <CardModel />
-          <CardModel />
-          <CardModel />
-        </div>
+        <ProductList />
       </div>
     </section>
   );

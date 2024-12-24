@@ -22,7 +22,7 @@ export default async function Header() {
         </Link>
 
         <div className="flex sm:gap-10 lg:gap-20">
-          <nav className="hidden md:block">
+          <nav className="hidden lg:block">
             <NavItems
               session={
                 session
@@ -39,7 +39,7 @@ export default async function Header() {
             />
           </nav>
 
-          <nav className="hidden md:flex items-center">
+          <nav className="hidden lg:flex items-center">
             <NavItemsBis
               session={
                 session

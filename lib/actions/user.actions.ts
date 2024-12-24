@@ -6,11 +6,13 @@ import { userProfileSchema, userSettingSchema } from "../validator";
 
 import { revalidatePath } from "next/cache";
 import {
+  Address,
   // CreateUserParams,
   DeleteUserParams,
   // GetSuscriptionEvent,
   // UpdateUserParams,
 } from "@/types";
+// import { generateVerificationToken } from "../token";
 
 // import { generateVerificationToken } from "../token";
 
@@ -63,7 +65,16 @@ export async function getUserByIdForProfile(userId: string) {
 
         role: true,
 
-        isTwofactorEnabled: true,
+        addresses: {
+          select: {
+            id: true,
+            street: true,
+            city: true,
+            state: true,
+            postalCode: true,
+            country: true,
+          },
+        },
       },
     });
     return user;
@@ -73,81 +84,135 @@ export async function getUserByIdForProfile(userId: string) {
 }
 
 //! UPDATE USER FOR PROFILE
-// export async function updateProfileUser(
-//   values: z.infer<typeof userProfileSchema>
-// ) {
-//   // Importation de currentUser ici : éviter les conflits d'importation qui génere une erreur
-//   const { currentUser } = await import("../auth");
-//   const user = await currentUser();
+export async function updateProfileUser(
+  values: z.infer<typeof userProfileSchema>
+) {
+  // Importation de currentUser ici : éviter les conflits d'importation qui génere une erreur
+  const { currentUser } = await import("../auth");
+  const user = await currentUser();
 
-//   if (!user || !user.id) {
-//     return { error: "User not found" };
-//   }
-//   const dbUser = await getUserById(user.id);
-//   if (!dbUser) {
-//     return { error: "User not found" };
-//   }
+  if (!user || !user.id) {
+    return { error: "User not found" };
+  }
+  const dbUser = await getUserById(user.id);
+  if (!dbUser) {
+    return { error: "User not found" };
+  }
 
-//   await db.user.update({
-//     where: { id: dbUser.id },
-//     data: {
-//       ...values,
-//     },
-//   });
+  await db.user.update({
+    where: { id: dbUser.id },
+    data: {
+      ...values,
+    },
+  });
 
-//   return { success: "Profil mis à jour !" };
-// }
+  return { success: "Profil mis à jour !" };
+}
+
+export async function addUserAddress(
+  userId: string,
+  addressData: Address,
+  addressId?: string
+) {
+  try {
+    await db.address.create({
+      data: {
+        userId,
+        street: addressData.street,
+        city: addressData.city,
+        state: addressData.state,
+        postalCode: addressData.postalCode,
+        country: addressData.country,
+      },
+    });
+
+    await db.user.findUnique({
+      where: { id: userId },
+      include: { addresses: true },
+    });
+
+    revalidatePath(`/mon-compte/infos-personnelles`);
+    return { success: "Profil mis à jour !" };
+  } catch (error) {
+    console.error("Erreur lors de l'ajout de l'adresse:", error);
+    throw new Error("Impossible d'ajouter l'adresse.");
+  }
+}
+
+export async function updateUserAddress(
+  userId: string,
+  addressId: string,
+  addressData: Address
+) {
+  try {
+    await db.address.update({
+      where: { id: addressId },
+      data: {
+        street: addressData.street,
+        city: addressData.city,
+        state: addressData.state,
+        postalCode: addressData.postalCode,
+        country: addressData.country,
+      },
+    });
+
+    revalidatePath(`/mon-compte/infos-personnelles`);
+    return { success: "Profil mis à jour !" };
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour de l'adresse:", error);
+    throw new Error("Impossible de mettre à jour l'adresse.");
+  }
+}
 
 //! UPDATE USER FOR SETTINGS
-// export async function updateSettingUser(
-//   values: z.infer<typeof userSettingSchema>
-// ) {
-//   const { currentUser } = await import("../auth");
-//   const user = await currentUser();
+export async function updateSettingUser(
+  values: z.infer<typeof userSettingSchema>
+) {
+  const { currentUser } = await import("../auth");
+  const user = await currentUser();
 
-//   if (!user || !user.id) {
-//     return { error: "User not found" };
-//   }
-//   const dbUser = await getUserById(user.id);
-//   if (!dbUser) {
-//     return { error: "User not found" };
-//   }
+  if (!user || !user.id) {
+    return { error: "User not found" };
+  }
+  const dbUser = await getUserById(user.id);
+  if (!dbUser) {
+    return { error: "User not found" };
+  }
 
-//   // Le user est connecté avec Google ou pas ? On ne peut pas changer son adresse mail ni avoir une authentification à deux facteurs : on les met à undefined pour que leur valeur ne change pas quoi qu'il arrive.
-//   if (user.isOAuth) {
-//     values.email = undefined;
-//     values.isTwofactorEnabled = undefined;
-//   }
+  // Le user est connecté avec Google ou pas ? On ne peut pas changer son adresse mail ni avoir une authentification à deux facteurs : on les met à undefined pour que leur valeur ne change pas quoi qu'il arrive.
+  if (user.isOAuth) {
+    values.email = undefined;
+  }
 
-//   if (values.email && values.email !== user.email) {
-//     const existingUser = await getUserByEmail(values.email);
+  // if (values.email && values.email !== user.email) {
+  //   const existingUser = await getUserByEmail(values.email);
 
-//     if (existingUser) {
-//       return { error: "Email déjà utilisé" };
-//     }
+  //   if (existingUser) {
+  //     return { error: "Email déjà utilisé" };
+  //   }
 
-//     // Envoyer un email de vérification
-//     const verificationToken = await generateVerificationToken(values.email);
-//     await sendVerificationEmail(
-//       verificationToken.email,
-//       verificationToken.token
-//     );
+  //   // Envoyer un email de vérification
+  //   const verificationToken = await generateVerificationToken(values.email);
+  //   await sendVerificationEmail(
+  //     verificationToken.email,
+  //     verificationToken.token
+  //   );
 
-//     return {
-//       success:
-//         "Un email de vérification a été envoyé à votre adresse mail. Veuillez vérifier votre boîte de réception.",
-//     };
-//   }
+  //   return {
+  //     success:
+  //       "Un email de vérification a été envoyé à votre adresse mail. Veuillez vérifier votre boîte de réception.",
+  //   };
+  // }
 
-//   await db.user.update({
-//     where: { id: dbUser.id },
-//     data: {
-//       ...values,
-//     },
-//   });
+  await db.user.update({
+    where: { id: dbUser.id },
+    data: {
+      ...values,
+    },
+  });
 
-//   return { success: "Paramètres mis à jour !" };
-// }
+  return { success: "Paramètres mis à jour !" };
+}
 
 //! DELETE USER
 export const deleteUser = async ({ userId, path }: DeleteUserParams) => {
@@ -158,7 +223,8 @@ export const deleteUser = async ({ userId, path }: DeleteUserParams) => {
 
     if (deletedUser) revalidatePath(path);
   } catch (error) {
-    handleError(error);
+    console.error("Erreur lors de la suppression:", error);
+    throw new Error("Impossible de supprimer l'utilisateur.");
   }
 };
 

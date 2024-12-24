@@ -3,13 +3,16 @@
 import { useRouter } from "next/navigation";
 
 interface DeleteVariantButtonProps {
-    setIsModalOpen: (isOpen: boolean) => void;
-    userId: string | undefined;
-    modelId: string;
-    variantId: string;
-  }
+  setIsModalOpen: (isOpen: boolean) => void;
+  userId: string | undefined;
+  modelId: string;
+  variantId: string;
+}
 
-export default function DeleteVariant({ setIsModalOpen, userId, variantId,}: DeleteVariantButtonProps) {
+export default function DeleteVariant({
+  setIsModalOpen,
+  variantId,
+}: DeleteVariantButtonProps) {
   const router = useRouter();
 
   const deleteVariant = async () => {

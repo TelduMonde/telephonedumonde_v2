@@ -38,7 +38,7 @@ export const NavMobile = ({ session }: NavItemsProps) => {
   }, [isOpen]);
 
   return (
-    <nav className="md:hidden">
+    <nav className="lg:hidden">
       <div className="flex items-center justify-between text-white">
         <button onClick={handleOpen} className="text-2xl">
           <MdMenu size={40} className="text-white" />

@@ -4,6 +4,8 @@ import { currentRole } from "@/lib/auth";
 
 const prisma = new PrismaClient();
 
+import { revalidatePath } from "next/cache";
+
 //! RECUPERER UN SEUL MODELE
 export const GET = async (req: NextRequest) => {
   try {
@@ -121,6 +123,8 @@ export const DELETE = async (req: NextRequest) => {
     const deletedModel = await prisma.phoneModel.delete({
       where: { id },
     });
+
+    revalidatePath("http://localhost:3000/admin-tel-du-monde/produits");
 
     return NextResponse.json(deletedModel, { status: 200 });
   } catch (error) {

@@ -14,6 +14,7 @@ import { BottomGradient } from "@/components/ui/BottomGradient";
 import { Input } from "@/components/ui/input";
 import { FormError } from "@/components/shared/Form/FormError";
 import { FormSuccess } from "@/components/shared/Form/FormSucess";
+import { toast } from "sonner";
 
 export default function NewPasswordForm() {
   //! Récupération du token depuis l'URL envoyé depuis le lien du mail :
@@ -46,6 +47,7 @@ export default function NewPasswordForm() {
       newPassword(values, token).then((data) => {
         setError(data?.error);
         setSuccess(data?.success);
+        toast.success("Votre mot de passe a été réinitialisé avec succès !");
       });
     });
   };

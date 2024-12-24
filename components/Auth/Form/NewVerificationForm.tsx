@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { CardWrapper } from "../CardWrapper";
 import { FormSuccess } from "@/components/shared/Form/FormSucess";
 import { FormError } from "@/components/shared/Form/FormError";
+import { toast } from "sonner";
 
 export const NewVerificationForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -26,8 +27,9 @@ export const NewVerificationForm = () => {
       .then((data) => {
         setError(data?.error);
         setSuccess(data?.success);
+        toast.success("Votre email a été vérifié avec succès !");
       })
-      .catch((error) => {
+      .catch(() => {
         setError(
           "Une erreur est survenue lors de la vérification de votre email."
         );

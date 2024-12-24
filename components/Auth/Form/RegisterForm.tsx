@@ -14,6 +14,7 @@ import { FormSuccess } from "@/components/shared/Form/FormSucess";
 
 import { BottomGradient } from "@/components/ui/BottomGradient";
 import { CardWrapper } from "../CardWrapper";
+import { toast } from "sonner";
 
 export const RegisterForm = () => {
   const [isPending, startTransition] = useTransition();
@@ -39,13 +40,12 @@ export const RegisterForm = () => {
     setError("");
     setSuccess("");
 
-    console.log(values);
-
     // Server Action (je peux aussi utiliser fetch ici)
     startTransition(() => {
       register(values).then((data: { error?: string; success?: string }) => {
         setError(data.error);
         setSuccess(data.success);
+        toast.success("Votre compte a été créé avec succès !");
       });
     });
   };

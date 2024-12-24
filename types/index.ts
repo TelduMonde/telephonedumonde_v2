@@ -2,9 +2,40 @@ export type ModelPhone = {
   id: string;
   brand: string;
   name: string;
-  variantCount: number;
+  variantCount?: number;
   isActive: boolean;
 };
+
+export type CardsModelProps = {
+  id: string;
+  brand: string;
+  name: string;
+  isActive: boolean;
+  firstImage: string | null;
+  minPrice: number | null;
+};
+
+export type ShowModelProps = {
+  data: {
+    id: string;
+    brand: string;
+    name: string;
+    isActive: boolean;
+    firstImage: string | null;
+    minPrice: number | null;
+  }[];
+  totalPages: number;
+};
+
+//! ====== USER
+export interface Address {
+  id?: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+}
 
 // ====== URL QUERY PARAMS
 export type UrlQueryParams = {

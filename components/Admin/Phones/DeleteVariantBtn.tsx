@@ -26,7 +26,7 @@ const DeleteVariantBtn: React.FC<DeleteVariantButtonProps> = ({
   return (
     <>
       <button onClick={handleOpenModal}>
-        <MdDeleteOutline size={20} className="text-white hover:text-white/80" />
+        <MdDeleteOutline size={15} className="text-white hover:text-white/80" />
       </button>
       <ModalAdmin isOpen={isModalOpen} onClose={handleCloseModal}>
         <h2 className="text-xl font-bold">Confirmer la suppression</h2>

@@ -27,7 +27,7 @@ const DeleteModalButton: React.FC<DeleteModelButtonProps> = ({ modelId }) => {
         <div className="flex justify-end gap-4 mt-4">
           <button
             onClick={handleCloseModal}
-            className="bg-gray-300 p-2 rounded-md hover:bg-gray-400 transition-all ease-in-out duration-150"
+            className="bg-noir-800 p-2 rounded-md hover:bg-noir-900 transition-all ease-in-out duration-150"
           >
             Annuler
           </button>

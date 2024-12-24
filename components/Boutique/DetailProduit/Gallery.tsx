@@ -3,7 +3,7 @@ import Image from "next/image";
 import React, { useState, useEffect } from "react";
 
 export default function Gallery({ imageUrl }: { imageUrl: string[] }) {
-  const defaultImage = "/Carrousel/iphone.webp";
+  const defaultImage = "/logo/telephone_du_monde.png";
 
   const images = imageUrl && imageUrl.length > 0 ? imageUrl : [defaultImage];
 
@@ -18,14 +18,15 @@ export default function Gallery({ imageUrl }: { imageUrl: string[] }) {
   }, [imageUrl]);
 
   return (
-    <div className="flex flex-col justify-center items-center gap-2 w-full lg:max-w-fit">
+    <div className="flex flex-col justify-center items-center gap-2 h-[450px] sm:h-full w-full lg:w-[300px]">
       <Image
         src={mainImage}
         alt="produit"
         width={800}
         height={800}
-        className="w-48 lg:w-80 lg:h-80 object-cover"
+        className="w-48 h-80 sm:w-full lg:h-80 object-contain"
       />
+
       <div className="flex gap-2 justify-center md:justify-normal overflow-auto tailwind-scrollbar-hide">
         {images.map((image, index) => (
           <Image
@@ -34,7 +35,7 @@ export default function Gallery({ imageUrl }: { imageUrl: string[] }) {
             alt="produit"
             width={200}
             height={200}
-            className={`w-16 lg:w-20 lg:h-20 object-cover cursor-pointer filter grayscale transition-all ease-in-out ${
+            className={`w-12 h-16 lg:w-full lg:h-20 object-cover cursor-pointer filter grayscale transition-all ease-in-out ${
               mainImage === image ? "filter-none" : ""
             }`}
             onClick={() => setMainImage(image)}

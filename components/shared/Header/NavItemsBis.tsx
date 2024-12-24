@@ -1,15 +1,14 @@
 "use client";
 import ModalConnexion from "@/components/Auth/ModalConnexion";
 import ModalPanier from "@/components/Panier/ModalPanier";
+import { getCart, removeFromCart } from "@/lib/useCart";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-import {
-  MdOutlineAccountCircle,
-  MdOutlineShoppingCart,
-  MdOutlineSearch,
-} from "react-icons/md";
+import { MdOutlineAccountCircle, MdOutlineShoppingCart } from "react-icons/md";
+import { Search } from "../SearchModel";
+import { useCart } from "@/components/Panier/Context/CartContext";
 
 interface NavItemsProps {
   onLinkClick?: () => void;
@@ -18,7 +17,6 @@ interface NavItemsProps {
 
 export const NavItemsBis = ({ onLinkClick, session }: NavItemsProps) => {
   const pathname = usePathname();
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -39,30 +37,28 @@ export const NavItemsBis = ({ onLinkClick, session }: NavItemsProps) => {
     }
   };
 
-  const handleSearchClick = () => {
-    setIsSearchVisible((prev) => !prev);
-  };
-
   const isActive = pathname === "/mon-compte";
+
+  //! GESTION DU PANIER
+  const [cart, setCart] = useState(() => getCart());
+  const { state } = useCart();
+
+  // Calcul du nombre total d'articles
+  const totalItemCount = state.items.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  const removeFromCartHandler = (itemId: string) => {
+    const updatedCart = removeFromCart(itemId);
+    setCart(updatedCart);
+  };
 
   return (
     <>
       <ul className="flex gap-6 items-center">
         <li className="relative flex">
-          <MdOutlineSearch
-            size={25}
-            className={`cursor-pointer z-20 hover:text-white/70 transition-transform duration-300 ${
-              isSearchVisible ? "translate-x-[-215px]" : ""
-            }`}
-            onClick={handleSearchClick}
-          />
-          <input
-            type="text"
-            className={`absolute right-0 h-full pl-4 pr-2 py-2 bg-noir-900 border-[1px] border-white rounded-md text-white text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 transition-all duration-300 placeholder:text-xs ${
-              isSearchVisible ? "w-[200px] opacity-100" : "w-0 opacity-0"
-            }`}
-            placeholder="Recherche..."
-          />
+          <Search />
         </li>
         <li>
           <Link
@@ -80,11 +76,20 @@ export const NavItemsBis = ({ onLinkClick, session }: NavItemsProps) => {
           </Link>
         </li>
         <li>
-          <MdOutlineShoppingCart
-            size={25}
+          <div
+            className="relative flex items-center gap-4"
             onClick={() => setIsPanierOpen(true)}
-            className="cursor-pointer hover:text-white/70"
-          />
+          >
+            <MdOutlineShoppingCart
+              size={25}
+              className="cursor-pointer hover:text-white/70"
+            />
+            {totalItemCount > 0 && (
+              <span className="cursor-pointer absolute -top-2 -right-2 bg-gradient-to-t from-primary-500 to-primary-900 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                {totalItemCount}
+              </span>
+            )}
+          </div>
         </li>
       </ul>
 
@@ -96,6 +101,8 @@ export const NavItemsBis = ({ onLinkClick, session }: NavItemsProps) => {
       <ModalPanier
         isOpen={isPanierOpen}
         onClose={() => setIsPanierOpen(false)}
+        cartItems={cart}
+        onRemove={removeFromCartHandler}
       />
     </>
   );

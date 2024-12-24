@@ -4,7 +4,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { userLoginSchema } from "@/lib/validator";
 import { login } from "@/lib/actions/auth.actions";
@@ -17,12 +17,14 @@ import { FormSuccess } from "@/components/shared/Form/FormSucess";
 
 import { BottomGradient } from "@/components/ui/BottomGradient";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface LoginFormProps {
   onClose?: () => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get("error") === "OauthAccountNotLinked"
@@ -70,6 +72,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
             if (data?.success) {
               form.reset();
               setSuccess(data.success);
+              router.refresh();
+              toast.success("Vous êtes connecté");
               if (onClose) {
                 onClose();
               }

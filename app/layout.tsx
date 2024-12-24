@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Header from "@/components/shared/Header/Header";
-import Footer from "@/components/shared/Footer";
+
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+
+import { CartProvider } from "@/components/Panier/Context/CartContext";
+
+import Header from "@/components/shared/Header/Header";
+import Footer from "@/components/shared/Footer";
+import { Toaster } from "@/components/shared/Sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,9 +40,13 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-noir-900 min-h-screen`}
       >
         <SessionProvider session={session}>
-          <Header />
-          <div className="min-h-screen">{children}</div>
-          <Footer />
+          <CartProvider>
+            <Header />
+            <div className="min-h-screen">
+              {children} <Toaster />
+            </div>
+            <Footer />
+          </CartProvider>
         </SessionProvider>
       </body>
     </html>

@@ -4,24 +4,33 @@ import React, { useEffect, useState } from "react";
 import AddVariantBtn from "@/components/Admin/Phones/addVariantBtn";
 import EditVariantBtn from "./EditVariantBtn";
 import DeleteVariantBtn from "./DeleteVariantBtn";
-//import DeleteVariantBtn from "./DeleteVariantBtn";
+import Image from "next/image";
 
-export default function ShowVariant({ userId, modelId}: {userId: string | undefined;modelId: string;}) {
+export default function ShowVariant({
+  userId,
+  modelId,
+}: {
+  userId: string | undefined;
+  modelId: string;
+}) {
   const [isModalImageOpen, setIsModalImageOpen] = useState(false);
-  const [selectedVariantImages, setSelectedVariantImages] = useState<string[]>([]);
-  const [variants, setVariants] = useState<{ 
-    id: string; 
-    name: string;
-    memory: number; 
-    color: string; 
-    price: number; 
-    country: string; 
-    description: string; 
-    isActive: boolean;
-    images: string[]; 
-    model: { id: string; name: string};
-  }[]>([]);
-  
+  const [selectedVariantImages, setSelectedVariantImages] = useState<string[]>(
+    []
+  );
+  const [variants, setVariants] = useState<
+    {
+      id: string;
+      name: string;
+      memory: number;
+      color: string;
+      price: number;
+      country: string;
+      description: string;
+      isActive: boolean;
+      images: string[];
+      model: { id: string; name: string };
+    }[]
+  >([]);
 
   const openImageModal = (images: string[]) => {
     setSelectedVariantImages(images);
@@ -33,7 +42,6 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
     setIsModalImageOpen(false);
   };
 
-  
   useEffect(() => {
     const fetchVariants = async () => {
       try {
@@ -43,7 +51,7 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
             "Content-Type": "application/json",
           },
         });
-  
+
         const data = await response.json();
         console.log("Données des variantes :", data);
         setVariants(data.data);
@@ -51,11 +59,10 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
         console.error("Failed to fetch variants", error);
       }
     };
-  
+
     fetchVariants();
-  }, []);
-  
-  
+  }, [modelId]);
+
   return (
     <section className="wrapper">
       <div className="flex gap-9 mb-5 items-center">
@@ -65,8 +72,11 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
 
       <div className="flex flex-col gap-2">
         {variants.map((variant) => (
-          <div key={variant.id} className="grid grid-cols-9 items-center px-5 bg-noir-800 text-white font-font1 p-2 rounded-md">
-            <p className="flex gap-2">
+          <div
+            key={variant.id}
+            className="grid grid-cols-9 justify-center  items-center px-5 bg-noir-800 text-white font-font1 p-2 rounded-md"
+          >
+            <p className="flex justify-center items-center gap-2 text-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -84,7 +94,7 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
               {variant.model.name}
             </p>
 
-            <p className="flex gap-2">
+            <p className="flex justify-center items-center gap-2 text-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -99,10 +109,10 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
                   d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-16.5-3a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3m-19.5 0a4.5 4.5 0 0 1 .9-2.7L5.737 5.1a3.375 3.375 0 0 1 2.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 0 1 .9 2.7m0 0a3 3 0 0 1-3 3m0 3h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Zm-3 6h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Z"
                 />
               </svg>
-              {variant.memory} GB 
+              {variant.memory} GB
             </p>
 
-            <p className="flex gap-2">
+            <p className="flex justify-center items-center gap-2 text-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -120,7 +130,7 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
               {variant.color}
             </p>
 
-            <p className="flex gap-2">
+            <p className="flex justify-center items-center gap-2 text-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -138,7 +148,7 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
               {variant.price} euros
             </p>
 
-            <p className="flex gap-2">
+            <p className="flex justify-center items-center gap-2 text-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -153,10 +163,10 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
                   d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
                 />
               </svg>
-              {variant.country?.name || "Pays non spécifié"}
+              {variant.country.name || "Pays non spécifié"}
             </p>
 
-            <p className="flex gap-2">
+            <p className="flex justify-center items-center gap-2 text-xs">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -174,12 +184,19 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
               {variant.description.slice(0, 20)}
             </p>
 
-            <p className="flex gap-2">
+            <p className="flex justify-center items-center gap-2 text-sm">
               {variant.isActive ? "Actif : Oui" : "Actif : Non"}
             </p>
 
+            <button
+              type="button"
+              className="bg-noir-600 px-10 py-1 rounded-md text-xs"
+              onClick={() => openImageModal(variant.images)} // Les images sont déjà des chaînes
+            >
+              Média
+            </button>
 
-            <div className="flex gap-2">
+            <div className="flex justify-center gap-2">
               <EditVariantBtn
                 userId={userId || ""}
                 modelId={variant.id}
@@ -201,14 +218,6 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
                 modelId={modelId}
               />
             </div>
-            <button
-              type="button"
-              className="bg-noir-600 px-10 rounded-md text-xs"
-              onClick={() => openImageModal(variant.images)} // Les images sont déjà des chaînes
-
-            >
-              Voir les images
-            </button>
           </div>
         ))}
 
@@ -217,11 +226,13 @@ export default function ShowVariant({ userId, modelId}: {userId: string | undefi
             <div className="relative flex flex-col bg-noir-800 max-w-4xl w-full p-5 rounded-lg shadow-lg">
               <div className="grid grid-cols-3 gap-2 justify-center items-center">
                 {selectedVariantImages.map((image, index) => (
-                  <img
+                  <Image
                     key={index}
                     src={image}
                     alt={`Image ${index + 1}`}
-                    className="rounded-md object-cover h-56 w-56 mx-auto"
+                    width={200}
+                    height={200}
+                    className="rounded-md object-cover h-48 w-48 mx-auto"
                   />
                 ))}
               </div>

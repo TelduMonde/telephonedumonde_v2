@@ -14,7 +14,10 @@ export const variantFormSchema = z.object({
   color: z.string(),
   country: z.string().optional(),
   description: z.string(),
-  stock: z.number().min(0, "Le stock doit être supérieur ou égal à 0").optional(),
+  stock: z
+    .number()
+    .min(0, "Le stock doit être supérieur ou égal à 0")
+    .optional(),
   isActive: z.boolean(),
   modelId: z.string().optional(),
   imageUrl: z.array(z.string().url()).optional(), // imageUrl: z.string().optional(),
@@ -26,6 +29,7 @@ export const countryFormSchema = z.object({
   imageUrl: z.string().optional(),
 });
 
+//! USER
 export const userLoginSchema = z.object({
   email: z.string().email({
     message: "L'email est requis.",
@@ -115,17 +119,12 @@ export const userSettingSchema = z.object({
   ),
   name: z.optional(z.string()),
   email: z.optional(z.string().email()),
-  departement: z.optional(z.string()),
-  isTwofactorEnabled: z.optional(z.boolean()),
-  organizationName: z.optional(z.string()),
-  organizationType: z.optional(z.string()),
-  isHidenWishlist: z.optional(z.boolean()),
-  tags: z
-    .array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-      })
-    )
-    .optional(),
+});
+
+export const userAdressSchema = z.object({
+  street: z.string().min(2, "La rue est requise"),
+  city: z.string().min(2, "La ville est requise"),
+  state: z.string().min(2, "L'état est requis"),
+  postalCode: z.string().min(2, "Le code postal est requis"),
+  country: z.string().min(2, "Le pays est requis"),
 });

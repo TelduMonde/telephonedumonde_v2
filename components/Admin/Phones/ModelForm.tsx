@@ -13,7 +13,7 @@ import { FormSuccess } from "@/components/shared/Form/FormSucess";
 import { BottomGradient } from "@/components/ui/BottomGradient";
 import { modelFormSchema } from "@/lib/validator";
 import { useCurrentUser } from "@/lib/utils/use-current-user";
-// import { addModel, editModel } from "@/lib/actions/model.actions";
+import { toast } from "sonner";
 
 type PhoneFormProps = {
   type: "add" | "edit";
@@ -103,9 +103,12 @@ export default function ModelForm({
         setSuccess("Modèle ajouté avec succès");
         setIsModalOpen(false);
         router.refresh();
+        window.location.href = window.location.href;
+        toast.success("Modèle ajouté avec succès");
       } catch (error) {
         console.log(error);
         setError("Erreur lors de l'ajout du modèle");
+        toast.error("Erreur lors de l'ajout du modèle");
       }
     }
 
@@ -145,9 +148,12 @@ export default function ModelForm({
         setSuccess("Modèle modifié avec succès");
         setIsModalOpen(false);
         router.refresh();
+        window.location.href = window.location.href;
+        toast.success("Modèle modifié avec succès");
       } catch (error) {
         console.log(error);
         setError("Erreur lors de la modification du modèle");
+        toast.error("Erreur lors de la modification du modèle");
       }
     }
   }

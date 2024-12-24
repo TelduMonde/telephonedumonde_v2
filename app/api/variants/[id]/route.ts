@@ -5,16 +5,11 @@ import { currentRole } from "@/lib/auth";
 const prisma = new PrismaClient();
 
 // Récupérer les variants d'un produit
-export const GET = async (req: NextRequest, { params }: { params: { id: string } })  => {
+export const GET = async (
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) => {
   try {
-    const role = await currentRole();
-    if (role !== "admin") {
-      return NextResponse.json(
-        { error: "Vous n'êtes pas autorisé à effectuer cette action." },
-        { status: 403 }
-      );
-    }
-
     const url = new URL(req.url);
     const id = params.id; // Récupère l'ID du modèle depuis l'URL
     const limit = Number(url.searchParams.get("limit")) || 10; // Par défaut : 10
@@ -66,8 +61,19 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
   }
 };
 
-export const POST = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const POST = async (
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) => {
   try {
+    const role = await currentRole();
+    if (role !== "admin") {
+      return NextResponse.json(
+        { error: "Vous n'êtes pas autorisé à effectuer cette action." },
+        { status: 403 }
+      );
+    }
+
     const modelId = params.id;
 
     if (!req.body) {
@@ -77,9 +83,25 @@ export const POST = async (req: NextRequest, { params }: { params: { id: string 
       );
     }
 
-    const { memory, color, countryId, price, description,  stock, isActive, images } = await req.json();
+    const {
+      memory,
+      color,
+      countryId,
+      price,
+      description,
+      stock,
+      isActive,
+      images,
+    } = await req.json();
 
-    if (!modelId || !memory || !color || !price || !images || images.length === 0) {
+    if (
+      !modelId ||
+      !memory ||
+      !color ||
+      !price ||
+      !images ||
+      images.length === 0
+    ) {
       return NextResponse.json(
         { error: "Paramètres obligatoires manquants." },
         { status: 400 }
@@ -111,8 +133,19 @@ export const POST = async (req: NextRequest, { params }: { params: { id: string 
   }
 };
 
-export const PUT = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const PUT = async (
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) => {
   try {
+    const role = await currentRole();
+    if (role !== "admin") {
+      return NextResponse.json(
+        { error: "Vous n'êtes pas autorisé à effectuer cette action." },
+        { status: 403 }
+      );
+    }
+
     const modelId = params.id;
 
     if (!req.body) {
@@ -122,7 +155,29 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: string }
       );
     }
 
-    const { variantId, memory, color, countryId, price, description, stock, isActive, images, imagesToDelete } = await req.json();
+    // Vérifier et parser le JSON
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Format JSON invalide." },
+        { status: 400 }
+      );
+    }
+
+    const {
+      variantId,
+      memory,
+      color,
+      countryId,
+      price,
+      description,
+      stock,
+      isActive,
+      images,
+      imagesToDelete,
+    } = body;
 
     if (!variantId || !modelId || !memory || !color || !price) {
       return NextResponse.json(
@@ -144,18 +199,18 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: string }
       );
     }
 
-    // console.log("Images existantes :", variant.images);
-    // console.log("Images à supprimer :", imagesToDelete);
-
     // Supprimer les images marquées pour suppression
-    const remainingImages = variant.images.filter((url) => !imagesToDelete.includes(url));
-    //console.log("Images restantes après suppression :", remainingImages);
+    const remainingImages = variant.images.filter(
+      (url) => !imagesToDelete.includes(url)
+    );
 
     // Ajouter uniquement les nouvelles images qui ne sont pas à supprimer
-    const filteredNewImages: string[] = (images || []).filter((url: string) => !imagesToDelete.includes(url));
-    const updatedImages = [...new Set([...remainingImages, ...filteredNewImages])];
-
-    //console.log("Images mises à jour :", updatedImages);
+    const filteredNewImages: string[] = (images || []).filter(
+      (url: string) => !imagesToDelete.includes(url)
+    );
+    const updatedImages = [
+      ...new Set([...remainingImages, ...filteredNewImages]),
+    ];
 
     // Mettre à jour la variante
     const updatedVariant = await prisma.phoneVariant.update({
@@ -182,11 +237,19 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: string }
   }
 };
 
-
-
-
-export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const DELETE = async (
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) => {
   try {
+    const role = await currentRole();
+    if (role !== "admin") {
+      return NextResponse.json(
+        { error: "Vous n'êtes pas autorisé à effectuer cette action." },
+        { status: 403 }
+      );
+    }
+
     const variantId = params.id;
 
     if (!variantId) {
@@ -208,4 +271,4 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: strin
       { status: 500 }
     );
   }
-}
+};

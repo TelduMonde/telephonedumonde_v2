@@ -12,14 +12,16 @@ export const LogoutBtn = ({ children }: LogoutBtnProps) => {
   const router = useRouter();
 
   const onClick = async () => {
-    try {
-      await logout();
-      toast.success("Déconnexion réussie");
-      router.push("/");
-    } catch (error) {
-      console.error("Erreur lors de la déconnexion:", error);
-      toast.error("Erreur lors de la déconnexion");
+    const result = await logout();
+
+    if (result?.error) {
+      console.error("Erreur lors de la déconnexion:", result.error);
+      toast.error(result.error);
+      return;
     }
+
+    toast.success("Déconnexion réussie");
+    router.push("/");
   };
 
   return (

@@ -2,7 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 
+import { revalidatePath } from "next/cache";
+
 const prisma = new PrismaClient();
+
+// function generateSlug(name: string): string {
+//   return name
+//     .toLowerCase()
+//     .replace(/[^a-z0-9]+/g, "-")
+//     .replace(/^-+|-+$/g, "");
+// }
 
 //! CREER UN MODELE
 export const POST = async (req: NextRequest) => {
@@ -19,7 +28,7 @@ export const POST = async (req: NextRequest) => {
 
     const { name, brand, isActive } = data;
 
-    // VERIFIER SI LE MODELE EXISTE DEJA
+    // const slug = generateSlug(name);
 
     const existingModel = await prisma.phoneModel.findFirst({
       where: {
@@ -50,6 +59,7 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
+    revalidatePath("http://localhost:3000/admin-tel-du-monde/produits");
     return NextResponse.json(phoneModel);
   } catch (error) {
     return NextResponse.json(
@@ -62,13 +72,13 @@ export const POST = async (req: NextRequest) => {
 //! RECUPERER TOUS LES MODELES AVEC LE NOMBRE DE VARIANTS POUR ADMIN
 export const GET = async (req: NextRequest) => {
   try {
-    // const role = await currentRole();
-    // if (role !== "admin") {
-    //   return NextResponse.json(
-    //     { error: "Vous n'êtes pas autorisé à effectuer cette action." },
-    //     { status: 403 }
-    //   );
-    // }
+    const role = await currentRole();
+    if (role !== "admin") {
+      return NextResponse.json(
+        { error: "Vous n'êtes pas autorisé à effectuer cette action." },
+        { status: 403 }
+      );
+    }
 
     const url = new URL(req.url);
     const query = url.searchParams.get("query");
@@ -76,8 +86,6 @@ export const GET = async (req: NextRequest) => {
     const page = Number(url.searchParams.get("page")) || 1;
     const brand = url.searchParams.get("brand");
     const skipAmount = (Number(page) - 1) * limit;
-
-    console.log("Query Parameters:", { query, limit, page, brand, skipAmount });
 
     const models = await prisma.phoneModel.findMany({
       where: {

@@ -2,23 +2,27 @@
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { useForm } from "react-hook-form";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+
+import { variantFormSchema } from "@/lib/validator";
+
+import { useUploadThing } from "@/lib/uploadthing";
 
 import { Input } from "@/components/ui/input";
 import { FormError } from "@/components/shared/Form/FormError";
 import { FormSuccess } from "@/components/shared/Form/FormSucess";
 import { BottomGradient } from "@/components/ui/BottomGradient";
-import { variantFormSchema } from "@/lib/validator";
-// import {
-//   addVariant,
-//   deleteImage,
-//   updateVariant,
-// } from "@/lib/actions/variant.actions";
-// import { getCountries } from "@/lib/actions/country.actions";
-import { useUploadThing } from "@/lib/uploadthing";
-import Image from "next/image";
+import { toast } from "sonner";
+
+type CountryProps = {
+  id: string;
+  name: string;
+};
 
 type VariantFormProps = {
   userId: string | undefined;
@@ -38,37 +42,39 @@ type VariantFormProps = {
   setIsModalOpen: (isOpen: boolean) => void;
 };
 
-export default function VariantForm({ userId, type, modelId, variant, setIsModalOpen } : VariantFormProps) {
+export default function VariantForm({
+  type,
+  modelId,
+  variant,
+  setIsModalOpen,
+}: VariantFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
- 
-  const [countries, setCountries] = useState<{ id: string; name: string }[]>([]);
+
+  const [countries, setCountries] = useState<CountryProps[]>([]);
+
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Fichiers sélectionnés
-  const [existingImages, setExistingImages] = useState<string[]>(variant?.imageUrl || []);
+  const [existingImages, setExistingImages] = useState<string[]>(
+    variant?.imageUrl || []
+  );
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]); // Images à supprimer
   const { startUpload } = useUploadThing("imageUploader");
 
-  console.log("SELECTEDFILES", selectedFiles);
-
   const variantId = variant?.id;
-  console.log("imagesToDelete", imagesToDelete);
 
+  //! Récupérer les pays
   useEffect(() => {
     const fetchCountry = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/country`,
-          {
-            headers: {
-              method: "GET",
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`http://localhost:3000/api/country`, {
+          headers: {
+            method: "GET",
+            "Content-Type": "application/json",
+          },
+        });
 
         if (!response.ok) {
-          const errorData = await response.json();
           throw new Error("Failed to fetch models");
         }
 
@@ -81,7 +87,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
     fetchCountry();
   }, []);
 
- 
+  //! Initialiser les valeurs du formulaire
   const initialValues =
     variant && type === "edit"
       ? {
@@ -108,9 +114,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
           modelId: modelId || "",
         };
 
-        const [isChecked, setIsChecked] = useState(initialValues.isActive);
-    
-     
+  const [isChecked, setIsChecked] = useState(initialValues.isActive);
 
   const form = useForm<z.infer<typeof variantFormSchema>>({
     resolver: zodResolver(variantFormSchema),
@@ -123,19 +127,19 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
     console.log("initialValues.isActive", initialValues.isActive);
   }, [initialValues.isActive]);
 
-  // useEffect(() => {
-  //   if (initialValues.country) {
-  //     form.setValue("country", initialValues.country); // Définir la valeur initiale
-  //   }
-  // }, [initialValues.country, form]);
-  
+  const selectedCountry =
+    typeof initialValues.country === "string"
+      ? countries.find((country) => country.id === initialValues.country)
+      : initialValues.country;
+
+  //! Soumettre le formulaire
   async function onSubmit(values: z.infer<typeof variantFormSchema>) {
     setError("");
     setSuccess("");
 
+    //! Ajouter une variante
     if (type === "add") {
       try {
-
         if (!modelId) {
           setError("modelId est requis pour ajouter une variante.");
           return;
@@ -160,6 +164,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
 
         if (imageUrls.length === 0) {
           setError("Aucune image n'a été uploadée.");
+          toast.error("Aucune image n'a été uploadée.");
           return;
         }
 
@@ -181,28 +186,37 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
             description: values.description || "",
             stock: values.stock || 0,
             isActive: values.isActive ?? true,
-            images: values.imageUrl, 
+            images: values.imageUrl,
           }),
         });
 
-      // Vérifiez la réponse
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Erreur lors de la création de la variante :", errorData);
-        setError("Erreur lors de la création de la variante.");
-        return;
-      }
-       
+        // Vérifiez la réponse
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error(
+            "Erreur lors de la création de la variante :",
+            errorData
+          );
+          setError("Erreur lors de la création de la variante.");
+          toast.error("Erreur lors de la création de la variante.");
+          return;
+        }
+
         setSelectedFiles([]);
         setSuccess("Variante et images ajoutées avec succès !");
         setIsModalOpen(false);
-        window.location.href = window.location.href;
+
+        // window.location.href = window.location.href;
+        router.refresh();
+        toast.success("Variante ajoutée avec succès !");
       } catch (error) {
         console.error("Erreur dans onSubmit :", error);
         setError("Erreur lors de l'ajout de la variante.");
+        toast.error("Erreur lors de l'ajout de la variante.");
       }
     }
 
+    //! Modifier une variante
     if (type === "edit") {
       try {
         if (!modelId) {
@@ -218,6 +232,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
           });
 
           if (!uploadedImages || uploadedImages.length === 0) {
+            toast.error("Échec de l'upload des images.");
             throw new Error("Échec de l'upload des images.");
           }
 
@@ -232,31 +247,35 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
           return;
         }
 
-          // Modifier la variante
-          const response = await fetch(`/api/variants/${modelId}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              variantId: variantId,
-              memory: values.memory,
-              color: values.color,
-              countryId: values.country || initialValues.country.id,
-              price: values.price,
-              description: values.description || "",
-              stock: values.stock || 0,
-              isActive: values.isActive ?? true,
-              images: imageUrls,
-              imagesToDelete,
-            }),
-          });
+        // Modifier la variante
+        const response = await fetch(`/api/variants/${modelId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            variantId: variantId,
+            memory: values.memory,
+            color: values.color,
+            countryId: values.country || initialValues.country.id,
+            price: values.price,
+            description: values.description || "",
+            stock: values.stock || 0,
+            isActive: values.isActive ?? true,
+            images: imageUrls,
+            imagesToDelete,
+          }),
+        });
 
-           // Vérifiez la réponse
+        // Vérifiez la réponse
         if (!response.ok) {
           const errorData = await response.json();
-          console.error("Erreur lors de la création de la variante :", errorData);
+          console.error(
+            "Erreur lors de la création de la variante :",
+            errorData
+          );
           setError("Erreur lors de la création de la variante.");
+          toast.error("Erreur lors de la création de la variante.");
           return;
         }
 
@@ -265,13 +284,16 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
         setIsModalOpen(false);
         router.refresh();
         window.location.href = window.location.href;
+        toast.success("Variante modifiée avec succès !");
       } catch (error) {
         console.error("Erreur dans onSubmit :", error);
         setError("Erreur lors de l'édition de la variante.");
+        toast.error("Erreur lors de l'édition de la variante.");
       }
     }
   }
 
+  //! Supprimer une image sélectionnée
   const handleRemoveSelectedFile = (fileName: string) => {
     setSelectedFiles((prevFiles) =>
       prevFiles.filter((file) => file.name !== fileName)
@@ -285,22 +307,23 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
     setImagesToDelete((prevImages) => [...prevImages, imageUrl]);
   };
 
+  //! Afficher le formulaire
   return (
     <div className="flex flex-col gap-8">
       <h3 className="flex gap-3 text-white text-xl font-font1 tracking-widest">
         {type === "add" ? "Ajouter un modèle |" : "Modifier un modèle |"}
         <div className="flex gap-2">
-      <Input
-          id="isActive"
-          type="checkbox"
-          className="h-5 w-5 mt-1"
-          checked={isChecked} 
-          {...form.register("isActive", {
-            onChange: () => setIsChecked(!isChecked), 
-          })}
-        />
-        <p>{isChecked ? "Actuellement actif" : "Actuellement désactivé"}</p>
-          </div>
+          <Input
+            id="isActive"
+            type="checkbox"
+            className="h-5 w-5 mt-1"
+            checked={isChecked}
+            {...form.register("isActive", {
+              onChange: () => setIsChecked(!isChecked),
+            })}
+          />
+          <p>{isChecked ? "Actuellement actif" : "Actuellement désactivé"}</p>
+        </div>
       </h3>
 
       <form
@@ -350,10 +373,21 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
 
           <div className="">
             <label className="text-white text-sm" htmlFor="country">
-            {!initialValues.country ? "-- Pays de provenance --" : `Pays actuel : ${initialValues.country.name}`}
+              {!selectedCountry
+                ? "-- Pays de provenance --"
+                : `Pays actuel : ${selectedCountry.name}`}
             </label>
-            <select id="country" {...form.register("country")} className="text-noir-900 w-52 h-10 rounded-md" defaultValue={initialValues.country} >
-                <option value="">{!initialValues.country ? "-- Sélectionnez un pays --" : "Changer de pays"}</option> 
+            <select
+              id="country"
+              {...form.register("country")}
+              className="text-noir-900 w-52 h-10 rounded-md"
+              defaultValue={initialValues.country}
+            >
+              <option value="">
+                {!initialValues.country
+                  ? "-- Sélectionnez un pays --"
+                  : "Changer de pays"}
+              </option>
               {countries.map((country) => (
                 <option key={country.id} value={country.id}>
                   {country.name}
@@ -362,9 +396,7 @@ export default function VariantForm({ userId, type, modelId, variant, setIsModal
             </select>
           </div>
 
-          <div>
-          
-          </div>
+          <div></div>
 
           <div>
             <label className="text-white text-sm" htmlFor="stock">

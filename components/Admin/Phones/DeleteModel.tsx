@@ -1,4 +1,6 @@
+"use client";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface DeleteModelProps {
   setIsModalOpen: (isOpen: boolean) => void;
@@ -24,9 +26,14 @@ export default function DeleteModel({
       }
 
       setIsModalOpen(false);
+
       router.refresh();
+
+      window.location.href = window.location.href;
+      toast.success("Modèle supprimé avec succès");
     } catch (error) {
       console.error("Erreur lors de la suppression du modèle", error);
+      toast.error("Erreur lors de la suppression du modèle");
     }
   };
 

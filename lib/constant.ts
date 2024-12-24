@@ -1,3 +1,9 @@
+import {
+  MdOutlineLocalShipping,
+  MdOutlineAccountCircle,
+  MdFavorite,
+} from "react-icons/md";
+
 export const headerLinkMain = [
   {
     label: "Home",
@@ -29,5 +35,23 @@ export const headerLinkAdmin = [
   {
     label: "Admin",
     href: "/admin-tel-du-monde",
+  },
+];
+
+export const headerProfilLink = [
+  {
+    label: "Mes commandes",
+    href: "/mon-compte",
+    icon: MdOutlineLocalShipping,
+  },
+  {
+    label: "Mes Favoris",
+    href: "/mon-compte/favoris",
+    icon: MdFavorite,
+  },
+  {
+    label: "Paramètres",
+    href: "/mon-compte/infos-personnelles",
+    icon: MdOutlineAccountCircle,
   },
 ];

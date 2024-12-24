@@ -17,8 +17,8 @@ import { getUserByEmail } from "./user.actions";
 import { AuthError } from "next-auth";
 import { signIn, signOut } from "@/auth";
 
-import { DEFAULT_LOGIN_REDIRECT } from "@/route";
-import { revalidatePath } from "next/cache";
+// import { DEFAULT_LOGIN_REDIRECT } from "@/route";
+// import { revalidatePath } from "next/cache";
 
 import {
   generatePasswordResetToken,
@@ -80,11 +80,17 @@ export const login = async (values: z.infer<typeof userLoginSchema>) => {
 
   // La fonction signIn vient de NextAuth importé depuis "auth.ts"
   try {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email,
       password,
-      redirectTo: DEFAULT_LOGIN_REDIRECT,
+      redirect: false, // Empêche NextAuth de rediriger automatiquement
     });
+
+    if (result?.error) {
+      return { error: result.error };
+    }
+
+    return { success: "Vous êtes connecté avec succès." };
   } catch (error) {
     // Ici, on récupère les erreurs envoyé par nextAuth en fonction du type d'erreur
     if (error instanceof AuthError) {
@@ -96,7 +102,7 @@ export const login = async (values: z.infer<typeof userLoginSchema>) => {
           return { error: "Identifiants incorrects." };
       }
     }
-    // (A compléter)
+
     throw error;
   }
 };
@@ -165,9 +171,13 @@ export const register = async (values: z.infer<typeof userRegisterSchema>) => {
 
 // //! LOGOUT ACTION
 export const logout = async () => {
-  // On peut dans cette fonction supprimer des cookies ou des tokens de session du User par exemple
-  await signOut();
-  revalidatePath("/");
+  try {
+    await signOut({ redirect: false }); // `redirect: false` empêche la redirection automatique
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur lors de la déconnexion :", error);
+    return { error: "Échec de la déconnexion. Veuillez réessayer." };
+  }
 };
 
 // //! VERIFICATION EMAIL ACTION

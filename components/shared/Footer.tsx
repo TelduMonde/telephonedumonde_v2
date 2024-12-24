@@ -4,17 +4,19 @@ import { LogoutBtn } from "../Auth/LogOutBtn";
 
 export default function Footer() {
   return (
-    <footer className="text-white bg-noir-900 py-20">
-      <div className="flex-center flex-col gap-8">
+    <footer className="text-white bg-noir-900 py-14 lg:py-20">
+      <div className="px-4 lg:px-0 flex flex-col gap-4 flex-center lg:gap-8">
         <p className="font-font1 tracking-widest text-xl p-4 border rounded-md">
           Téléphone du Monde
         </p>
 
         <LogoutBtn>
-          <p className="text-white text-xs">DECONNEXION</p>
+          <p className="text-white font-font1 text-xs bg-noir-800 p-2 rounded-md hover:bg-noir-700 transition-all ease-in-out duration-300">
+            DECONNEXION
+          </p>
         </LogoutBtn>
 
-        <div className="flex gap-8">
+        <div className="flex flex-col gap-4 lg:flex-row lg:gap-8 text-center">
           <Link
             href="/mentions-legales"
             className="text-xs hover:text-white/70 transition-all ease-in-out duration-300"
