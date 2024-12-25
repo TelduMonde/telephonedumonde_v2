@@ -23,6 +23,20 @@ export const variantFormSchema = z.object({
   imageUrl: z.array(z.string().url()).optional(), // imageUrl: z.string().optional(),
 });
 
+//! PROMO CODE
+export const promoCodeFormSchema = z.object({
+  code: z.string().min(1, "Le code promo est requis."),
+  discount: z.preprocess(
+    (val) => Number(val),
+    z
+      .number()
+      .min(1, "Le pourcentage doit être supérieur à 0.")
+      .max(100, "Le pourcentage doit être inférieur ou égal à 100.")
+  ),
+  isActive: z.boolean().optional(),
+  expiresAt: z.date({ required_error: "La date d'expiration est requise." }),
+});
+
 //! COUNTRY
 export const countryFormSchema = z.object({
   name: z.string().min(2, "Le nom du pays doit contenir au moins 2 caractères"),
@@ -127,4 +141,20 @@ export const userAdressSchema = z.object({
   state: z.string().min(2, "L'état est requis"),
   postalCode: z.string().min(2, "Le code postal est requis"),
   country: z.string().min(2, "Le pays est requis"),
+});
+
+//! ORDER
+export const checkoutSchema = z.object({
+  contactEmail: z.string().email("Veuillez entrer un email valide"),
+  contactPhone: z
+    .string()
+    .min(10, "Le numéro de téléphone doit comporter au moins 10 caractères"),
+  address: z.object({
+    street: z.string().min(1, "La rue est obligatoire"),
+    city: z.string().min(1, "La ville est obligatoire"),
+    postalCode: z.string().min(1, "Le code postal est obligatoire"),
+    country: z.string().min(1, "Le pays est obligatoire"),
+  }),
+  promoCode: z.string().optional(), // Le code promo est facultatif
+  deliveryMethod: z.enum(["standard", "express"]),
 });

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { BottomGradient } from "../ui/BottomGradient";
@@ -62,6 +62,45 @@ const ModalPanier: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     dispatch({ type: "REMOVE_ITEM", payload: itemId });
   };
 
+  //! PASSER AU PAIEMENT
+  const [promoCode, setPromoCode] = useState(""); // État pour le code promo
+  const [loading, setLoading] = useState(false); // État pour l'indicateur de chargement
+  const [error, setError] = useState<string | null>(null);
+
+  const handleValidation = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/orders/validation-cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: state.items,
+          promoCode: promoCode || null,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Une erreur est survenue");
+      }
+
+      // Si la validation réussit, redirigez l'utilisateur vers la page de pré-checkout
+      console.log("Validation réussie", result);
+      onClose();
+      window.location.href = "/checkout"; // Remplacez par la route de votre choix
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       className={`fixed inset-0 flex items-center justify-end z-50 transition-transform duration-300 ${
@@ -123,11 +162,29 @@ const ModalPanier: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   </li>
                 ))}
               </ul>
+              <div className="flex flex-col gap-2">
+                <input
+                  type="text"
+                  placeholder="Entrez votre code promo"
+                  className="w-full rounded-md text-noir-900 text-sm p-1"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                />
+              </div>
+
+              {/* Erreur */}
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+
+              {/* Bouton de validation */}
               <div className="flex items-center justify-around font-font1 bg-noir-800 p-2 rounded-md text-white">
                 <p className="font-bold text-lg"> {totalPrice} €</p>
               </div>
-              <button className="bg-gradient-to-t px-2 relative group/btn font-font1 from-primary-900  to-primary-500 block w-full text-white rounded-md h-10 font-medium">
-                Passer au paiement
+              <button
+                onClick={handleValidation}
+                disabled={loading}
+                className="bg-gradient-to-t px-2 relative group/btn font-font1 from-primary-900  to-primary-500 block w-full text-white rounded-md h-10 font-medium"
+              >
+                {loading ? "Validation en cours..." : "Passer au paiement"}
                 <BottomGradient />
               </button>
             </>

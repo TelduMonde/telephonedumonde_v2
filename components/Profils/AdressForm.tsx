@@ -32,11 +32,11 @@ export const AddressForm = ({ address }: AddressFormProps) => {
   const form = useForm<z.infer<typeof userAdressSchema>>({
     resolver: zodResolver(userAdressSchema),
     defaultValues: {
-      street: address.street || undefined,
-      city: address.city || undefined,
-      state: address.state || undefined,
-      postalCode: address.postalCode || undefined,
-      country: address.country || undefined,
+      street: address?.street || "",
+      city: address?.city || "",
+      state: address?.state || "",
+      postalCode: address?.postalCode || "",
+      country: address?.country || "",
     },
   });
 
@@ -114,7 +114,7 @@ export const AddressForm = ({ address }: AddressFormProps) => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-1">
+        {/* <div className="flex flex-col gap-1">
           <label className="text-white text-sm" htmlFor="State">
             State
           </label>
@@ -125,7 +125,7 @@ export const AddressForm = ({ address }: AddressFormProps) => {
             className="text-noir-900 p-1 rounded-md placeholder:text-xs"
             {...form.register("state")}
           />
-        </div>
+        </div> */}
 
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex flex-col gap-1 w-full">

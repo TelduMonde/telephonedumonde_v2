@@ -14,7 +14,6 @@ import { FormSuccess } from "@/components/shared/Form/FormSucess";
 
 import { BottomGradient } from "@/components/ui/BottomGradient";
 import { useUploadThing } from "@/lib/uploadthing";
-import { db } from "@/lib/db";
 
 type CountryFormProps = {
   userId: string | undefined;
@@ -34,7 +33,11 @@ export default function CountryForm({
 
   const form = useForm<z.infer<typeof countryFormSchema>>({
     resolver: async (data, context, options) => {
-      const result = await zodResolver(countryFormSchema)(data, context, options);
+      const result = await zodResolver(countryFormSchema)(
+        data,
+        context,
+        options
+      );
       console.log("Validation Zod :", result);
       return result;
     },
@@ -75,8 +78,8 @@ export default function CountryForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            name: values.name,
-            imageUrl: imageUrl,
+          name: values.name,
+          imageUrl: imageUrl,
         }),
       });
 
@@ -105,31 +108,44 @@ export default function CountryForm({
   return (
     <div className="flex flex-col gap-8">
       {" "}
-      <h3 className="text-white text-xl font-font1 tracking-widest">Ajouter un pays de provenance</h3>
-
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-
+      <h3 className="text-white text-xl font-font1 tracking-widest">
+        Ajouter un pays de provenance
+      </h3>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col gap-4"
+      >
         <div className="flex flex-col gap-1">
-          <label className="text-white text-sm" htmlFor="name">Nom du pays</label>
-          <Input id="name" type="text" placeholder="Japon" className="text-noir-900" {...form.register("name")} />
+          <label className="text-white text-sm" htmlFor="name">
+            Nom du pays
+          </label>
+          <Input
+            id="name"
+            type="text"
+            placeholder="Japon"
+            className="text-noir-900"
+            {...form.register("name")}
+          />
         </div>
 
         <div className="flex flex-col gap-1">
-        <label className="text-white text-sm" htmlFor="images">Ajouter le drapeau</label>
-        <input
-          id="images"
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0]; // Prend uniquement le premier fichier
-            if (file) {
-              setSelectedPicture([file]);
-              console.log("Fichier sélectionné :", file);
-            }
-          }}
-          className="text-noir-900"
-        />
-      </div>
+          <label className="text-white text-sm" htmlFor="images">
+            Ajouter le drapeau
+          </label>
+          <input
+            id="images"
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0]; // Prend uniquement le premier fichier
+              if (file) {
+                setSelectedPicture([file]);
+                console.log("Fichier sélectionné :", file);
+              }
+            }}
+            className="text-noir-900"
+          />
+        </div>
 
         <FormError message={error} />
         <FormSuccess message={success} />

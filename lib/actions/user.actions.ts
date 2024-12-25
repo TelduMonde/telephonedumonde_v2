@@ -109,11 +109,7 @@ export async function updateProfileUser(
   return { success: "Profil mis à jour !" };
 }
 
-export async function addUserAddress(
-  userId: string,
-  addressData: Address,
-  addressId?: string
-) {
+export async function addUserAddress(userId: string, addressData: Address) {
   try {
     await db.address.create({
       data: {
@@ -161,6 +157,20 @@ export async function updateUserAddress(
   } catch (error) {
     console.error("Erreur lors de la mise à jour de l'adresse:", error);
     throw new Error("Impossible de mettre à jour l'adresse.");
+  }
+}
+
+export async function getUserAddress(userId: string) {
+  try {
+    if (!userId) {
+      return null;
+    }
+    return await db.address.findMany({
+      where: { userId },
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des adresses:", error);
+    throw new Error("Impossible de récupérer les adresses.");
   }
 }
 

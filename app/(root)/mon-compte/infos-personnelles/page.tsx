@@ -69,7 +69,7 @@ export default function InfosPersonnelleProfils() {
 
       {user ? (
         <>
-          <div className="wrapper flex flex-col lg:flex-row justify-start items-start gap-10 lg:w-2/3">
+          <div className="wrapper flex flex-col justify-start items-start gap-10 lg:w-1/3 ">
             <div className="w-full bg-noir-800 p-6 rounded-md">
               <UpdateUserForm user={user} />
             </div>
@@ -79,14 +79,13 @@ export default function InfosPersonnelleProfils() {
             </div>
           </div>
 
+          <button
+            onClick={toggleModal}
+            className="text-xs font-font1 hover:text-white/80"
+          >
+            Supprimer mon compte
+          </button>
           <div className="flex justify-end w-full">
-            <button
-              onClick={toggleModal}
-              className="text-xs font-font1 hover:text-white/80"
-            >
-              Supprimer mon compte
-            </button>
-
             {isModalOpen && (
               <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
                 <div className="flex flex-col gap-4 bg-noir-100 p-6 rounded-md shadow-md relative w-1/3">

@@ -141,16 +141,6 @@ model PhoneVariant {
   @@unique([modelId, memory, color, countryId])
 }
 
-// model PhoneImage {
-//   id          String      @id @default(cuid())
-//   variantId   String?
-//   url         String
-//   description String?
-//   PhoneVariant PhoneVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
-
-//   @@map("phone_image")
-//}
-
 model Country {
   id          String   @id @default(cuid())
   name        String   @unique
@@ -167,6 +157,7 @@ model Order {
   addressId         String?
   variantId         String
   quantity          Int
+  price             Float
   stripeSessionId   String?       // ID de la session de paiement Stripe
   paymentStatus     String        // Statut du paiement (e.g., 'pending', 'paid', 'failed')
   promoCodeId       String?
@@ -203,7 +194,7 @@ model Address {
   id           String   @id @default(cuid())
   street       String
   city         String
-  state        String
+  state        String?
   postalCode   String
   country      String
   userId       String
@@ -222,14 +213,4 @@ model PromoCode {
   orders      Order[]
 
   @@map("promo_code")
-}
-
-model CarouselImageHome {
-  id          String   @id @default(cuid())
-  imageUrl    String   // URL de l'image
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  isActive    Boolean  @default(true) // Indique si l'image est active
-
-  @@map("carousel_image")
 }

@@ -1,3 +1,4 @@
+import AddPromoCodeBtn from "@/components/Admin/PromoCode/AddPromoCode";
 import React from "react";
 
 export default function AdminPage() {
@@ -15,6 +16,16 @@ export default function AdminPage() {
             <h2 className="text-white font-font1">Total Clients</h2>
           </div>
         </div>
+      </section>
+
+      <section className="wrapper">
+        <h2 className="text-white font-font1">Code promo</h2>
+        {/* AFFICHER LES CODES PROMOS ACTIFS (NON EXPIREES) */}
+
+        {/* BOUTON POUR AFFICHER LES CODE PROMO : liste de tous les codes promos créés + bouton modifier/supprimer */}
+
+        {/* Créer un nouveau code promo */}
+        <AddPromoCodeBtn />
       </section>
 
       <section className="wrapper flex flex-col gap-4">
