@@ -11,6 +11,7 @@ export default async function Header() {
 
   return (
     <header className="px-8 lg:px-16 text-white sticky top-0 z-50 bg-noir-900 overflow-hidden">
+      <div></div>
       <div className="flex justify-between items-center">
         <Link href={"/"} className="">
           <Image

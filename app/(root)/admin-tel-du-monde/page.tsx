@@ -1,4 +1,6 @@
 import AddPromoCodeBtn from "@/components/Admin/PromoCode/AddPromoCode";
+import ShowActifPromo from "@/components/Admin/PromoCode/ShowActifPromo";
+import ShowAllPromo from "@/components/Admin/PromoCode/ShowAllPromo";
 import React from "react";
 
 export default function AdminPage() {
@@ -16,16 +18,6 @@ export default function AdminPage() {
             <h2 className="text-white font-font1">Total Clients</h2>
           </div>
         </div>
-      </section>
-
-      <section className="wrapper">
-        <h2 className="text-white font-font1">Code promo</h2>
-        {/* AFFICHER LES CODES PROMOS ACTIFS (NON EXPIREES) */}
-
-        {/* BOUTON POUR AFFICHER LES CODE PROMO : liste de tous les codes promos créés + bouton modifier/supprimer */}
-
-        {/* Créer un nouveau code promo */}
-        <AddPromoCodeBtn />
       </section>
 
       <section className="wrapper flex flex-col gap-4">
@@ -58,6 +50,17 @@ export default function AdminPage() {
         <div className="bg-noir-800 w-full p-2 rounded-md h-[200px]">
           <h2 className="text-white font-font1">Ventes</h2>
         </div>
+      </section>
+
+      <section className="wrapper flex flex-col gap-4">
+        <div className="flex justify-between">
+          <h2 className="text-white font-font1">Code promo</h2>
+          <AddPromoCodeBtn />
+        </div>
+        {/* AFFICHER LES CODES PROMOS ACTIFS (NON EXPIREES) */}
+        <ShowActifPromo />
+        {/* BOUTON POUR AFFICHER LES CODE PROMO : liste de tous les codes promos créés + bouton modifier/supprimer */}
+        <ShowAllPromo />
       </section>
     </>
   );

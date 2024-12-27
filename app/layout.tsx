@@ -10,6 +10,7 @@ import { CartProvider } from "@/components/Panier/Context/CartContext";
 import Header from "@/components/shared/Header/Header";
 import Footer from "@/components/shared/Footer";
 import { Toaster } from "@/components/shared/Sonner";
+import CodePromo from "@/components/shared/CodePromo";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -41,6 +42,7 @@ export default async function RootLayout({
       >
         <SessionProvider session={session}>
           <CartProvider>
+            <CodePromo />
             <Header />
             <div className="min-h-screen">
               {children} <Toaster />

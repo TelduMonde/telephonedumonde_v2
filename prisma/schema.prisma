@@ -197,6 +197,7 @@ model Address {
   state        String?
   postalCode   String
   country      String
+  typeAdress   String?  // Type d'adresse (e.g., 'appartement', 'work', etc.)
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   orders       Order[]

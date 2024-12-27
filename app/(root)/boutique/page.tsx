@@ -12,8 +12,6 @@ export default function page() {
       <div className="flex gap-10">
         {/* FILTRAGE PAR MARQUE, MODELE OU PRIX */}
         <FilterBrand />
-        <FilterBrand />
-        <FilterBrand />
       </div>
 
       <div className="flex justify-center items-center w-full">

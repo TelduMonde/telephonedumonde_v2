@@ -2,19 +2,19 @@
 import { useState } from "react";
 
 import ModalAdmin from "@/components/shared/Modals/ModalAdmin";
-import ModelForm from "./ModelForm";
 
 import { FaEdit } from "react-icons/fa";
+import PromoCodeForm from "./PromoCodeForm";
+import { PromoCode } from "@/types";
 
-interface EditModelButtonProps {
-  userId: string | undefined;
-  model: { id: string; brand: string; name: string; isActive: boolean };
-  modelId: string;
+interface EditPromoCodeBtnProps {
+  promoCode: PromoCode;
+  promoCodeId: string;
 }
 
-const EditModelButton: React.FC<EditModelButtonProps> = ({
-  model,
-  modelId,
+const EditPromoCodeBtn: React.FC<EditPromoCodeBtnProps> = ({
+  promoCode,
+  promoCodeId,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -28,10 +28,10 @@ const EditModelButton: React.FC<EditModelButtonProps> = ({
       </button>
 
       <ModalAdmin isOpen={isModalOpen} onClose={handleCloseModal}>
-        <ModelForm
+        <PromoCodeForm
           type="edit"
-          model={model}
-          modelId={modelId}
+          promoCode={promoCode}
+          promoCodeId={promoCodeId}
           setIsModalOpen={setIsModalOpen}
         />
       </ModalAdmin>
@@ -39,4 +39,4 @@ const EditModelButton: React.FC<EditModelButtonProps> = ({
   );
 };
 
-export default EditModelButton;
+export default EditPromoCodeBtn;

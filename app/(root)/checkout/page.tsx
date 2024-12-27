@@ -3,12 +3,13 @@ import React from "react";
 
 export default function Checkout() {
   return (
-    <section className="wrapper">
-      <h1 className="text-xl uppercase text-white font-font1">
+    <section className="wrapper flex flex-col gap-10">
+      <h1 className="sm:mt-2 font-font1 text-white uppercase text-base sm:text-4xl font-extrabold tracking-wide">
         Résumé de la commande
       </h1>
+      <div className="h-[1px] w-2/3 bg-gradient-to-r from-white to-noir-900" />
+
       <div>
-        <h2 className="text-lg uppercase text-white font-font1">Articles</h2>
         <ItemsOrder />
       </div>
     </section>

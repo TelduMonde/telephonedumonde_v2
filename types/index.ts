@@ -54,3 +54,12 @@ export type SearchParamProps = {
   params: { id: string };
   searchParams: { [key: string]: string | string[] | undefined };
 };
+
+//! PROMO CODE
+export interface PromoCode {
+  id: string;
+  code: string;
+  discount: number;
+  isActive: boolean;
+  expiresAt: Date;
+}

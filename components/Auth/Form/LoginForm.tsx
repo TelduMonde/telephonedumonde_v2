@@ -130,7 +130,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
           <FormSuccess message={success} />
 
           <button
-            className="bg-gradient-to-t px-2 relative group/btn from-primary-900  to-primary-500 block w-full text-white rounded-md h-10 font-medium "
+            className="bg-gradient-to-t px-2 relative group/btn from-primary-900  to-primary-500 block w-full text-white rounded-md h-10 font-medium font-font1 uppercase tracking-widest"
             type="submit"
             disabled={isPending}
           >

@@ -56,7 +56,9 @@ export default function PromoCodeForm({
           code: promoCode?.code,
           discount: promoCode?.discount || 1,
           isActive: promoCode?.isActive,
-          expiresAt: promoCode?.expiresAt,
+          expiresAt: promoCode?.expiresAt
+            ? new Date(promoCode.expiresAt)
+            : new Date(),
         }
       : {
           code: "",
@@ -149,9 +151,9 @@ export default function PromoCodeForm({
         }
 
         form.reset();
+        router.refresh();
         setSuccess("Code promo modifié avec succès");
         setIsModalOpen(false);
-        router.refresh();
         toast.success("Code promo modifié avec succès");
       } catch (error) {
         console.log(error);
