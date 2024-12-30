@@ -21,7 +21,7 @@ export default function PopularModels() {
     const fetchActiveModels = async () => {
       try {
         const response = await fetch(
-          `${process.env.BASE_URL}/api/models/home?query=${searchText}&page=${page}&brand=${brand}`,
+          `/api/models/home?query=${searchText}&page=${page}&brand=${brand}`,
           {
             headers: {
               method: "GET",
