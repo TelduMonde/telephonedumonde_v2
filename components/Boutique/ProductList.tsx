@@ -24,7 +24,7 @@ export default function ProductList() {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `${process.env.BASE_URL}/api/models/actifs?query=${searchText}&page=${page}&brand=${brand}`,
+          `/api/models/actifs?query=${searchText}&page=${page}&brand=${brand}`,
           {
             headers: {
               method: "GET",

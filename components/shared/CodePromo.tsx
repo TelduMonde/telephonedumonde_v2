@@ -14,15 +14,12 @@ export default function CodePromo() {
   useEffect(() => {
     const fetchActivePromo = async () => {
       try {
-        const response = await fetch(
-          `${process.env.BASE_URL}/api/promo-codes/actifForHome`,
-          {
-            headers: {
-              method: "GET",
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/api/promo-codes/actifForHome`, {
+          headers: {
+            method: "GET",
+            "Content-Type": "application/json",
+          },
+        });
 
         if (!response.ok) {
           const errorData = await response.json();
