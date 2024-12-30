@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 //! CREER UN PAYS
 export const POST = async (req: NextRequest) => {
   try {
-
     const role = await currentRole();
     if (role !== "admin") {
       return NextResponse.json(
@@ -57,7 +56,7 @@ export const POST = async (req: NextRequest) => {
   }
 };
 
-export const GET = async (req: NextRequest) => {
+export const GET = async () => {
   try {
     const models = await prisma.country.findMany();
     return NextResponse.json(models);
@@ -67,4 +66,4 @@ export const GET = async (req: NextRequest) => {
       { status: 500 }
     );
   }
-}
+};

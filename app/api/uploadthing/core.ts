@@ -1,4 +1,3 @@
-import { db } from "@/lib/db";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { z } from "zod";
@@ -32,7 +31,7 @@ export const ourFileRouter = {
 
         return { variantId: input.variantId };
       }
-      
+
       if ("countryId" in input) {
         console.log("countryId reçu :", input.countryId);
 
@@ -67,7 +66,7 @@ export const ourFileRouter = {
           // await db.country.update({
           //   where: { id: metadata.countryId },
           //   data: {
-          //     imageUrl: file.url, 
+          //     imageUrl: file.url,
           //   },
           // });
 
