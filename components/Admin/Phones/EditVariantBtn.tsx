@@ -8,17 +8,18 @@ import { FaEdit } from "react-icons/fa";
 type EditVariantButtonProps = {
   userId: string;
   modelId: string;
-  variant: {
+  variant?: {
+    model: { name: string };
     id: string;
     price: number;
     memory: number;
     color: string;
+    country: string;
+    countryId: string;
     description: string;
     stock: number;
-    isActive: boolean;
     imageUrl: string[];
-    model: { name: string };
-    country: string;
+    isActive: boolean;
   };
 };
 

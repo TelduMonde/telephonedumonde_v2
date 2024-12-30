@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
+// import { use } from "react";
 
 const prisma = new PrismaClient();
 
 // Récupérer les variants d'un produit
 export const GET = async (
   req: NextRequest,
-  { params }: { params: Record<string, string> }
+  { params }: { params: Promise<{ id: string }> }
 ) => {
   try {
     const url = new URL(req.url);
-    const { id } = params; // Récupère l'ID du modèle depuis l'URL
+    const { id } = await params;
     const limit = Number(url.searchParams.get("limit")) || 10; // Par défaut : 10
     const page = Number(url.searchParams.get("page")) || 1; // Par défaut : page 1
     const skipAmount = (page - 1) * limit;
@@ -63,7 +64,7 @@ export const GET = async (
 
 export const POST = async (
   req: NextRequest,
-  { params }: { params: Record<string, string> }
+  { params }: { params: Promise<{ modelId: string }> }
 ) => {
   try {
     const role = await currentRole();
@@ -74,7 +75,7 @@ export const POST = async (
       );
     }
 
-    const modelId = params.id;
+    const { modelId } = await params;
 
     if (!req.body) {
       return NextResponse.json(
@@ -135,7 +136,7 @@ export const POST = async (
 
 export const PUT = async (
   req: NextRequest,
-  { params }: { params: Record<string, string> }
+  { params }: { params: Promise<{ modelId: string }> }
 ) => {
   try {
     const role = await currentRole();
@@ -146,7 +147,7 @@ export const PUT = async (
       );
     }
 
-    const modelId = params.id;
+    const { modelId } = await params;
 
     if (!req.body) {
       return NextResponse.json(
@@ -239,7 +240,7 @@ export const PUT = async (
 
 export const DELETE = async (
   req: NextRequest,
-  { params }: { params: Record<string, string> }
+  { params }: { params: Promise<{ variantId: string }> }
 ) => {
   try {
     const role = await currentRole();
@@ -249,8 +250,7 @@ export const DELETE = async (
         { status: 403 }
       );
     }
-
-    const variantId = params.id;
+    const { variantId } = await params;
 
     if (!variantId) {
       return NextResponse.json(
