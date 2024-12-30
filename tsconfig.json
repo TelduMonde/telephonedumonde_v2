@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     "prisma/seed.ts",
     "next.config.mjs"
-, "app/api/variants/[id]/route.trs"  ],
+  ],
   "exclude": ["node_modules"]
 }

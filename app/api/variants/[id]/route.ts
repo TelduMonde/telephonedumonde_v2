@@ -7,12 +7,11 @@ const prisma = new PrismaClient();
 // Récupérer les variants d'un produit
 export const GET = async (
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Record<string, string> }
 ) => {
   try {
     const url = new URL(req.url);
-    const params = await context.params;
-    const { id } = params;
+    const { id } = params; // Récupère l'ID du modèle depuis l'URL
     const limit = Number(url.searchParams.get("limit")) || 10; // Par défaut : 10
     const page = Number(url.searchParams.get("page")) || 1; // Par défaut : page 1
     const skipAmount = (page - 1) * limit;
@@ -64,7 +63,7 @@ export const GET = async (
 
 export const POST = async (
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Record<string, string> }
 ) => {
   try {
     const role = await currentRole();
@@ -75,7 +74,7 @@ export const POST = async (
       );
     }
 
-    const { id: modelId } = context.params;
+    const modelId = params.id;
 
     if (!req.body) {
       return NextResponse.json(
@@ -136,7 +135,7 @@ export const POST = async (
 
 export const PUT = async (
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Record<string, string> }
 ) => {
   try {
     const role = await currentRole();
@@ -147,7 +146,7 @@ export const PUT = async (
       );
     }
 
-    const { id: modelId } = context.params;
+    const modelId = params.id;
 
     if (!req.body) {
       return NextResponse.json(
@@ -240,7 +239,7 @@ export const PUT = async (
 
 export const DELETE = async (
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Record<string, string> }
 ) => {
   try {
     const role = await currentRole();
@@ -251,7 +250,7 @@ export const DELETE = async (
       );
     }
 
-    const { id: variantId } = context.params;
+    const variantId = params.id;
 
     if (!variantId) {
       return NextResponse.json(
