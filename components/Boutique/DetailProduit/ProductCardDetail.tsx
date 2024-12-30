@@ -27,6 +27,7 @@ type VariantProps = {
 export default function ProductCardDetail({ modelId }: { modelId: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  console.log("modelId", modelId);
 
   const [variants, setVariants] = useState<VariantProps[]>([]);
   const [selectedVariant, setSelectedVariant] = useState<VariantProps | null>(

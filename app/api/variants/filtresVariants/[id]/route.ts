@@ -5,11 +5,12 @@ const prisma = new PrismaClient();
 
 export const GET = async (
   req: NextRequest,
-  { params }: { params: Promise<{ modelId: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) => {
   try {
     const url = new URL(req.url);
-    const { modelId } = await params;
+    const { id } = await params;
+    const modelId = id;
 
     // Récupérer les filtres depuis l'URL
     const color = url.searchParams.get("color");
