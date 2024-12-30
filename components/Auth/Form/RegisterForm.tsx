@@ -8,7 +8,6 @@ import { useState, useTransition } from "react";
 import { userRegisterSchema } from "@/lib/validator";
 import { register } from "@/lib/actions/auth.actions";
 
-import { Input } from "@/components/ui/input";
 import { FormError } from "@/components/shared/Form/FormError";
 import { FormSuccess } from "@/components/shared/Form/FormSucess";
 
@@ -62,70 +61,75 @@ export const RegisterForm = () => {
         className="flex flex-col gap-4"
       >
         <div className="flex gap-2">
-          <div>
-            <label className="text-white text-sm" htmlFor="firstName">
+          <div className="flex flex-col gap-2">
+            <label className="text-white/70 text-xs" htmlFor="firstName">
               Prénom
             </label>
-            <Input
+            <input
               id="firstName"
               placeholder="Tyler"
               type="text"
               {...form.register("firstName")}
+              className="p-1 bg-transparent border-b text-white"
             />
             <BottomGradient />
           </div>
 
-          <div>
-            <label className="text-white text-sm" htmlFor="lastName">
+          <div className="flex flex-col gap-2">
+            <label className="text-white/70 text-xs" htmlFor="lastName">
               Nom
             </label>
-            <Input
+            <input
               id="lastName"
               placeholder="Brown"
               type="text"
               {...form.register("lastName")}
+              className="p-1 bg-transparent border-b text-white"
             />
             <BottomGradient />
           </div>
         </div>
 
-        <div>
-          <label className="text-white text-sm" htmlFor="mail">
+        <div className="flex flex-col gap-2">
+          <label className="text-white/70 text-xs" htmlFor="mail">
             Email
           </label>
-          <Input
+          <input
             id="mail"
             placeholder="Tyler"
             type="text"
             {...form.register("email")}
+            className="p-1 bg-transparent border-b text-white"
           />
           <BottomGradient />
         </div>
 
         <div className="flex gap-2">
-          <div>
-            <label className="text-white text-sm" htmlFor="password">
+          <div className="flex flex-col gap-2">
+            <label className="text-white/70 text-xs" htmlFor="password">
               Mot de passe
             </label>
-            <Input
+            <input
               id="password"
               type="password"
               {...form.register("password")}
+              className="p-1 bg-transparent border-b text-white"
             />
             <BottomGradient />
           </div>
 
-          <div>
+          <div className="flex flex-col gap-2">
             <label
-              className="text-white text-sm"
+              className="text-white/70 text-xs"
               htmlFor="passwordConfirmation"
             >
               Confirmer le mot de passe
             </label>
-            <Input
+            <input
               id="passwordConfirmation"
               type="password"
               {...form.register("passwordConfirmation")}
+              className="p-1 bg-transparent border-b text-white"
             />
             <BottomGradient />
           </div>
@@ -135,7 +139,7 @@ export const RegisterForm = () => {
         <FormSuccess message={success} />
 
         <button
-          className="bg-gradient-to-t px-2 relative group/btn from-primary-900  to-primary-500 block w-full text-white rounded-md h-10 font-medium "
+          className="bg-gradient-to-t px-2 relative group/btn from-primary-900  to-primary-500 block w-full text-white rounded-md h-10 font-medium font-font1 uppercase tracking-widest"
           type="submit"
           disabled={isPending}
         >

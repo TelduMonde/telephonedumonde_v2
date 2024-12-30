@@ -19,6 +19,18 @@ export const GET = async () => {
       );
     }
 
+    // await prisma.promoCode.updateMany({
+    //   where: {
+    //     expiresAt: {
+    //       lte: new Date(),
+    //     },
+    //     isActive: true,
+    //   },
+    //   data: {
+    //     isActive: false,
+    //   },
+    // });
+
     return NextResponse.json(promo, { status: 200 });
   } catch (error) {
     return NextResponse.json(

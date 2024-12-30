@@ -19,7 +19,7 @@ interface AddressFormProps {
 }
 
 export const AddressForm = ({ address }: AddressFormProps) => {
-  console.log(address);
+  // console.log(address);
 
   const currentUser = useCurrentUser();
   const userId = currentUser ? currentUser.id : "";
@@ -37,6 +37,7 @@ export const AddressForm = ({ address }: AddressFormProps) => {
       state: address?.state || "",
       postalCode: address?.postalCode || "",
       country: address?.country || "",
+      typeAdress: address?.typeAdress || "",
     },
   });
 
@@ -45,12 +46,15 @@ export const AddressForm = ({ address }: AddressFormProps) => {
 
     const updatedValues = { ...values };
 
+    console.log("UPDATED VALUES", updatedValues);
+
     if (
       values.street ||
       values.city ||
       values.state ||
       values.postalCode ||
-      values.country
+      values.country ||
+      values.typeAdress
     ) {
       // Etre sûr que street, city, state, postalCode et country ne sont pas undefined
       startTransition(() => {
@@ -89,33 +93,33 @@ export const AddressForm = ({ address }: AddressFormProps) => {
       >
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex flex-col gap-1 w-full">
-            <label className="text-white text-sm" htmlFor="street">
+            <label className="text-white/70 text-xs" htmlFor="street">
               Rue
             </label>
             <input
               id="street"
               placeholder="Rue"
               type="text"
-              className="text-noir-900 p-1 rounded-md placeholder:text-xs"
+              className="p-1 bg-noir-800 border-b text-white"
               {...form.register("street")}
             />
           </div>
 
           <div className="flex flex-col gap-1 w-full">
-            <label className="text-white text-sm" htmlFor="city">
+            <label className="text-white/70 text-xs" htmlFor="city">
               Ville
             </label>
             <input
               id="city"
               placeholder="Ville"
               type="text"
-              className="text-noir-900 p-1 rounded-md placeholder:text-xs"
+              className="p-1 bg-noir-800 border-b text-white"
               {...form.register("city")}
             />
           </div>
         </div>
         {/* <div className="flex flex-col gap-1">
-          <label className="text-white text-sm" htmlFor="State">
+          <label className="text-white/70 text-xs" htmlFor="State">
             State
           </label>
           <input
@@ -129,30 +133,43 @@ export const AddressForm = ({ address }: AddressFormProps) => {
 
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex flex-col gap-1 w-full">
-            <label className="text-white text-sm" htmlFor="postalCode">
+            <label className="text-white/70 text-xs" htmlFor="postalCode">
               Code Postal
             </label>
             <input
               id="postalCode"
               placeholder="Code Postal"
               type="text"
-              className="text-noir-900 p-1 rounded-md placeholder:text-xs"
+              className="p-1 bg-noir-800 border-b text-white"
               {...form.register("postalCode")}
             />
           </div>
 
           <div className="flex flex-col gap-1 w-full">
-            <label className="text-white text-sm" htmlFor="country">
+            <label className="text-white/70 text-xs" htmlFor="country">
               Pays
             </label>
             <input
               id="country"
               placeholder="Pays"
               type="text"
-              className="text-noir-900 p-1 rounded-md placeholder:text-xs"
+              className="p-1 bg-noir-800 border-b text-white"
               {...form.register("country")}
             />
           </div>
+        </div>
+
+        <div className="flex flex-col gap-1 w-full">
+          <label className="text-white/70 text-xs" htmlFor="typeAdress">
+            Informations supplémentaires (optionnel)
+          </label>
+          <input
+            id="typeAdress"
+            placeholder="Appartement, suite, etc."
+            type="text"
+            className="p-1 bg-noir-800 border-b text-white"
+            {...form.register("typeAdress")}
+          />
         </div>
 
         {error && <p className="text-red-500">{error}</p>}

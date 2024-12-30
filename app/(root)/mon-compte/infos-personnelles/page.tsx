@@ -49,10 +49,12 @@ export default function InfosPersonnelleProfils() {
     fetchUserData();
   }, [userId]);
 
+  console.log("user", user);
+
   //! SUPPRESSION DU COMPTE
   const handleDeleteAccount = async () => {
     try {
-      await deleteUser(userId);
+      await deleteUser({ userId: userId!, path: "/" });
       toast.success("Votre compte a été supprimé avec succès.");
       router.push("/");
     } catch (err) {
@@ -69,7 +71,7 @@ export default function InfosPersonnelleProfils() {
 
       {user ? (
         <>
-          <div className="wrapper flex flex-col justify-start items-start gap-10 lg:w-1/3 ">
+          <div className="wrapper flex flex-col justify-start items-start gap-10 lg:w-2/4 ">
             <div className="w-full bg-noir-800 p-6 rounded-md">
               <UpdateUserForm user={user} />
             </div>

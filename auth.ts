@@ -41,6 +41,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async signIn({ user, account }) {
       // On autorise la connexion sans email Vérification pour Google
+      if (account?.provider === "google" && account?.access_token) {
+        console.log("Google Access Token:", account.access_token);
+      }
+
       if (account?.provider !== "credentials") return true;
 
       // Ici, si le user n'est pas vérifié, il ne peut pas se connecter
@@ -62,6 +66,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       //     where: { id: twoFactorConfirmation.id },
       //   });
       // }
+
+      console.log("SignIn Callback", { user, account });
 
       return true;
     },
@@ -112,4 +118,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
   // On passe la config d'auth.config
   ...authConfig,
+  secret: process.env.AUTH_SECRET,
 });

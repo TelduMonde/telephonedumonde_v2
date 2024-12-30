@@ -11,6 +11,7 @@ import Header from "@/components/shared/Header/Header";
 import Footer from "@/components/shared/Footer";
 import { Toaster } from "@/components/shared/Sonner";
 import CodePromo from "@/components/shared/CodePromo";
+import { initializeServerTasks } from "@/lib/cron";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,6 +35,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
+
+  let cronInitialized = false;
+
+  if (typeof window === "undefined" && !cronInitialized) {
+    initializeServerTasks(); // Initialise le cron
+    cronInitialized = true; // Empêche plusieurs initialisations
+  }
 
   return (
     <html lang="fr">

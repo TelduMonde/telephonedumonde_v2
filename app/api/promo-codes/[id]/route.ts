@@ -73,7 +73,7 @@ export const PUT = async (req: NextRequest) => {
       },
     });
 
-    revalidatePath("http://localhost:3000/admin-tel-du-monde");
+    revalidatePath(`${process.env.BASE_URL}/admin-tel-du-monde`);
     return NextResponse.json(updatedPromo, { status: 200 });
   } catch (error) {
     return NextResponse.json(
@@ -105,7 +105,7 @@ export const DELETE = async (req: NextRequest) => {
     // Suppression dans la base de données avec Prisma
     await prisma.promoCode.delete({ where: { id } });
 
-    revalidatePath("http://localhost:3000/admin-tel-du-monde");
+    revalidatePath(`${process.env.BASE_URL}/admin-tel-du-monde`);
     return NextResponse.json(
       { success: "Code promo supprimé" },
       { status: 200 }

@@ -95,6 +95,20 @@ export const GET = async () => {
       );
     }
 
+    const now = new Date();
+
+    await prisma.promoCode.updateMany({
+      where: {
+        expiresAt: {
+          lte: now,
+        },
+        isActive: true,
+      },
+      data: {
+        isActive: false,
+      },
+    });
+
     // Récupère tous les codes promo
     const promoCodes = await prisma.promoCode.findMany({
       orderBy: {

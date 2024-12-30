@@ -138,9 +138,10 @@ export const userSettingSchema = z.object({
 export const userAdressSchema = z.object({
   street: z.string().min(2, "La rue est requise"),
   city: z.string().min(2, "La ville est requise"),
-  state: z.string().min(2, "L'état est requis"),
+  state: z.string().optional(),
   postalCode: z.string().min(2, "Le code postal est requis"),
   country: z.string().min(2, "Le pays est requis"),
+  typeAdress: z.string().optional(),
 });
 
 //! ORDER
@@ -154,6 +155,7 @@ export const checkoutSchema = z.object({
     city: z.string().min(1, "La ville est obligatoire"),
     postalCode: z.string().min(1, "Le code postal est obligatoire"),
     country: z.string().min(1, "Le pays est obligatoire"),
+    typeAdress: z.string().optional(),
   }),
   promoCode: z.string().optional(), // Le code promo est facultatif
   deliveryMethod: z.enum(["standard", "express"]),

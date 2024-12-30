@@ -5,7 +5,7 @@ import { LogoutBtn } from "../Auth/LogOutBtn";
 export default function Footer() {
   return (
     <footer className="text-white bg-noir-900 py-14 lg:py-20">
-      <div className="px-4 lg:px-0 flex flex-col gap-4 flex-center lg:gap-8">
+      <div className="px-4 lg:px-0 flex flex-col gap-6 flex-center lg:gap-8">
         <p className="font-font1 tracking-widest text-xl p-4 border rounded-md">
           Téléphone du Monde
         </p>
@@ -36,7 +36,7 @@ export default function Footer() {
             Politique de confidentialité
           </Link>
           <Link
-            href="/contact"
+            href="/livraison-et-retour"
             className="text-xs hover:text-white/70 transition-all ease-in-out duration-300"
           >
             Livaisons & retours

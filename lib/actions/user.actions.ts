@@ -8,10 +8,11 @@ import { revalidatePath } from "next/cache";
 import {
   Address,
   // CreateUserParams,
-  DeleteUserParams,
+  // DeleteUserParams,
   // GetSuscriptionEvent,
   // UpdateUserParams,
 } from "@/types";
+import { generateVerificationToken } from "../token";
 // import { generateVerificationToken } from "../token";
 
 // import { generateVerificationToken } from "../token";
@@ -73,6 +74,7 @@ export async function getUserByIdForProfile(userId: string) {
             state: true,
             postalCode: true,
             country: true,
+            typeAdress: true,
           },
         },
       },
@@ -119,6 +121,7 @@ export async function addUserAddress(userId: string, addressData: Address) {
         state: addressData.state,
         postalCode: addressData.postalCode,
         country: addressData.country,
+        typeAdress: addressData.typeAdress,
       },
     });
 
@@ -149,6 +152,7 @@ export async function updateUserAddress(
         state: addressData.state,
         postalCode: addressData.postalCode,
         country: addressData.country,
+        typeAdress: addressData.typeAdress,
       },
     });
 
@@ -194,25 +198,36 @@ export async function updateSettingUser(
     values.email = undefined;
   }
 
-  // if (values.email && values.email !== user.email) {
-  //   const existingUser = await getUserByEmail(values.email);
+  if (values.email && values.email !== user.email) {
+    const existingUser = await getUserByEmail(values.email);
 
-  //   if (existingUser) {
-  //     return { error: "Email déjà utilisé" };
-  //   }
+    if (existingUser) {
+      return { error: "Email déjà utilisé" };
+    }
 
-  //   // Envoyer un email de vérification
-  //   const verificationToken = await generateVerificationToken(values.email);
-  //   await sendVerificationEmail(
-  //     verificationToken.email,
-  //     verificationToken.token
-  //   );
+    //   // Envoyer un email de vérification
+    const verificationToken = await generateVerificationToken(values.email);
+    await fetch(`${process.env.BASE_URL}/api/emails`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sender: {
+          name: "Téléphone du monde",
+          address: "no-reply@telephonedumonde.com",
+        },
+        recipient: { name: user.name, address: verificationToken.email },
+        subject: "Vérifiez votre adresse email",
+        message: `Cliquez sur le lien suivant pour vérifier votre adresse email : ${process.env.BASE_URL}/auth/new-verification?token=${verificationToken.token}`,
+      }),
+    });
 
-  //   return {
-  //     success:
-  //       "Un email de vérification a été envoyé à votre adresse mail. Veuillez vérifier votre boîte de réception.",
-  //   };
-  // }
+    return {
+      success:
+        "Un email de vérification a été envoyé à votre adresse mail. Veuillez vérifier votre boîte de réception.",
+    };
+  }
 
   await db.user.update({
     where: { id: dbUser.id },
@@ -225,7 +240,13 @@ export async function updateSettingUser(
 }
 
 //! DELETE USER
-export const deleteUser = async ({ userId, path }: DeleteUserParams) => {
+export const deleteUser = async ({
+  userId,
+  path,
+}: {
+  userId: string;
+  path: string;
+}) => {
   try {
     const deletedUser = await db.user.delete({
       where: { id: userId },

@@ -4,7 +4,7 @@ import ModalPanier from "@/components/Panier/ModalPanier";
 import { getCart, removeFromCart } from "@/lib/useCart";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { MdOutlineAccountCircle, MdOutlineShoppingCart } from "react-icons/md";
 import { Search } from "../SearchModel";
@@ -19,8 +19,21 @@ export const NavItemsBis = ({ onLinkClick, session }: NavItemsProps) => {
   const pathname = usePathname();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [isPanierOpen, setIsPanierOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // Détecter si l'écran est mobile (largeur <= 768px)
+    };
+
+    handleResize(); // Vérifier la taille de l'écran au chargement
+    window.addEventListener("resize", handleResize); // Ajouter un écouteur d'événement pour les redimensionnements
+
+    return () => {
+      window.removeEventListener("resize", handleResize); // Nettoyer l'écouteur d'événement
+    };
+  }, []);
 
   const handleLinkClick = () => {
     if (onLinkClick) {
@@ -76,20 +89,36 @@ export const NavItemsBis = ({ onLinkClick, session }: NavItemsProps) => {
           </Link>
         </li>
         <li>
-          <div
-            className="relative flex items-center gap-4"
-            onClick={() => setIsPanierOpen(true)}
-          >
-            <MdOutlineShoppingCart
-              size={25}
-              className="cursor-pointer hover:text-white/70"
-            />
-            {totalItemCount > 0 && (
-              <span className="cursor-pointer absolute -top-2 -right-2 bg-gradient-to-t from-primary-500 to-primary-900 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                {totalItemCount}
-              </span>
-            )}
-          </div>
+          {isMobile ? (
+            <Link href="/panier">
+              <div className="relative flex items-center gap-4">
+                <MdOutlineShoppingCart
+                  size={25}
+                  className="cursor-pointer hover:text-white/70"
+                />
+                {totalItemCount > 0 && (
+                  <span className="cursor-pointer absolute -top-2 -right-2 bg-gradient-to-t from-primary-500 to-primary-900 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                    {totalItemCount}
+                  </span>
+                )}
+              </div>
+            </Link>
+          ) : (
+            <div
+              className="relative flex items-center gap-4"
+              onClick={() => setIsPanierOpen(true)}
+            >
+              <MdOutlineShoppingCart
+                size={25}
+                className="cursor-pointer hover:text-white/70"
+              />
+              {totalItemCount > 0 && (
+                <span className="cursor-pointer absolute -top-2 -right-2 bg-gradient-to-t from-primary-500 to-primary-900 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                  {totalItemCount}
+                </span>
+              )}
+            </div>
+          )}
         </li>
       </ul>
 
@@ -98,12 +127,14 @@ export const NavItemsBis = ({ onLinkClick, session }: NavItemsProps) => {
         onClose={() => setIsModalOpen(false)}
       />
 
-      <ModalPanier
-        isOpen={isPanierOpen}
-        onClose={() => setIsPanierOpen(false)}
-        cartItems={cart}
-        onRemove={removeFromCartHandler}
-      />
+      {!isMobile && (
+        <ModalPanier
+          isOpen={isPanierOpen}
+          onClose={() => setIsPanierOpen(false)}
+          cartItems={cart}
+          onRemove={removeFromCartHandler}
+        />
+      )}
     </>
   );
 };

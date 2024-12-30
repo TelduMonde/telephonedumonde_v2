@@ -32,9 +32,10 @@ export interface Address {
   id?: string;
   street: string;
   city: string;
-  state?: string;
+  state?: string | null;
   postalCode: string;
   country: string;
+  typeAdress?: string | null;
 }
 
 // ====== URL QUERY PARAMS

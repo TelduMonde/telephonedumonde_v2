@@ -86,7 +86,9 @@ export const NavMobile = ({ session }: NavItemsProps) => {
             >
               <MdOutlineAccountCircle size={40} />
             </Link>
-            <MdOutlineShoppingCart size={40} className="cursor-pointer" />
+            <Link href="/panier" onClick={handleClose}>
+              <MdOutlineShoppingCart size={40} className="cursor-pointer" />
+            </Link>
           </li>
         </ul>
       </div>

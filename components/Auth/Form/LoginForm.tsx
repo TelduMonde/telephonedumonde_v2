@@ -11,7 +11,6 @@ import { login } from "@/lib/actions/auth.actions";
 
 import { CardWrapper } from "../CardWrapper";
 
-import { Input } from "@/components/ui/input";
 import { FormError } from "@/components/shared/Form/FormError";
 import { FormSuccess } from "@/components/shared/Form/FormSucess";
 
@@ -99,28 +98,28 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
           className="flex flex-col gap-4"
         >
           <>
-            <div>
-              <label className="text-white text-sm" htmlFor="mail">
+            <div className="flex flex-col gap-2">
+              <label className="text-white/70 text-xs" htmlFor="mail">
                 Email
               </label>
-              <Input
+              <input
                 id="mail"
                 placeholder="monde@mail.com"
                 type="text"
-                className="text-noir-900"
+                className="p-1 bg-transparent border-b text-white"
                 {...form.register("email")}
               />
             </div>
 
-            <div>
-              <label className="text-white text-sm" htmlFor="mail">
+            <div className="flex flex-col gap-2">
+              <label className="text-white/70 text-xs" htmlFor="mail">
                 Mot de passe
               </label>
-              <Input
+              <input
                 id="password"
                 placeholder="Mot de passe"
                 type="password"
-                className="text-noir-900"
+                className="p-1 bg-transparent border-b text-white"
                 {...form.register("password")}
               />
             </div>

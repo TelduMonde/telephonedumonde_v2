@@ -11,6 +11,7 @@ export const GET = async (req: NextRequest) => {
     const limit = Number(url.searchParams.get("limit")) || 10;
     const page = Number(url.searchParams.get("page")) || 1;
     const brand = url.searchParams.get("brand");
+
     const skipAmount = (Number(page) - 1) * limit;
 
     const models = await prisma.phoneModel.findMany({

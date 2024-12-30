@@ -12,15 +12,7 @@ import { updateSettingUser } from "@/lib/actions/user.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { BottomGradient } from "../ui/BottomGradient";
-
-interface Address {
-  id?: string;
-  street: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  country: string;
-}
+import { Address } from "@/types";
 
 interface User {
   user: {
@@ -89,26 +81,26 @@ export const UpdateUserForm = (user: User) => {
       >
         {" "}
         <div className="flex flex-col gap-1">
-          <label className="text-white text-sm" htmlFor="nom">
+          <label className="text-white/70 text-xs" htmlFor="nom">
             Nom
           </label>
           <input
             id="nom"
             placeholder="Nom"
             type="text"
-            className="text-noir-900 p-1 rounded-md"
+            className="p-1 bg-noir-800 border-b text-white"
             {...form.register("lastName")}
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-white text-sm" htmlFor="prenom">
+          <label className="text-white/70 text-xs" htmlFor="prenom">
             Prénom
           </label>
           <input
             id="prenom"
             placeholder="Prénom"
             type="text"
-            className="text-noir-900 p-1 rounded-md"
+            className="p-1 bg-noir-800 border-b text-white"
             {...form.register("firstName")}
           />
         </div>

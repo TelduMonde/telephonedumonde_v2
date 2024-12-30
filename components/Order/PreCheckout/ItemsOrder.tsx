@@ -47,6 +47,7 @@ export default function ItemsOrder() {
         city: "",
         postalCode: "",
         country: "",
+        typeAdress: "",
       },
       deliveryMethod: "standard",
     },
@@ -80,6 +81,7 @@ export default function ItemsOrder() {
           setValue("address.city", address.city || "");
           setValue("address.postalCode", address.postalCode || "");
           setValue("address.country", address.country || "");
+          setValue("address.typeAdress", address.typeAdress || "");
         }
       } catch (error) {
         console.error("Erreur lors de la récupération de l'adresse :", error);
@@ -289,6 +291,19 @@ export default function ItemsOrder() {
               {errors.address?.postalCode && (
                 <p className="text-red-500">
                   {errors.address.postalCode.message}
+                </p>
+              )}
+
+              <input
+                id="typeAdress"
+                type="text"
+                placeholder="Appartement, suite, etc. (optionnel)"
+                {...register("address.typeAdress")}
+                className="w-full border rounded-md p-2"
+              />
+              {errors.address?.typeAdress && (
+                <p className="text-red-500">
+                  {errors.address.typeAdress.message}
                 </p>
               )}
 
