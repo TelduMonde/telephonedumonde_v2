@@ -27,7 +27,7 @@ export default function ProductsPage() {
     const fetchModels = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/models?query=${searchText}&page=${page}&brand=${brand}`,
+          `${process.env.BASE_URL}/api/models?query=${searchText}&page=${page}&brand=${brand}`,
           {
             headers: {
               method: "GET",

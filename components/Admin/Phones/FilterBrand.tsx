@@ -14,7 +14,9 @@ const FilterBrand = () => {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/models/brands");
+        const response = await fetch(
+          `${process.env.BASE_URL}/api/models/brands`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch brands");
         }

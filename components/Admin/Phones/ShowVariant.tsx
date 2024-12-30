@@ -24,7 +24,7 @@ export default function ShowVariant({
       memory: number;
       color: string;
       price: number;
-      country: string;
+      country: { name: string };
       description: string;
       isActive: boolean;
       images: string[];
@@ -203,7 +203,7 @@ export default function ShowVariant({
                 variant={{
                   ...variant,
                   model: { name: variant.model.name },
-                  country: variant.country,
+                  country: variant.country.name,
                   stock: 0,
                   isActive: variant.isActive,
                   imageUrl: variant.images,

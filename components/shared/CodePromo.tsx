@@ -15,7 +15,7 @@ export default function CodePromo() {
     const fetchActivePromo = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/promo-codes/actifForHome`,
+          `${process.env.BASE_URL}/api/promo-codes/actifForHome`,
           {
             headers: {
               method: "GET",

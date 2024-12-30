@@ -20,16 +20,13 @@ type CountryFormProps = {
   setIsModalOpen: (isOpen: boolean) => void;
 };
 
-export default function CountryForm({
-  userId,
-  setIsModalOpen,
-}: CountryFormProps) {
+export default function CountryForm({ setIsModalOpen }: CountryFormProps) {
   const router = useRouter();
 
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [selectedPicture, setSelectedPicture] = useState<File[]>([]); // Fichiers sélectionnés
-  const { startUpload, isUploading } = useUploadThing("imageUploader");
+  const { startUpload } = useUploadThing("imageUploader");
 
   const form = useForm<z.infer<typeof countryFormSchema>>({
     resolver: async (data, context, options) => {

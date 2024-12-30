@@ -34,6 +34,7 @@ type VariantFormProps = {
     memory: number;
     color: string;
     country: string;
+    countryId: string;
     description: string;
     stock: number;
     imageUrl: string[];
@@ -63,11 +64,13 @@ export default function VariantForm({
 
   const variantId = variant?.id;
 
+  console.log("variantId", variant);
+
   //! Récupérer les pays
   useEffect(() => {
     const fetchCountry = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/country`, {
+        const response = await fetch(`/api/country`, {
           headers: {
             method: "GET",
             "Content-Type": "application/json",
@@ -107,6 +110,7 @@ export default function VariantForm({
           memory: 0,
           color: "",
           country: "",
+          countryId: "",
           description: "",
           imageUrl: [],
           stock: 0,
@@ -128,9 +132,9 @@ export default function VariantForm({
   }, [initialValues.isActive]);
 
   const selectedCountry =
-    typeof initialValues.country === "string"
-      ? countries.find((country) => country.id === initialValues.country)
-      : initialValues.country;
+    countries.find((country) => country.id === variant?.countryId) || null;
+
+  console.log("selectedCountry", selectedCountry);
 
   //! Soumettre le formulaire
   async function onSubmit(values: z.infer<typeof variantFormSchema>) {
@@ -257,7 +261,7 @@ export default function VariantForm({
             variantId: variantId,
             memory: values.memory,
             color: values.color,
-            countryId: values.country || initialValues.country.id,
+            countryId: values.country || initialValues.country,
             price: values.price,
             description: values.description || "",
             stock: values.stock || 0,
@@ -381,7 +385,7 @@ export default function VariantForm({
               id="country"
               {...form.register("country")}
               className="text-noir-900 w-52 h-10 rounded-md"
-              defaultValue={initialValues.country}
+              defaultValue={type === "edit" ? selectedCountry?.id : ""}
             >
               <option value="">
                 {!initialValues.country
