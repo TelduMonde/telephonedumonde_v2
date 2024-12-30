@@ -1,7 +1,7 @@
 import { sendEmail } from "@/lib/utils/mailConfig";
-import type { NextApiRequest } from "next";
+import { NextRequest } from "next/server";
 
-export async function POST(req: NextApiRequest) {
+export async function POST(req: NextRequest) {
   const jsonPayload = await new Response(req.body).text();
   const { sender, recipient, subject, message } = JSON.parse(jsonPayload);
 
