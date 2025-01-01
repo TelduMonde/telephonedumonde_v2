@@ -8,7 +8,7 @@ import { BottomGradient } from "@/components/ui/BottomGradient";
 import { TbTruckDelivery } from "react-icons/tb";
 import { ImPriceTags } from "react-icons/im";
 import { BiWorld } from "react-icons/bi";
-import WorldMap from "@/components/ui/world-map";
+// import WorldMap from "@/components/ui/world-map";
 
 export default function Home() {
   return (
@@ -84,7 +84,7 @@ export default function Home() {
             Téléphone du monde, c&apos;est quoi ?
           </span>{" "}
         </p>
-        <div className="wrapper flex-center">
+        {/* <div className="wrapper flex-center">
           <WorldMap
             dots={[
               {
@@ -109,7 +109,7 @@ export default function Home() {
               },
             ]}
           />
-        </div>
+        </div> */}
         {/* <div className="flex-center px-4">
           <div className="flex flex-col justify-center gap-2 lg:gap-10 sm:w-1/2 pl-8 pr-8 bg-gradient-to-t from-primary-900 to-primary-500 sm:h-[400px] rounded-md">
             <p className="flex-center items-center pt-4 lg:pt-0 text-base md:text-xl font-font1 text-white ">
