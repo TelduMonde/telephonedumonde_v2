@@ -8,6 +8,7 @@ import { BottomGradient } from "@/components/ui/BottomGradient";
 import { TbTruckDelivery } from "react-icons/tb";
 import { ImPriceTags } from "react-icons/im";
 import { BiWorld } from "react-icons/bi";
+import WorldMap from "@/components/ui/world-map";
 
 export default function Home() {
   return (
@@ -78,7 +79,38 @@ export default function Home() {
 
       {/* CEST QUOI ? */}
       <section className="relative">
-        <div className="flex-center px-4">
+        <p className="flex-center items-center pt-4 lg:pt-0 text-base md:text-xl font-font1 text-white">
+          <span className="text-lg lg:text-xl font-font1 inline-block text-center p-4 border-b rounded-md text-white tracking-widest">
+            Téléphone du monde, c&apos;est quoi ?
+          </span>{" "}
+        </p>
+        <div className="wrapper flex-center">
+          <WorldMap
+            dots={[
+              {
+                start: { lat: 48.8566, lng: 2.3522 }, // Paris
+                end: { lat: 48.8566, lng: 2.3522 }, // Paris (même point)
+              },
+              {
+                start: { lat: 48.8566, lng: 2.3522 }, // Paris, France
+                end: { lat: 45.4215, lng: -75.6972 }, // Ottawa, Canada
+              },
+              {
+                start: { lat: 48.8566, lng: 2.3522 }, // Paris, France
+                end: { lat: 1.3521, lng: 103.8198 }, // Singapore
+              },
+              {
+                start: { lat: 48.8566, lng: 2.3522 }, // Paris, France
+                end: { lat: 39.9042, lng: 116.4074 }, // Beijing, China
+              },
+              {
+                start: { lat: 48.8566, lng: 2.3522 }, // Paris, France
+                end: { lat: 35.6895, lng: 139.6917 }, // Tokyo, Japan
+              },
+            ]}
+          />
+        </div>
+        {/* <div className="flex-center px-4">
           <div className="flex flex-col justify-center gap-2 lg:gap-10 sm:w-1/2 pl-8 pr-8 bg-gradient-to-t from-primary-900 to-primary-500 sm:h-[400px] rounded-md">
             <p className="flex-center items-center pt-4 lg:pt-0 text-base md:text-xl font-font1 text-white ">
               <span className="text-lg lg:text-xl font-font1 inline-block text-center p-4 border rounded-md text-white tracking-widest">
@@ -98,7 +130,7 @@ export default function Home() {
               !
             </p>
           </div>
-        </div>
+        </div> */}
         <button className="mt-4 lg:mt-10 mx-auto bg-gradient-to-r group/btn from-primary-900 to-primary-500 w-2/3 lg:w-1/3 text-white text-center flex items-center justify-center rounded-md h-10 uppercase font-font1 font-extrabold tracking-wide z-10">
           <Link href="/concept">En savoir plus</Link>
         </button>
