@@ -21,6 +21,16 @@ export default function WorldMap({
   lineColor = "#b80b07",
 }: MapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+
+  const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    if (svgRef.current) {
+      const { width, height } = svgRef.current.getBoundingClientRect();
+      setSvgDimensions({ width, height });
+    }
+  }, []);
+
   const map = new DottedMap({ height: 200, grid: "diagonal" });
 
   // const { theme } = useTheme();
@@ -32,68 +42,9 @@ export default function WorldMap({
     backgroundColor: "#020202",
   });
 
-  // const projectPoint = (lat: number, lng: number) => {
-  //   const x = (lng + 180) * (800 / 360);
-  //   const y = (90 - lat) * (400 / 180);
-  //   return { x, y };
-  // };
-
-  const [dimensions, setDimensions] = useState({ width: 800, height: 400 });
-
-  function debounce(func: Function, wait: number) {
-    let timeout: ReturnType<typeof setTimeout>;
-    return (...args: any[]) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  }
-
-  useEffect(() => {
-    const updateDimensions = debounce(() => {
-      const container = svgRef.current?.getBoundingClientRect();
-      if (container) {
-        setDimensions({
-          width: container.width,
-          height: container.height,
-        });
-      }
-    }, 100); // Ajustez la valeur pour équilibrer fluidité et réactivité
-
-    updateDimensions(); // Appel initial
-    window.addEventListener("resize", updateDimensions);
-
-    return () => {
-      window.removeEventListener("resize", updateDimensions);
-    };
-  }, []);
-
-  // const projectPoint = (lat: number, lng: number) => {
-  //   const mapWidth = 1056; // Largeur de référence de l'image SVG
-  //   const mapHeight = 495; // Hauteur de référence de l'image SVG
-
-  //   // Calcul proportionnel des offsets
-  //   const offsetX = -15 * (dimensions.width / mapWidth); // Ajustement horizontal relatif
-  //   const offsetY = 30 * (dimensions.height / mapHeight); // Ajustement vertical relatif
-
-  //   // Application de l'échelle
-  //   const scaleX = dimensions.width / mapWidth; // Échelle horizontale
-  //   const scaleY = dimensions.height / mapHeight; // Échelle verticale
-
-  //   const x = ((lng + 180) * (dimensions.width / 360) + offsetX) * scaleX;
-  //   const y = ((90 - lat) * (dimensions.height / 180) + offsetY) * scaleY;
-
-  //   return { x, y };
-  // };
-
   const projectPoint = (lat: number, lng: number) => {
-    const width = dimensions.width;
-    const height = dimensions.height;
-
-    const offsetX = -5; // Ajustez si nécessaire
-    const offsetY = -30; // Ajustez si nécessaire
-
-    const x = (lng + 180) * (width / 360) - offsetX;
-    const y = (90 - lat) * (height / 180) - offsetY;
+    const x = (lng + 180) * (svgDimensions.width / 360); // Utiliser la largeur réelle de l'image SVG
+    const y = (90 - lat) * (svgDimensions.height / 180); // Utiliser la hauteur réelle de l'image SVG
     return { x, y };
   };
 
@@ -113,18 +64,21 @@ export default function WorldMap({
   };
 
   return (
-    <div className="w-full lg:w-3/4 aspect-[2/1] bg-noir-900 rounded-md relative font-sans">
+    <div className="w-full aspect-[2/1] bg-noir-900 rounded-md relative font-sans">
       <Image
         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
         className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none"
         alt="world map"
-        height="495"
-        width="1056"
+        // height="495"
+        // width="1056"
+        height={svgDimensions.height}
+        width={svgDimensions.width}
         draggable={false}
       />
       <svg
         ref={svgRef}
-        viewBox="0 800 400"
+        // viewBox="0 800 400"
+        viewBox={`0 0 ${svgDimensions.width} ${svgDimensions.height}`}
         className="w-full h-full absolute inset-0 pointer-events-none select-none"
       >
         {dots.map((dot, i) => {

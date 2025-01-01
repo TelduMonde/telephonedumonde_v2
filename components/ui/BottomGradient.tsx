@@ -6,3 +6,12 @@ export const BottomGradient = () => {
     </>
   );
 };
+
+export const BottomGradient2 = () => {
+  return (
+    <>
+      <span className=" block transition duration-500 opacity-0 absolute h-1 w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-orange-500 to-transparent" />
+      <span className=" blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-orange-500 to-transparent" />
+    </>
+  );
+};

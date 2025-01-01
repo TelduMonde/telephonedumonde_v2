@@ -4,18 +4,21 @@ import Link from "next/link";
 import Slider from "@/components/Home/Slider";
 import PopularModels from "@/components/Home/PopularModels";
 
-import { BottomGradient } from "@/components/ui/BottomGradient";
+import {
+  BottomGradient,
+  BottomGradient2,
+} from "@/components/ui/BottomGradient";
 import { TbTruckDelivery } from "react-icons/tb";
 import { ImPriceTags } from "react-icons/im";
 import { BiWorld } from "react-icons/bi";
-// import WorldMap from "@/components/ui/world-map";
+import WorldMap from "@/components/ui/world-map";
 
 export default function Home() {
   return (
-    <div className="flex flex-col gap-10 lg:gap-20">
+    <div className="flex flex-col gap-10 sm:gap-20">
       {/* SLIDER */}
       <section className="">
-        <div className="h-[95vh] px-1 lg:px-0 sm:h-[60vh] lg:h-[60vh] 2xl:h-[75vh] bg-gradient-to-t from-noir-900 via-noir-900 to-noir-900">
+        <div className=" px-1 lg:px-0 sm:h-[60vh] lg:h-[60vh] 2xl:h-[75vh] bg-gradient-to-t from-noir-900 via-noir-900 to-noir-900">
           <div className="hidden sm:block relative h-full w-full">
             <div className="h-full">
               <Slider />
@@ -32,7 +35,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="sm:hidden px-4 relative h-4/5 justify-center rounded-md wrapper mt-8">
+          <div className="sm:hidden px-4 relative h-[75vh] justify-center rounded-md wrapper mt-8">
             <div className="h-full">
               <Slider />
             </div>
@@ -52,11 +55,11 @@ export default function Home() {
 
       {/* PRESENTATOIN PHONE */}
       <section className="wrapper">
-        <div className="text-base md:text-2xl font-font1 flex flex-col gap-2">
+        <div className="text-sm md:text-2xl font-font1 flex flex-col gap-2">
           <p className="gradient-text">
             Vous n&apos;arrivez pas à faire un choix de téléphone ?
           </p>
-          <span className="text-xl md:text-5xl font-font1 font-extrabold text-white">
+          <span className="text-3xl sm:text-4xl lg:text-5xl font-font1 font-extrabold text-white">
             Nos modèles les plus populaires !
           </span>
           <PopularModels />
@@ -64,7 +67,7 @@ export default function Home() {
       </section>
 
       {/* BANDEAU */}
-      <div className="sm:flex lg:-mt-4 bg-gradient-to-t from-primary-600 to-primary-900 w-full h-12 flex-center flex-wrap gap-4 lg:gap-20">
+      <div className="relative sm:flex lg:-mt-4 bg-gradient-to-t from-primary-600 to-primary-900 w-full h-12 flex-center flex-wrap gap-4 lg:gap-20">
         <p className="hidden sm:flex gap-2 items-center text-white uppercase text-xs lg:text-base font-fontb font-bold tracking-widest">
           <BiWorld size={20} /> Produits du monde
         </p>
@@ -75,16 +78,20 @@ export default function Home() {
         <p className="flex gap-2 items-center text-white uppercase text-xs lg:text-base font-fontb font-bold tracking-widest">
           <ImPriceTags size={20} /> Prix réduit
         </p>
+        <BottomGradient2 />
       </div>
 
       {/* CEST QUOI ? */}
-      <section className="relative">
-        <p className="flex-center items-center pt-4 lg:pt-0 text-base md:text-xl font-font1 text-white">
-          <span className="text-lg lg:text-xl font-font1 inline-block text-center p-4 border-b rounded-md text-white tracking-widest">
+      <section className="relative wrapper flex flex-col gap-10">
+        <div className="text-sm md:text-2xl font-font1 flex flex-col gap-2">
+          <p className="gradient-text">
+            Vous voulez en savoir plus sur notre concept ?
+          </p>
+          <span className="text-3xl sm:text-4xl lg:text-5xl font-font1 font-extrabold text-white">
             Téléphone du monde, c&apos;est quoi ?
           </span>{" "}
-        </p>
-        {/* <div className="wrapper flex-center">
+        </div>
+        <div className="flex-center flex-col gap-6 lg:flex-row lg:gap-10 w-full">
           <WorldMap
             dots={[
               {
@@ -109,7 +116,28 @@ export default function Home() {
               },
             ]}
           />
-        </div> */}
+          <div className="flex flex-col gap-10 justify-between">
+            <p className="pb-4 lg:pb-0 text-white text-sm md:text-sm font-fontb">
+              {" "}
+              <span className="text-lg font-bold">
+                C&apos;est tout simplement la plateforme qui vous facilite
+                l&apos;achat de smartphones du monde entier.
+              </span>
+              <br /> <br /> Le concept est simple : vous êtes en France ou
+              n&apos;importe où dans le monde, et vous aimeriez avoir un
+              téléphone venant du Japon ou de l&apos;Inde ? Tout simplement
+              parce que les téléphones provenant de ces pays sont beaucoup moins
+              cher ? <br /> <br /> Faites le bon choix et économisez énormément
+              d&apos;argent pour un smartphone qui aura les mêmes
+              caractéristiques que celui que vous achèteriez plein pot en France
+              !
+            </p>
+            <button className="bg-gradient-to-t px-2 relative group/btn font-font1 from-primary-900  to-primary-500 block w-full text-white rounded-md h-10 font-medium">
+              <Link href="/concept">En savoir plus</Link>
+              <BottomGradient />
+            </button>
+          </div>
+        </div>
         {/* <div className="flex-center px-4">
           <div className="flex flex-col justify-center gap-2 lg:gap-10 sm:w-1/2 pl-8 pr-8 bg-gradient-to-t from-primary-900 to-primary-500 sm:h-[400px] rounded-md">
             <p className="flex-center items-center pt-4 lg:pt-0 text-base md:text-xl font-font1 text-white ">
@@ -131,17 +159,7 @@ export default function Home() {
             </p>
           </div>
         </div> */}
-        <button className="mt-4 lg:mt-10 mx-auto bg-gradient-to-r group/btn from-primary-900 to-primary-500 w-2/3 lg:w-1/3 text-white text-center flex items-center justify-center rounded-md h-10 uppercase font-font1 font-extrabold tracking-wide z-10">
-          <Link href="/concept">En savoir plus</Link>
-        </button>
       </section>
-      {/* <div className="mt-10 flex-center gap-20 p-4">
-        <VelocityScroll
-          text="CANADA - JAPON - INDE - SINGAPORE - "
-          default_velocity={1}
-          className="text-white uppercase text-lg font-font1 font-bold tracking-widest"
-        />
-      </div> */}
     </div>
   );
 }
