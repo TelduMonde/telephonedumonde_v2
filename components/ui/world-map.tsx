@@ -31,7 +31,7 @@ export default function WorldMap({
     }
   }, []);
 
-  const map = new DottedMap({ height: 200, grid: "diagonal" });
+  const map = new DottedMap({ height: 100, grid: "diagonal" });
 
   // const { theme } = useTheme();
 
