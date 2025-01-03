@@ -6,7 +6,7 @@ import {
 
 export const headerLinkMain = [
   {
-    label: "Home",
+    label: "Accueil",
     href: "/",
   },
   {
@@ -21,7 +21,7 @@ export const headerLinkMain = [
 
 export const headerLinkAdmin = [
   {
-    label: "Home",
+    label: "Accueil",
     href: "/",
   },
   {

@@ -78,11 +78,8 @@ export const Search = () => {
   }, []);
 
   return (
-    <div
-      className="relative flex flex-col items-start z-50"
-      ref={searchContainerRef}
-    >
-      <div className="relative flex">
+    <div className="flex flex-col items-start z-50" ref={searchContainerRef}>
+      <div className="flex">
         <MdOutlineSearch
           size={25}
           className={`cursor-pointer z-20 hover:text-white/70 transition-transform duration-300 ${
@@ -101,7 +98,7 @@ export const Search = () => {
       </div>
 
       {isSearchVisible && results.length > 0 && (
-        <div className="fixed top-16 right-40 bg-noir-900 text-white border border-white rounded-md shadow-lg z-50 w-[200px] max-h-[300px] overflow-y-auto">
+        <div className="fixed top-24 right-40 bg-noir-900 text-white border border-white rounded-md shadow-lg z-50 w-[200px] max-h-[300px] overflow-y-auto">
           {isLoading ? (
             <p className="p-2 text-sm">Chargement...</p>
           ) : (

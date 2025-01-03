@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import Link from "next/link";
 
 // import ProductCardDetail from "@/components/Boutique/DetailProduit/ProductCardDetail";
@@ -72,7 +73,7 @@ export default function Home() {
           <BiWorld size={20} /> Produits du monde
         </p>
         <p className="flex gap-2 items-center text-white uppercase text-xs lg:text-base font-fontb font-bold tracking-widest">
-          <TbTruckDelivery size={20} /> Livraison 5 à 7 jours
+          <TbTruckDelivery size={20} /> Livraison 7 à 10 jours
         </p>
 
         <p className="flex gap-2 items-center text-white uppercase text-xs lg:text-base font-fontb font-bold tracking-widest">
@@ -95,24 +96,40 @@ export default function Home() {
           <WorldMap
             dots={[
               {
-                start: { lat: 48.8566, lng: 2.3522 }, // Paris
-                end: { lat: 48.8566, lng: 2.3522 }, // Paris (même point)
+                start: { lat: 40.0, lng: 2.0 }, // France (ajusté)
+                end: { lat: 40.0, lng: 2.0 }, // France (même point, ajusté)
               },
               {
-                start: { lat: 48.8566, lng: 2.3522 }, // Paris, France
+                start: { lat: 40.0, lng: 2.0 }, // France (ajusté)
                 end: { lat: 45.4215, lng: -75.6972 }, // Ottawa, Canada
               },
               {
-                start: { lat: 48.8566, lng: 2.3522 }, // Paris, France
+                start: { lat: 40.0, lng: 2.0 }, // France (ajusté)
                 end: { lat: 1.3521, lng: 103.8198 }, // Singapore
               },
               {
-                start: { lat: 48.8566, lng: 2.3522 }, // Paris, France
+                start: { lat: 40.0, lng: 2.0 }, // France (ajusté)
                 end: { lat: 39.9042, lng: 116.4074 }, // Beijing, China
               },
               {
-                start: { lat: 48.8566, lng: 2.3522 }, // Paris, France
-                end: { lat: 35.6895, lng: 139.6917 }, // Tokyo, Japan
+                start: { lat: 40.0, lng: 2.0 }, // France (ajusté)
+                end: { lat: 28.6895, lng: 143.6917 }, // Tokyo, Japan
+              },
+              {
+                start: { lat: 40.0, lng: 2.0 }, // France (ajusté)
+                end: { lat: 40.7128, lng: -74.006 }, // New York, USA
+              },
+              {
+                start: { lat: 40.0, lng: 2.0 }, // France (ajusté)
+                end: { lat: 20.5937, lng: 78.9629 }, // India
+              },
+              {
+                start: { lat: 40.0, lng: 2.0 }, // France (ajusté)
+                end: { lat: 35.8617, lng: 104.1954 }, // China
+              },
+              {
+                start: { lat: 40.0, lng: 2.0 }, // France (ajusté)
+                end: { lat: -34.6037, lng: -58.3816 }, // Buenos Aires, Argentina
               },
             ]}
           />
@@ -120,45 +137,23 @@ export default function Home() {
             <p className="pb-4 lg:pb-0 text-white text-sm md:text-sm font-fontb">
               {" "}
               <span className="text-lg font-bold">
-                C&apos;est tout simplement la plateforme qui vous facilite
-                l&apos;achat de smartphones du monde entier.
+                Bienvenue sur Téléphones du Monde, la plateforme qui
+                révolutionne l'achat de smartphones internationaux.
               </span>
-              <br /> <br /> Le concept est simple : vous êtes en France ou
-              n&apos;importe où dans le monde, et vous aimeriez avoir un
-              téléphone venant du Japon ou de l&apos;Inde ? Tout simplement
-              parce que les téléphones provenant de ces pays sont beaucoup moins
-              cher ? <br /> <br /> Faites le bon choix et économisez énormément
-              d&apos;argent pour un smartphone qui aura les mêmes
-              caractéristiques que celui que vous achèteriez plein pot en France
-              !
+              <br /> <br /> Le concept est simple : Découvrez des modèles de
+              qualité provenant des quatre coins du globe, neufs et performants,
+              sans payer le prix fort. Faites le choix malin et économisez sur
+              l'achat de votre prochain smartphone tout en profitant des
+              dernières technologies. <br /> <br /> Ne dépensez plus une fortune
+              pour un smartphone dernier cri : faites le bon choix avec
+              Téléphones du Monde et économisez dès aujourd'hui.
             </p>
-            <button className="bg-gradient-to-t px-2 relative group/btn font-font1 from-primary-900  to-primary-500 block w-full text-white rounded-md h-10 font-medium">
+            <button className="bg-gradient-to-t px-2 relative group/btn font-font1 from-primary-900  to-primary-500 block w-full text-white uppercase rounded-md h-10 font-medium">
               <Link href="/concept">En savoir plus</Link>
               <BottomGradient />
             </button>
           </div>
         </div>
-        {/* <div className="flex-center px-4">
-          <div className="flex flex-col justify-center gap-2 lg:gap-10 sm:w-1/2 pl-8 pr-8 bg-gradient-to-t from-primary-900 to-primary-500 sm:h-[400px] rounded-md">
-            <p className="flex-center items-center pt-4 lg:pt-0 text-base md:text-xl font-font1 text-white ">
-              <span className="text-lg lg:text-xl font-font1 inline-block text-center p-4 border rounded-md text-white tracking-widest">
-                Téléphone du monde, c&apos;est quoi ?
-              </span>{" "}
-            </p>
-            <p className="pb-4 lg:pb-0 text-white text-sm md:text-sm font-font1">
-              C&apos;est tout simplement la plateforme qui vous facilite
-              l&apos;achat de smartphones du monde entier.
-              <br /> <br /> Le concept est simple : vous êtes en France ou
-              n&apos;importe où dans le monde, et vous aimeriez avoir un
-              téléphone venant du Japon ou de l&apos;Inde ? Tout simplement
-              parce que les téléphones provenant de ces pays sont beaucoup moins
-              cher ? <br /> <br /> Faites le bon choix et économisez énormément
-              d&apos;argent pour un smartphone qui aura les mêmes
-              caractéristiques que celui que vous achèteriez plein pot en France
-              !
-            </p>
-          </div>
-        </div> */}
       </section>
     </div>
   );

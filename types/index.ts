@@ -27,6 +27,73 @@ export type ShowModelProps = {
   totalPages: number;
 };
 
+//! VARIANT
+export type CountryProps = {
+  id: string;
+  name: string;
+};
+
+export type VariantProps = {
+  id: string;
+  name: string;
+  memory: number;
+  color: string;
+  price: number;
+  country: CountryProps;
+  description: string;
+  isActive: boolean;
+  images: string[];
+  model: { id: string; name: string };
+};
+
+//! FAVORITE VARIANT
+export interface Brand {
+  name: string;
+}
+
+export interface Model {
+  id: string;
+  name: string;
+  brand: Brand;
+}
+
+export interface Country {
+  id: string;
+  name: string;
+  flagUrl: string;
+}
+
+export interface VariantFav {
+  id: string;
+  color: string;
+  modelId: string;
+  memory: number;
+  price: number;
+  stock: number | null;
+  isActive: boolean;
+  description: string;
+  images: string[];
+  countryId: string | null; // Allow countryId to be string or null
+  model: {
+    id: string;
+    name: string;
+    isActive: boolean;
+    brand: string;
+  };
+  country: {
+    id: string;
+    name: string;
+    imageUrl: string | null;
+  } | null;
+}
+
+// export interface Favorite {
+//   userId: string;
+//   variantId: string;
+//   createdAt: Date;
+//   Variant: Variant;
+// }
+
 //! ====== USER
 export interface Address {
   id?: string;

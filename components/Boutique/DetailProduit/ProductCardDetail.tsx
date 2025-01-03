@@ -5,29 +5,18 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useCart } from "@/components/Panier/Context/CartContext";
 import { toast } from "sonner";
-
-type CountryProps = {
-  id: string;
-  name: string;
-};
-
-type VariantProps = {
-  id: string;
-  name: string;
-  memory: number;
-  color: string;
-  price: number;
-  country: CountryProps;
-  description: string;
-  isActive: boolean;
-  images: string[];
-  model: { id: string; name: string };
-};
+import {
+  getFavoriteVariants,
+  toggleFavoriteVariant,
+} from "@/lib/actions/user.actions";
+import { useCurrentUser } from "@/lib/utils/use-current-user";
+import { MdOutlineFavorite } from "react-icons/md";
+import { CountryProps, VariantProps } from "@/types";
 
 export default function ProductCardDetail({ modelId }: { modelId: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
-  console.log("modelId", modelId);
+  const userId = useCurrentUser()?.id;
 
   const [variants, setVariants] = useState<VariantProps[]>([]);
   const [selectedVariant, setSelectedVariant] = useState<VariantProps | null>(
@@ -43,6 +32,8 @@ export default function ProductCardDetail({ modelId }: { modelId: string }) {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedMemory, setSelectedMemory] = useState<number | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -79,6 +70,63 @@ export default function ProductCardDetail({ modelId }: { modelId: string }) {
 
     fetchVariants();
   }, [modelId]);
+
+  //! Charger les favoris de l'utilisateur
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        if (userId) {
+          const response = await getFavoriteVariants({ userId });
+          console.log("Favoris récupérés :", response);
+          setFavorites(
+            response.map((fav: { Variant: { id: string } }) => fav.Variant.id)
+          );
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des favoris :", error);
+      }
+    };
+
+    if (userId) {
+      fetchFavorites();
+    }
+  }, [userId]);
+
+  //! Ajouter ou retirer la variante sélectionnée des favoris
+  const handleToggleFavorite = async () => {
+    if (!userId) {
+      console.error("Vous devez être connecté pour ajouter aux favoris.");
+      return;
+    }
+    if (selectedVariant) {
+      const variantId = selectedVariant.id;
+      console.log("Ajout/Retrait des favoris...", userId, variantId);
+      try {
+        await toggleFavoriteVariant({ userId, variantId });
+        toast.success("Smartphone ajouté aux favoris !");
+        setFavorites((prevFavorites) =>
+          prevFavorites.includes(variantId)
+            ? prevFavorites.filter((id) => id !== variantId)
+            : [...prevFavorites, variantId]
+        );
+      } catch {
+        toast.error("Erreur lors de l'ajout aux favoris.");
+      }
+    } else {
+      console.error(
+        "Veuillez sélectionner toutes les options avant de gérer les favoris."
+      );
+    }
+  };
+
+  //! Vérifier si la variante sélectionnée est dans les favoris
+  const isFavorite = () => {
+    if (selectedVariant) {
+      const variantId = selectedVariant.id;
+      return favorites.includes(variantId);
+    }
+    return false;
+  };
 
   //! Mettre à jour la variante sélectionnée en fonction des filtres
   useEffect(() => {
@@ -201,13 +249,18 @@ export default function ProductCardDetail({ modelId }: { modelId: string }) {
               <div className="flex flex-wrap gap-2 lg:gap-6 text-xs"></div>
             </div>
 
-            <button
-              onClick={handleAddToCart}
-              className="font-font1 text-lg uppercase bg-gradient-to-t px-2 relative group/btn from-primary-900 to-primary-500 block w-full text-white rounded-md h-10 font-medium  "
-            >
-              Ajouter au panier
-              <BottomGradient />
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleAddToCart}
+                className="font-font1 text-lg uppercase bg-gradient-to-t px-2 relative group/btn from-primary-900 to-primary-500 block w-full text-white rounded-md h-10 font-medium  "
+              >
+                Ajouter au panier
+                <BottomGradient />
+              </button>
+              <button onClick={handleToggleFavorite}>
+                <MdOutlineFavorite />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -304,13 +357,25 @@ export default function ProductCardDetail({ modelId }: { modelId: string }) {
             </div>
           </div>
 
-          <button
-            onClick={handleAddToCart}
-            className="font-font1 text-lg uppercase bg-gradient-to-t px-2 relative group/btn from-primary-900 to-primary-500 block w-full text-white rounded-md h-10 font-medium  "
-          >
-            Ajouter au panier
-            <BottomGradient />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleAddToCart}
+              className="font-font1 text-lg uppercase bg-gradient-to-t px-2 relative group/btn from-primary-900 to-primary-500 block w-full text-white rounded-md h-10 font-medium  "
+            >
+              Ajouter au panier
+              <BottomGradient />
+            </button>
+            <button onClick={handleToggleFavorite}>
+              <MdOutlineFavorite
+                size={25}
+                className={
+                  isFavorite()
+                    ? "text-primary-600 "
+                    : "text-white hover:text-primary-600 duration-200"
+                }
+              />
+            </button>
+          </div>
         </div>
       </div>
 

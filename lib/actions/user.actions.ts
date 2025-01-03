@@ -259,6 +259,74 @@ export const deleteUser = async ({
   }
 };
 
+//! AJOUTER UNE VARIANTE EN FAVORI
+export async function toggleFavoriteVariant({
+  userId,
+  variantId,
+}: {
+  userId: string;
+  variantId: string;
+}) {
+  try {
+    // Vérifier si la variante est déjà dans les favoris de l'utilisateur
+    const existingFavorite = await db.userWishlist.findUnique({
+      where: {
+        userId_variantId: {
+          userId,
+          variantId,
+        },
+      },
+    });
+
+    if (existingFavorite) {
+      // Si la variante est déjà dans les favoris, la retirer
+      await db.userWishlist.delete({
+        where: {
+          userId_variantId: {
+            userId,
+            variantId,
+          },
+        },
+      });
+      console.log("Variante retirée des favoris");
+    } else {
+      // Sinon, ajouter la variante aux favoris
+      await db.userWishlist.create({
+        data: {
+          userId,
+          variantId,
+        },
+      });
+      console.log("Variante ajoutée aux favoris");
+    }
+  } catch (error) {
+    console.error("Erreur lors de l'ajout aux favoris:", error);
+    throw new Error("Impossible d'ajouter aux favoris.");
+  }
+}
+
+//! Get les favoris de l'utilisateur
+export async function getFavoriteVariants({ userId }: { userId: string }) {
+  try {
+    const favoriteVariants = await db.userWishlist.findMany({
+      where: { userId },
+      include: {
+        Variant: {
+          include: {
+            model: true,
+            country: true,
+          },
+        },
+      },
+    });
+
+    return favoriteVariants;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des favoris:", error);
+    throw new Error("Impossible de récupérer les favoris.");
+  }
+}
+
 //! AJOUTER AUX FAVORIS
 // export async function addFavoriteEvent({
 //   userId,
