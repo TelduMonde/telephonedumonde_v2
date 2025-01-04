@@ -182,7 +182,7 @@ export default function VariantForm({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            //modelId,
+            modelId,
             memory: values.memory,
             color: values.color,
             countryId: values.country || null,
@@ -275,11 +275,11 @@ export default function VariantForm({
         if (!response.ok) {
           const errorData = await response.json();
           console.error(
-            "Erreur lors de la création de la variante :",
+            "Erreur lors de la modification de la variante :",
             errorData
           );
-          setError("Erreur lors de la création de la variante.");
-          toast.error("Erreur lors de la création de la variante.");
+          setError("Erreur lors de la modification de la variante.");
+          toast.error("Erreur lors de la modification de la variante.");
           return;
         }
 

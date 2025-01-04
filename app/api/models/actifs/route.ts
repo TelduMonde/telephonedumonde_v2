@@ -8,7 +8,7 @@ export const GET = async (req: NextRequest) => {
   try {
     const url = new URL(req.url);
     const query = url.searchParams.get("query");
-    const limit = Number(url.searchParams.get("limit")) || 10;
+    const limit = Number(url.searchParams.get("limit")) || 8;
     const page = Number(url.searchParams.get("page")) || 1;
     const brand = url.searchParams.get("brand");
 

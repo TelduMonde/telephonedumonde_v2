@@ -62,10 +62,7 @@ export const GET = async (
   }
 };
 
-export const POST = async (
-  req: NextRequest,
-  { params }: { params: Promise<{ modelId: string }> }
-) => {
+export const POST = async (req: NextRequest) => {
   try {
     const role = await currentRole();
     if (role !== "admin") {
@@ -75,8 +72,6 @@ export const POST = async (
       );
     }
 
-    const { modelId } = await params;
-
     if (!req.body) {
       return NextResponse.json(
         { error: "Corps de la requête manquant." },
@@ -85,6 +80,7 @@ export const POST = async (
     }
 
     const {
+      modelId,
       memory,
       color,
       countryId,
@@ -134,10 +130,7 @@ export const POST = async (
   }
 };
 
-export const PUT = async (
-  req: NextRequest,
-  { params }: { params: Promise<{ modelId: string }> }
-) => {
+export const PUT = async (req: NextRequest) => {
   try {
     const role = await currentRole();
     if (role !== "admin") {
@@ -147,7 +140,7 @@ export const PUT = async (
       );
     }
 
-    const { modelId } = await params;
+    // const { modelId } = await params;
 
     if (!req.body) {
       return NextResponse.json(
@@ -168,6 +161,7 @@ export const PUT = async (
     }
 
     const {
+      modelId,
       variantId,
       memory,
       color,
@@ -180,7 +174,21 @@ export const PUT = async (
       imagesToDelete,
     } = body;
 
-    if (!variantId || !modelId || !memory || !color || !price) {
+    console.log(
+      "Parametres :",
+      memory,
+      color,
+      countryId,
+      price,
+      images,
+      isActive,
+      description,
+      stock,
+      modelId,
+      variantId
+    );
+
+    if (!variantId || !memory || !color || !price) {
       return NextResponse.json(
         { error: "Paramètres obligatoires manquants." },
         { status: 400 }

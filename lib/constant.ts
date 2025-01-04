@@ -55,3 +55,26 @@ export const headerProfilLink = [
     icon: MdOutlineAccountCircle,
   },
 ];
+
+export const headerAdminSpace = [
+  {
+    label: "dashboard",
+    href: "/admin-tel-du-monde",
+    // icon: MdOutlineLocalShipping,
+  },
+  {
+    label: "Produits",
+    href: "/admin-tel-du-monde/produits",
+    // icon: MdFavorite,
+  },
+  {
+    label: "Commandes",
+    href: "/admin-tel-du-monde/commandes",
+    // icon: MdOutlineAccountCircle,
+  },
+  {
+    label: "Clients",
+    href: "/admin-tel-du-monde/clients",
+    // icon: MdOutlineAccountCircle,
+  },
+];

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import React from "react";
-import { LogoutBtn } from "../Auth/LogOutBtn";
 
 export default function Footer() {
   return (
@@ -9,12 +8,6 @@ export default function Footer() {
         <p className="font-font1 tracking-widest text-xl p-4 border rounded-md">
           Téléphone du Monde
         </p>
-
-        <LogoutBtn>
-          <p className="text-white font-font1 text-xs bg-noir-800 p-2 rounded-md hover:bg-noir-700 transition-all ease-in-out duration-300">
-            DECONNEXION
-          </p>
-        </LogoutBtn>
 
         <div className="flex flex-col gap-4 lg:flex-row lg:gap-8 text-center">
           <Link

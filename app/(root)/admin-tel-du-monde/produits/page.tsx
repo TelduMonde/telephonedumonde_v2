@@ -12,12 +12,16 @@ import { useSearchParams } from "next/navigation";
 import { ModelPhone } from "@/types";
 import EditModelButton from "@/components/Admin/Phones/EditModelBtn";
 import { useCurrentUser } from "@/lib/utils/use-current-user";
+import { Pagination } from "@/components/shared/Pagination";
 
 export default function ProductsPage() {
   const searchParams = useSearchParams();
   const user = useCurrentUser();
 
-  const [models, setModels] = useState<{ data: ModelPhone[] }>({ data: [] });
+  const [models, setModels] = useState<{
+    totalPages: number;
+    data: ModelPhone[];
+  }>({ totalPages: 0, data: [] });
 
   const page = Number(searchParams.get("page")) || 1;
   const searchText = searchParams.get("query") || "";
@@ -27,7 +31,7 @@ export default function ProductsPage() {
     const fetchModels = async () => {
       try {
         const response = await fetch(
-          `${process.env.BASE_URL}/api/models?query=${searchText}&page=${page}&brand=${brand}`,
+          `/api/models?query=${searchText}&page=${page}&brand=${brand}`,
           {
             headers: {
               method: "GET",
@@ -104,6 +108,13 @@ export default function ProductsPage() {
             </Link>
           </div>
         ))}
+        <div className="bg-gradient-to-l from-noir-800 to-noir-900 flex justify-end p-1 rounded-md">
+          {models.totalPages > 1 && (
+            <div className="">
+              <Pagination page={page} totalPages={models.totalPages} />
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 import FilterBrand from "@/components/Admin/Phones/FilterBrand";
 import ProductList from "@/components/Boutique/ProductList";
 import { Search } from "@/components/shared/Search";
+import { Transition } from "@/components/shared/Transition";
 
 export default function page() {
   return (
@@ -15,10 +16,11 @@ export default function page() {
         <Search />
         <FilterBrand />
       </div>
-
-      <div className="flex justify-center items-center w-full">
-        <ProductList />
-      </div>
+      <Transition>
+        <div className="flex justify-center items-center w-full">
+          <ProductList />
+        </div>
+      </Transition>
     </section>
   );
 }

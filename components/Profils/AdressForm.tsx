@@ -177,7 +177,7 @@ export const AddressForm = ({ address }: AddressFormProps) => {
         <button
           type="submit"
           disabled={isPending}
-          className="bg-gradient-to-t px-2 relative group/btn from-primary-900 to-primary-500 block w-full text-white rounded-md h-10 font-medium"
+          className="bg-gradient-to-t px-2 relative group/btn from-primary-900 to-primary-500 block w-full font-font1 uppercase text-white rounded-md h-10 font-medium"
         >
           {isPending ? "En cours..." : "Mettre à jour"}
           <BottomGradient />
