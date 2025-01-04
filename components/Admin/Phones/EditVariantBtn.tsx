@@ -7,7 +7,9 @@ import { FaEdit } from "react-icons/fa";
 
 type EditVariantButtonProps = {
   userId: string;
-  modelId: string;
+  modelId?: string;
+  modelSlug?: string;
+  variantID?: string;
   variant?: {
     model: { name: string };
     id: string;
@@ -20,13 +22,15 @@ type EditVariantButtonProps = {
     stock: number;
     imageUrl: string[];
     isActive: boolean;
+    modelId: string;
   };
 };
 
 const EditVariantBtn: React.FC<EditVariantButtonProps> = ({
   userId,
-  modelId,
+  variantID,
   variant,
+  modelSlug,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleOpenModal = () => setIsModalOpen(true);
@@ -41,7 +45,8 @@ const EditVariantBtn: React.FC<EditVariantButtonProps> = ({
       <ModalAdmin isOpen={isModalOpen} onClose={handleCloseModal}>
         <VariantForm
           userId={userId}
-          modelId={modelId}
+          variantID={variantID}
+          modelSlug={modelSlug}
           type="edit"
           variant={variant} // Passez la variante ici
           setIsModalOpen={setIsModalOpen}

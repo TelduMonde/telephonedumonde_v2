@@ -13,7 +13,7 @@ import { useCurrentUser } from "@/lib/utils/use-current-user";
 import { MdOutlineFavorite } from "react-icons/md";
 import { CountryProps, VariantProps } from "@/types";
 
-export default function ProductCardDetail({ modelId }: { modelId: string }) {
+export default function ProductCardDetail({ slug }: { slug: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const userId = useCurrentUser()?.id;
@@ -43,9 +43,7 @@ export default function ProductCardDetail({ modelId }: { modelId: string }) {
     setIsLoading(true);
     const fetchVariants = async () => {
       try {
-        const response = await fetch(
-          `/api/variants/filtresVariants/${modelId}`
-        );
+        const response = await fetch(`/api/variants/filtresVariants/${slug}`);
         const data = await response.json();
 
         if (data.options) {
@@ -69,7 +67,7 @@ export default function ProductCardDetail({ modelId }: { modelId: string }) {
     };
 
     fetchVariants();
-  }, [modelId]);
+  }, [slug]);
 
   //! Charger les favoris de l'utilisateur
   useEffect(() => {
@@ -92,18 +90,31 @@ export default function ProductCardDetail({ modelId }: { modelId: string }) {
     }
   }, [userId]);
 
+  //! Vérifier si la variante sélectionnée est dans les favoris
+  const isFavorite = () => {
+    if (selectedVariant) {
+      const variantId = selectedVariant.id;
+      return favorites.includes(variantId);
+    }
+    return false;
+  };
+
   //! Ajouter ou retirer la variante sélectionnée des favoris
   const handleToggleFavorite = async () => {
     if (!userId) {
-      console.error("Vous devez être connecté pour ajouter aux favoris.");
+      toast.error("Vous devez être connecté pour ajouter aux favoris.");
       return;
     }
     if (selectedVariant) {
       const variantId = selectedVariant.id;
-      console.log("Ajout/Retrait des favoris...", userId, variantId);
+      const isAlreadyFavorite = favorites.includes(variantId);
       try {
         await toggleFavoriteVariant({ userId, variantId });
-        toast.success("Smartphone ajouté aux favoris !");
+        if (isAlreadyFavorite) {
+          toast.success("Smartphone retiré des favoris !");
+        } else {
+          toast.success("Smartphone ajouté aux favoris !");
+        }
         setFavorites((prevFavorites) =>
           prevFavorites.includes(variantId)
             ? prevFavorites.filter((id) => id !== variantId)
@@ -117,15 +128,6 @@ export default function ProductCardDetail({ modelId }: { modelId: string }) {
         "Veuillez sélectionner toutes les options avant de gérer les favoris."
       );
     }
-  };
-
-  //! Vérifier si la variante sélectionnée est dans les favoris
-  const isFavorite = () => {
-    if (selectedVariant) {
-      const variantId = selectedVariant.id;
-      return favorites.includes(variantId);
-    }
-    return false;
   };
 
   //! Mettre à jour la variante sélectionnée en fonction des filtres

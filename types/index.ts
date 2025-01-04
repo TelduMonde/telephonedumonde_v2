@@ -1,5 +1,6 @@
 export type ModelPhone = {
   id: string;
+  slug: string;
   brand: string;
   name: string;
   variantCount?: number;
@@ -8,6 +9,7 @@ export type ModelPhone = {
 
 export type CardsModelProps = {
   id: string;
+  slug: string;
   brand: string;
   name: string;
   isActive: boolean;
@@ -18,6 +20,7 @@ export type CardsModelProps = {
 export type ShowModelProps = {
   data: {
     id: string;
+    slug: string;
     brand: string;
     name: string;
     isActive: boolean;

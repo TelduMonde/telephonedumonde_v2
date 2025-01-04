@@ -4,15 +4,36 @@ import Link from "next/link";
 import Slider from "@/components/Home/Slider";
 import PopularModels from "@/components/Home/PopularModels";
 
+import WorldMap from "@/components/ui/world-map";
+import { Transition } from "@/components/shared/Transition";
 import {
   BottomGradient,
   BottomGradient2,
 } from "@/components/ui/BottomGradient";
+
 import { TbTruckDelivery } from "react-icons/tb";
 import { ImPriceTags } from "react-icons/im";
 import { BiWorld } from "react-icons/bi";
-import WorldMap from "@/components/ui/world-map";
-import { Transition } from "@/components/shared/Transition";
+
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Téléphones du Monde | Smartphones Internationaux à Prix Réduits",
+  description:
+    "Découvrez Téléphones du Monde, votre plateforme pour acheter des smartphones internationaux neufs et performants à des prix imbattables. Économisez dès aujourd'hui !",
+  keywords: [
+    "smartphones internationaux",
+    "téléphones pas chers",
+    "téléphones du monde",
+    "acheter téléphone neuf",
+    "smartphone prix réduit",
+  ],
+  // openGraph: {
+  //   images: [
+  //     { url: "https://www.nocap.fr/api/opengraph", width: 1200, height: 630 },
+  //   ],
+  // },
+};
 
 export default function Home() {
   return (

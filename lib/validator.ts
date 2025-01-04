@@ -13,6 +13,7 @@ export const variantFormSchema = z.object({
   memory: z.number(),
   color: z.string(),
   country: z.string().optional(),
+  countryId: z.string().optional(),
   description: z.string(),
   stock: z
     .number()

@@ -27,7 +27,9 @@ type CountryProps = {
 type VariantFormProps = {
   userId: string | undefined;
   type: "add" | "edit";
+  modelSlug?: string;
   modelId?: string;
+  variantID?: string;
   variant?: {
     id: string;
     price: number;
@@ -39,13 +41,15 @@ type VariantFormProps = {
     stock: number;
     imageUrl: string[];
     isActive: boolean;
+    modelId: string;
   };
   setIsModalOpen: (isOpen: boolean) => void;
 };
 
 export default function VariantForm({
   type,
-  modelId,
+  modelSlug,
+  // modelId,
   variant,
   setIsModalOpen,
 }: VariantFormProps) {
@@ -63,8 +67,6 @@ export default function VariantForm({
   const { startUpload } = useUploadThing("imageUploader");
 
   const variantId = variant?.id;
-
-  console.log("variantId", variant);
 
   //! Récupérer les pays
   useEffect(() => {
@@ -94,16 +96,17 @@ export default function VariantForm({
   const initialValues =
     variant && type === "edit"
       ? {
+          id: variant?.id,
           price: variant?.price,
           memory: variant?.memory,
           color: variant?.color,
           country: variant?.country,
-          countryId: variant?.country,
+          countryId: variant?.countryId,
           description: variant?.description,
           imageUrl: variant?.imageUrl,
           stock: variant?.stock,
           isActive: variant?.isActive,
-          modelId: modelId,
+          modelSlug: modelSlug,
         }
       : {
           price: 0,
@@ -115,7 +118,7 @@ export default function VariantForm({
           imageUrl: [],
           stock: 0,
           isActive: true,
-          modelId: modelId || "",
+          modelSlug: modelSlug || "",
         };
 
   const [isChecked, setIsChecked] = useState(initialValues.isActive);
@@ -128,13 +131,11 @@ export default function VariantForm({
 
   useEffect(() => {
     setIsChecked(initialValues.isActive);
-    console.log("initialValues.isActive", initialValues.isActive);
+    // console.log("initialValues.isActive", initialValues.isActive);
   }, [initialValues.isActive]);
 
   const selectedCountry =
     countries.find((country) => country.id === variant?.countryId) || null;
-
-  console.log("selectedCountry", selectedCountry);
 
   //! Soumettre le formulaire
   async function onSubmit(values: z.infer<typeof variantFormSchema>) {
@@ -144,7 +145,7 @@ export default function VariantForm({
     //! Ajouter une variante
     if (type === "add") {
       try {
-        if (!modelId) {
+        if (!modelSlug) {
           setError("modelId est requis pour ajouter une variante.");
           return;
         }
@@ -153,17 +154,17 @@ export default function VariantForm({
         let imageUrls: string[] = [];
         if (selectedFiles.length > 0) {
           const uploadedImages = await startUpload(selectedFiles, {
-            variantId: modelId,
+            variantId: modelSlug,
           });
 
-          console.log("Images uploadées :", uploadedImages);
+          // console.log("Images uploadées :", uploadedImages);
 
           if (!uploadedImages || uploadedImages.length === 0) {
             throw new Error("Échec de l'upload des images.");
           }
 
           imageUrls = uploadedImages.map((file) => file.url);
-          console.log("URLs des images uploadées :", imageUrls);
+          // console.log("URLs des images uploadées :", imageUrls);
         }
 
         if (imageUrls.length === 0) {
@@ -176,13 +177,13 @@ export default function VariantForm({
         values.imageUrl = imageUrls;
 
         // Crée la variante
-        const response = await fetch(`/api/variants/${modelId}`, {
+        const response = await fetch(`/api/variants/${modelSlug}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            modelId,
+            modelSlug,
             memory: values.memory,
             color: values.color,
             countryId: values.country || null,
@@ -210,7 +211,7 @@ export default function VariantForm({
         setSuccess("Variante et images ajoutées avec succès !");
         setIsModalOpen(false);
 
-        // window.location.href = window.location.href;
+        window.location.href = window.location.href;
         router.refresh();
         toast.success("Variante ajoutée avec succès !");
       } catch (error) {
@@ -222,9 +223,15 @@ export default function VariantForm({
 
     //! Modifier une variante
     if (type === "edit") {
+      console.log("values", values);
       try {
-        if (!modelId) {
-          setError("modelId est requis pour ajouter une variante.");
+        if (!modelSlug) {
+          setError("modelSlug est requis pour ajouter une variante.");
+          return;
+        }
+
+        if (!variant?.modelId) {
+          setError("modelId est requis pour modifier une variante.");
           return;
         }
 
@@ -232,7 +239,7 @@ export default function VariantForm({
 
         if (selectedFiles.length > 0) {
           const uploadedImages = await startUpload(selectedFiles, {
-            variantId: modelId,
+            variantId: modelSlug,
           });
 
           if (!uploadedImages || uploadedImages.length === 0) {
@@ -252,7 +259,7 @@ export default function VariantForm({
         }
 
         // Modifier la variante
-        const response = await fetch(`/api/variants/${modelId}`, {
+        const response = await fetch(`/api/variants/${modelSlug}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -261,7 +268,7 @@ export default function VariantForm({
             variantId: variantId,
             memory: values.memory,
             color: values.color,
-            countryId: values.country || initialValues.country,
+            countryId: values.countryId || selectedCountry?.id,
             price: values.price,
             description: values.description || "",
             stock: values.stock || 0,

@@ -45,8 +45,6 @@ export default function ShowAllPromo() {
     setShowPromoCodes(!showPromoCodes);
   };
 
-  console.log("PROMO CODES SET", promoCodes);
-
   return (
     <div>
       <button

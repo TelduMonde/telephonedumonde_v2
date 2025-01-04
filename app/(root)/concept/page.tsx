@@ -2,6 +2,23 @@
 import { Transition } from "@/components/shared/Transition";
 import Image from "next/image";
 import React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Le Concept | Téléphones du Monde | Smartphones à Prix Réduits",
+  description:
+    "Découvrez le concept de Téléphones du Monde, la plateforme qui vous permet d'acheter des smartphones internationaux de qualité à des prix compétitifs. Qualité garantie, livraison rapide, et économies garanties.",
+  keywords: [
+    "concept smartphones",
+    "téléphones internationaux",
+    "téléphones pas chers",
+    "acheter téléphone neuf",
+    "smartphone prix réduit",
+    "qualité garantie",
+    "livraison rapide",
+    "économies garanties",
+  ],
+};
 
 export default function page() {
   return (

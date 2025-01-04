@@ -1,7 +1,23 @@
 import Favoris from "@/components/Profils/Favoris";
 import { currentUser } from "@/lib/auth";
 
-import React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Mes Favoris | Téléphones du Monde",
+  description:
+    "Retrouvez vos smartphones favoris sur Téléphones du Monde. Consultez votre liste de produits préférés et achetez-les facilement à des prix compétitifs.",
+  keywords: [
+    "mes favoris téléphones",
+    "produits favoris",
+    "liste de souhaits",
+    "smartphones internationaux",
+    "acheter téléphone pas cher",
+    "téléphones préférés",
+    "smartphones performants",
+    "prix compétitifs",
+  ],
+};
 
 export default async function Fav() {
   const user = await currentUser();

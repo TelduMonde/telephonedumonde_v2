@@ -27,7 +27,7 @@ export default function ShowActifPromo() {
         }
 
         const data = await response.json();
-        console.log("PROMO CODES", data);
+        // console.log("PROMO CODES", data);
         setPromoCodes(data.promoCodes);
       } catch (error) {
         console.error("Error fetching promo codes:", error);

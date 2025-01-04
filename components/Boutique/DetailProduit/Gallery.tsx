@@ -17,11 +17,13 @@ export default function Gallery({ imageUrl }: { imageUrl: string[] }) {
     }
   }, [imageUrl]);
 
+  console.log("images", images);
+
   return (
     <div className="flex flex-col justify-center items-center gap-2 h-[450px] sm:h-full w-full lg:w-[300px]">
       <Image
         src={mainImage}
-        alt="produit"
+        alt="smartphone"
         width={800}
         height={800}
         className="w-48 h-80 sm:w-full lg:h-80 object-contain"
@@ -32,7 +34,7 @@ export default function Gallery({ imageUrl }: { imageUrl: string[] }) {
           <Image
             key={index}
             src={image}
-            alt="produit"
+            alt="smartphone"
             width={200}
             height={200}
             className={`w-12 h-16 lg:w-full lg:h-20 object-cover cursor-pointer filter grayscale transition-all ease-in-out ${

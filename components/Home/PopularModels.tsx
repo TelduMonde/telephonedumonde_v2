@@ -46,8 +46,6 @@ export default function PopularModels() {
     fetchActiveModels();
   }, [page, brand, searchText]);
 
-  console.log("MODELE", models);
-
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 justify-center gap-4 lg:gap-12 w-full lg:h-[340px] mt-10 rounded-md">
       {models.data.map((model) => (

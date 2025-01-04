@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 // import { use } from "react";
 
 const prisma = new PrismaClient();
@@ -8,21 +9,36 @@ const prisma = new PrismaClient();
 // Récupérer les variants d'un produit
 export const GET = async (
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) => {
   try {
     const url = new URL(req.url);
-    const { id } = await params;
+    const { slug } = await params;
+
     const limit = Number(url.searchParams.get("limit")) || 10; // Par défaut : 10
     const page = Number(url.searchParams.get("page")) || 1; // Par défaut : page 1
     const skipAmount = (page - 1) * limit;
 
-    if (!id) {
+    if (!slug) {
       return NextResponse.json(
         { error: "ID du modèle manquant." },
         { status: 400 }
       );
     }
+
+    // Récupérer le modèle par son slug
+    const model = await prisma.phoneModel.findUnique({
+      where: { slug },
+    });
+
+    if (!model) {
+      return NextResponse.json(
+        { error: "Modèle non trouvé." },
+        { status: 404 }
+      );
+    }
+
+    const id = model?.id;
 
     // Récupérer les variantes avec pagination
     const variants = await prisma.phoneVariant.findMany({
@@ -80,7 +96,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     const {
-      modelId,
+      modelSlug,
       memory,
       color,
       countryId,
@@ -92,7 +108,7 @@ export const POST = async (req: NextRequest) => {
     } = await req.json();
 
     if (
-      !modelId ||
+      !modelSlug ||
       !memory ||
       !color ||
       !price ||
@@ -104,6 +120,19 @@ export const POST = async (req: NextRequest) => {
         { status: 400 }
       );
     }
+
+    const model = await prisma.phoneModel.findUnique({
+      where: { slug: modelSlug },
+    });
+
+    if (!model) {
+      return NextResponse.json(
+        { error: "Modèle introuvable." },
+        { status: 404 }
+      );
+    }
+
+    const modelId = model.id;
 
     const newVariant = await prisma.phoneVariant.create({
       data: {
@@ -130,6 +159,7 @@ export const POST = async (req: NextRequest) => {
   }
 };
 
+//! MODIFIER UNE VARIANTE
 export const PUT = async (req: NextRequest) => {
   try {
     const role = await currentRole();
@@ -139,8 +169,6 @@ export const PUT = async (req: NextRequest) => {
         { status: 403 }
       );
     }
-
-    // const { modelId } = await params;
 
     if (!req.body) {
       return NextResponse.json(
@@ -161,7 +189,6 @@ export const PUT = async (req: NextRequest) => {
     }
 
     const {
-      modelId,
       variantId,
       memory,
       color,
@@ -173,20 +200,6 @@ export const PUT = async (req: NextRequest) => {
       images,
       imagesToDelete,
     } = body;
-
-    console.log(
-      "Parametres :",
-      memory,
-      color,
-      countryId,
-      price,
-      images,
-      isActive,
-      description,
-      stock,
-      modelId,
-      variantId
-    );
 
     if (!variantId || !memory || !color || !price) {
       return NextResponse.json(
@@ -248,7 +261,7 @@ export const PUT = async (req: NextRequest) => {
 
 export const DELETE = async (
   req: NextRequest,
-  { params }: { params: Promise<{ variantId: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) => {
   try {
     const role = await currentRole();
@@ -258,7 +271,10 @@ export const DELETE = async (
         { status: 403 }
       );
     }
-    const { variantId } = await params;
+
+    const { variantId } = await req.json();
+    console.log("VARIANT ID", variantId);
+    const { slug } = await params;
 
     if (!variantId) {
       return NextResponse.json(
@@ -271,6 +287,7 @@ export const DELETE = async (
       where: { id: variantId },
     });
 
+    revalidatePath(`/admin-tel-du-monde/produits/${slug}`);
     return NextResponse.json({ message: "Variante supprimée avec succès." });
   } catch (error) {
     console.error("Erreur lors de la suppression de la variante :", error);

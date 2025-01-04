@@ -56,7 +56,7 @@ export default function ProductsPage() {
     fetchModels();
   }, [page, brand, searchText]);
 
-  console.log("MODELE", models);
+  // console.log("MODELE", models);
 
   return (
     <section className="wrapper flex flex-col gap-8">
@@ -101,7 +101,7 @@ export default function ProductsPage() {
               <DeleteModalButton modelId={model.id} />
             </div>
             <Link
-              href={`/admin-tel-du-monde/produits/${model.id}`}
+              href={`/admin-tel-du-monde/produits/${model.slug}`}
               className="bg-noir-600 text-center rounded-md hover:bg-noir-200"
             >
               Voir les variantes

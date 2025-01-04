@@ -8,10 +8,10 @@ import Image from "next/image";
 
 export default function ShowVariant({
   userId,
-  modelId,
+  modelSlug,
 }: {
   userId: string | undefined;
-  modelId: string;
+  modelSlug: string;
 }) {
   const [isModalImageOpen, setIsModalImageOpen] = useState(false);
   const [selectedVariantImages, setSelectedVariantImages] = useState<string[]>(
@@ -29,6 +29,7 @@ export default function ShowVariant({
       description: string;
       isActive: boolean;
       images: string[];
+      modelId: string;
       model: { id: string; name: string };
     }[]
   >([]);
@@ -46,7 +47,7 @@ export default function ShowVariant({
   useEffect(() => {
     const fetchVariants = async () => {
       try {
-        const response = await fetch(`/api/variants/${modelId}`, {
+        const response = await fetch(`/api/variants/${modelSlug}`, {
           headers: {
             method: "GET",
             "Content-Type": "application/json",
@@ -54,7 +55,7 @@ export default function ShowVariant({
         });
 
         const data = await response.json();
-        console.log("Données des variantes :", data);
+        // console.log("Données des variantes :", data);
         setVariants(data.data);
       } catch (error) {
         console.error("Failed to fetch variants", error);
@@ -62,13 +63,13 @@ export default function ShowVariant({
     };
 
     fetchVariants();
-  }, [modelId]);
+  }, [modelSlug]);
 
   return (
     <section className="wrapper">
       <div className="flex gap-9 mb-5 items-center">
         <h2 className="font-font1 text-white">Variantes du modèle</h2>
-        <AddVariantBtn userId={userId} modelId={modelId} />
+        <AddVariantBtn userId={userId} modelSlug={modelSlug} />
       </div>
 
       <div className="flex flex-col gap-2">
@@ -200,7 +201,8 @@ export default function ShowVariant({
             <div className="flex justify-center gap-2">
               <EditVariantBtn
                 userId={userId || ""}
-                modelId={variant.id}
+                variantID={variant.id}
+                modelSlug={modelSlug}
                 variant={{
                   ...variant,
                   model: { name: variant.model.name },
@@ -217,7 +219,7 @@ export default function ShowVariant({
                 variantId={variant.id}
                 setIsModalOpen={setIsModalImageOpen}
                 userId={userId || ""}
-                modelId={modelId}
+                modelSlug={modelSlug}
               />
             </div>
           </div>

@@ -9,13 +9,13 @@ import DeleteVariant from "./DeleteVariant";
 interface DeleteVariantButtonProps {
   setIsModalOpen: (isOpen: boolean) => void;
   userId: string | undefined;
-  modelId: string;
+  modelSlug: string;
   variantId: string;
 }
 
 const DeleteVariantBtn: React.FC<DeleteVariantButtonProps> = ({
   userId,
-  modelId,
+  modelSlug,
   variantId,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,7 +42,7 @@ const DeleteVariantBtn: React.FC<DeleteVariantButtonProps> = ({
             setIsModalOpen={setIsModalOpen}
             userId={userId ?? ""}
             variantId={variantId}
-            modelId={modelId}
+            modelSlug={modelSlug}
           />
         </div>
       </ModalAdmin>

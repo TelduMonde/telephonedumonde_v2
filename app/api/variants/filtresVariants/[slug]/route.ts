@@ -5,24 +5,39 @@ const prisma = new PrismaClient();
 
 export const GET = async (
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ slug: string }> }
 ) => {
   try {
     const url = new URL(req.url);
-    const { id } = await params;
-    const modelId = id;
+    const { slug } = await params;
 
     // Récupérer les filtres depuis l'URL
     const color = url.searchParams.get("color");
     const memory = url.searchParams.get("memory");
     const country = url.searchParams.get("country");
 
-    if (!modelId) {
+    if (!slug) {
       return NextResponse.json(
-        { error: "ID du modèle manquant." },
+        { error: "Slug du modèle manquant." },
         { status: 400 }
       );
     }
+
+    // Récupérer le modèle par son slug
+    const model = await prisma.phoneModel.findUnique({
+      where: { slug },
+    });
+
+    console.log("MODEL", model);
+
+    if (!model) {
+      return NextResponse.json(
+        { error: "Modèle non trouvé." },
+        { status: 404 }
+      );
+    }
+
+    const modelId = model.id;
 
     // Construire les filtres dynamiquement
     const filters: {

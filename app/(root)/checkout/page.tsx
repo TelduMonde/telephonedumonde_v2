@@ -1,5 +1,21 @@
 import ItemsOrder from "@/components/Order/PreCheckout/ItemsOrder";
-import React from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Paiement | Téléphones du Monde",
+  description:
+    "Finalisez votre achat en toute sécurité sur Téléphones du Monde. Vérifiez vos articles, choisissez votre mode de livraison et effectuez un paiement sécurisé pour recevoir vos smartphones internationaux rapidement.",
+  keywords: [
+    "paiement téléphones",
+    "checkout téléphones",
+    "finaliser commande",
+    "smartphones internationaux",
+    "téléphones pas chers",
+    "paiement sécurisé",
+    "livraison rapide",
+    "acheter smartphone",
+  ],
+};
 
 export default function Checkout() {
   return (

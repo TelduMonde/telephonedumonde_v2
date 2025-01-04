@@ -6,10 +6,13 @@ import VariantForm from "./VariantForm";
 
 interface AddVariantButtonProps {
   userId: string | undefined;
-  modelId: string;
+  modelSlug: string;
 }
 
-const AddVariantBtn: React.FC<AddVariantButtonProps> = ({userId, modelId,}) => {
+const AddVariantBtn: React.FC<AddVariantButtonProps> = ({
+  userId,
+  modelSlug,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -26,7 +29,7 @@ const AddVariantBtn: React.FC<AddVariantButtonProps> = ({userId, modelId,}) => {
       <ModalAdmin isOpen={isModalOpen} onClose={handleCloseModal}>
         <VariantForm
           userId={userId}
-          modelId={modelId}
+          modelSlug={modelSlug}
           type="add"
           setIsModalOpen={setIsModalOpen}
         />

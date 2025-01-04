@@ -37,7 +37,9 @@ export default function CodePromo() {
     fetchActivePromo();
   }, []);
 
-  if (!promoCode || !promoCode.isActive) {
+  const isExpired = new Date(promoCode.expiresAt) < new Date();
+
+  if (!promoCode || !promoCode.isActive || isExpired) {
     return null;
   }
 

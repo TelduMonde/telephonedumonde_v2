@@ -21,7 +21,6 @@ const FilterBrand = () => {
         const data = await response.json(); // Obtenez tout l'objet
         const brands = data.uniqueBrands;
         setBrands(brands);
-        console.log("Fetched brands:", brands);
       } catch (error) {
         console.error("Error fetching brands:", error);
       }
@@ -29,8 +28,6 @@ const FilterBrand = () => {
 
     fetchBrands();
   }, []);
-
-  console.log("BRANDS", brands);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {}, 300);

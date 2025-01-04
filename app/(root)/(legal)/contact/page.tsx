@@ -1,4 +1,21 @@
 import { ContactForm } from "@/components/shared/ContactForm";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contactez-nous | Téléphones du Monde",
+  description:
+    "Besoin d'aide ou d'informations ? Contactez l'équipe Téléphones du Monde pour toute question sur vos commandes ou nos smartphones internationaux. Nous sommes là pour vous aider.",
+  keywords: [
+    "contact téléphones",
+    "support client",
+    "aide téléphones",
+    "questions commandes",
+    "service client smartphones",
+    "téléphones internationaux",
+    "demande d'information",
+    "assistance téléphonique",
+  ],
+};
 
 export default function ContactPage() {
   return (

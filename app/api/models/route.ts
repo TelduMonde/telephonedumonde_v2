@@ -6,12 +6,12 @@ import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
-// function generateSlug(name: string): string {
-//   return name
-//     .toLowerCase()
-//     .replace(/[^a-z0-9]+/g, "-")
-//     .replace(/^-+|-+$/g, "");
-// }
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 //! CREER UN MODELE
 export const POST = async (req: NextRequest) => {
@@ -28,7 +28,7 @@ export const POST = async (req: NextRequest) => {
 
     const { name, brand, isActive } = data;
 
-    // const slug = generateSlug(name);
+    const slug = generateSlug(name);
 
     const existingModel = await prisma.phoneModel.findFirst({
       where: {
@@ -55,6 +55,7 @@ export const POST = async (req: NextRequest) => {
       data: {
         name,
         brand,
+        slug,
         isActive: isActive ?? true,
       },
     });

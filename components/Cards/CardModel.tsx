@@ -6,7 +6,7 @@ import React from "react";
 export default function CardModel({ model }: { model: CardsModelProps }) {
   return (
     <Link
-      href={`/boutique/${model.id}`}
+      href={`/boutique/${model.slug}`}
       className="relative group w-full lg:min-w-[300px] lg:min-h-[400px] pt-4 hover:shadow-2xl transition-all ease-in-out duration-300 rounded-md"
     >
       {/* IMAGE TEL */}

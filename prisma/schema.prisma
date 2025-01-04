@@ -114,6 +114,7 @@ model PhoneModel {
   id          String        @id @default(cuid())
   name        String
   brand       String
+  slug        String       @unique
   isActive    Boolean       @default(true)
   variants    PhoneVariant[]
 }
