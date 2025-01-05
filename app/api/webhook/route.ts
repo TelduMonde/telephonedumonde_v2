@@ -2,9 +2,9 @@ import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-// import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -57,26 +57,53 @@ export async function POST(req: NextRequest) {
         }
       );
 
+      const customerInfo = {
+        name: session?.customer_details?.name,
+        email: session?.customer_details?.email,
+        address: session?.customer_details?.address,
+      };
+
+      // Récupérez l'ID de commande depuis metadata
+      const orderId = session.metadata?.orderId;
+
       console.log("Order", lineItems);
+      console.log("Customer", customerInfo);
 
-      // const updatedOrder = await prisma.order.update({
-      //   where: { id: session.client_reference_id },
-      //   data: { statut: "PAID" },
-      // });
+      await prisma.order.update({
+        where: { id: orderId },
+        data: { statut: "PAID" },
+      });
 
-      // // Récupérer les informations de la commande
-      // const order = await prisma.order.findUnique({
-      //   where: { id: session.client_reference_id },
-      //   select: {
-      //     id: true,
-      //     orderNumber: true,
-      //   },
-      // });
+      // Récupérer les informations de la commande
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        select: {
+          id: true,
+          orderNumber: true,
+        },
+      });
 
-      // Envoyer un email de confirmation à l'utilisateur (optionnel)
-      // ...
+      // Envoyer un email de confirmation à l'utilisateur
+      await fetch(`${process.env.BASE_URL}/api/emails`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sender: {
+            name: "Téléphone du monde",
+            address: "no-reply@telephonedumonde.com",
+          },
+          recipient: { name: customerInfo.name, address: customerInfo.email },
+          subject: `Résumé de votre commande n°${order?.orderNumber} | Téléphones du Monde`,
+          message: `Voici un résumé de votre commande : ${order?.id}, merci de votre achat !
+          ${order?.orderNumber}, ${customerInfo.name}, ${customerInfo.email}, ${customerInfo.address}, ${lineItems}
 
-      // return NextResponse.json(updatedOrder);
+          `,
+        }),
+      });
+
+      return NextResponse.json({ success: true });
     } catch (err) {
       console.error("Erreur lors de la mise à jour de la commande :", err);
       return NextResponse.json(

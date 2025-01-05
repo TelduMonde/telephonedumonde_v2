@@ -128,8 +128,16 @@ export const POST = async (req: NextRequest) => {
         },
         quantity: item.quantity,
       })),
-      allow_promotion_codes: true,
+      shipping_options: [
+        {
+          shipping_rate: "shr_1QdyjsIVAQDvDHAw240L3DVR", // Livraison standard
+        },
+        {
+          shipping_rate: "shr_1QdyklIVAQDvDHAweEZBgS7Q", // Livraison express
+        },
+      ],
       mode: "payment",
+      billing_address_collection: "required",
       success_url: `${req.headers.get(
         "origin"
       )}/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${
@@ -138,6 +146,8 @@ export const POST = async (req: NextRequest) => {
       cancel_url: `${req.headers.get("origin")}/checkout`,
       metadata: {
         orderId: order.id,
+        orderNumber: order.orderNumber,
+        // shippingAdress: order.shippingAddress,
       },
     });
 

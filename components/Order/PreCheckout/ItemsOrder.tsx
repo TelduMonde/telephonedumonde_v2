@@ -335,8 +335,8 @@ export default function ItemsOrder() {
               {...register("deliveryMethod")}
               className="w-full border rounded-md p-2"
             >
-              <option value="standard">Standard (5 €)</option>
-              <option value="express">Express (10 €)</option>
+              <option value="standard">Standard (10 €)</option>
+              <option value="express">Rapide (15 €)</option>
             </select>
             {errors.deliveryMethod && (
               <p className="text-red-500">{errors.deliveryMethod.message}</p>
