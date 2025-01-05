@@ -1,18 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-
-// import Stripe from "stripe";
-
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-//   apiVersion: "2024-12-18.acacia",
-// });
-
+import { stripe } from "@/lib/stripe";
+import { currentUser } from "@/lib/auth";
 // import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
 export const POST = async (req: NextRequest) => {
+  const user = await currentUser();
+
   const {
     items,
     contactEmail,
@@ -24,7 +21,7 @@ export const POST = async (req: NextRequest) => {
 
   try {
     // Validation des champs obligatoires
-    if (!contactEmail || !contactPhone || !address) {
+    if (!contactEmail || !address) {
       return NextResponse.json(
         {
           error: "Les informations de contact et d'adresse sont obligatoires.",
@@ -83,11 +80,14 @@ export const POST = async (req: NextRequest) => {
     const deliveryCost = deliveryMethod === "express" ? 10 : 0;
     const total = subTotal + deliveryCost - (subTotal * discount) / 100;
 
+    console.log("Before CREATE ORDER");
+
     // Création d'une commande temporaire dans la base de données
     const order = await prisma.order.create({
       data: {
+        userId: user?.id || null,
         contactEmail,
-        contactPhone,
+        contactPhone: contactPhone || "",
         shippingAddress: address,
         promoCodeId: promoCode || null,
         statut: "pending",
@@ -98,9 +98,6 @@ export const POST = async (req: NextRequest) => {
           0
         ),
         price: total,
-        Variant: {
-          connect: items.map((item: any) => ({ id: item.id })),
-        },
         items: {
           create: items.map((item: any) => ({
             variantId: item.id,
@@ -111,33 +108,48 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
+    console.log("Commande créée :", order);
+
+    if (!order || !order.id) {
+      throw new Error("La commande n'a pas été correctement créée.");
+    }
+
     // Création d'une session Stripe
-    // const session = await stripe.checkout.sessions.create({
-    //   payment_method_types: ["card"],
-    //   line_items: items.map((item: any) => ({
-    //     price_data: {
-    //       currency: "eur",
-    //       product_data: {
-    //         name: item.name,
-    //         images: [item.image],
-    //       },
-    //       unit_amount: item.price * 100,
-    //     },
-    //     quantity: item.quantity,
-    //   })),
-    //   mode: "payment",
-    //   success_url: `${req.headers.get(
-    //     "origin"
-    //   )}/success?session_id={CHECKOUT_SESSION_ID}`,
-    //   cancel_url: `${req.headers.get("origin")}/checkout`,
-    //   metadata: {
-    //     orderId: order.id,
-    //   },
-    // });
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: items.map((item: any) => ({
+        price_data: {
+          currency: "eur",
+          product_data: {
+            name: item.name,
+            images: [item.image],
+          },
+          unit_amount: item.price * 100,
+        },
+        quantity: item.quantity,
+      })),
+      allow_promotion_codes: true,
+      mode: "payment",
+      customer_update: {
+        address: "auto",
+        name: "auto",
+      },
+      success_url: `${req.headers.get(
+        "origin"
+      )}/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${
+        order.orderNumber
+      }`,
+      cancel_url: `${req.headers.get("origin")}/checkout`,
+      metadata: {
+        orderId: order.id,
+      },
+    });
+
+    console.log("Stripe session created:", session);
 
     // Retournez l'URL de paiement Stripe
-    // return NextResponse.json({ checkoutUrl: session.url });
-    return NextResponse.json({ order }); // Pour le moment sinon cest la ligne au dessus
+    return NextResponse.json({ checkoutUrl: session.url });
+    // return NextResponse.json({ order }); // Pour le moment sinon cest la ligne au dessus
   } catch (err) {
     console.error("Erreur lors de la validation de la commande :", err);
     return NextResponse.json(

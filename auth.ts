@@ -4,11 +4,14 @@ import NextAuth, { type DefaultSession } from "next-auth";
 import authConfig from "./auth.config";
 import { db } from "./lib/db";
 
-import { Role } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 
 // import { getTwoFactorConfirmationByUserId } from "./lib/actions/two-factor-confirmation";
 import { getUserById } from "./lib/actions/user.actions";
 import { getAccountByUserId } from "./lib/actions/account";
+import { stripe } from "./lib/stripe";
+
+const prisma = new PrismaClient();
 
 //! Pour éviter les erreurs de type (erreur de type pour session.user.role : il ne reconnait pas "role")
 type ExtentedUser = DefaultSession["user"] & {
@@ -37,7 +40,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         data: { emailVerified: new Date() },
       });
     },
+
+    createUser: async (message) => {
+      const userId = message?.user?.id;
+      const email = message?.user?.email;
+      const name = message?.user?.name;
+
+      if (!userId || !email) return;
+
+      const stripeCustomer = await stripe.customers.create({
+        email,
+        name: name ?? undefined,
+      });
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { stripeCustomerId: stripeCustomer.id },
+      });
+    },
   },
+
   callbacks: {
     async signIn({ user, account }) {
       // On autorise la connexion sans email Vérification pour Google
@@ -118,5 +140,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
   // On passe la config d'auth.config
   ...authConfig,
+
   secret: process.env.AUTH_SECRET,
 });

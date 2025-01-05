@@ -28,3 +28,8 @@ export const removeFromCart = (itemId: any) => {
   Cookies.set(CART_COOKIE_NAME, JSON.stringify(updatedCart), { expires: 7 });
   return updatedCart;
 };
+
+export const clearCart = () => {
+  Cookies.remove(CART_COOKIE_NAME);
+  return [];
+};

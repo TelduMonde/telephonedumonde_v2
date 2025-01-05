@@ -148,9 +148,7 @@ export const userAdressSchema = z.object({
 //! ORDER
 export const checkoutSchema = z.object({
   contactEmail: z.string().email("Veuillez entrer un email valide"),
-  contactPhone: z
-    .string()
-    .min(10, "Le numéro de téléphone doit comporter au moins 10 caractères"),
+  contactPhone: z.string().optional(),
   address: z.object({
     street: z.string().min(1, "La rue est obligatoire"),
     city: z.string().min(1, "La ville est obligatoire"),

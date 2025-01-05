@@ -71,7 +71,7 @@ export default function ItemsOrder() {
       try {
         const userAddress = await getUserAddress(user.id);
 
-        console.log("Adresse de l'utilisateur :", userAddress);
+        // console.log("Adresse de l'utilisateur :", userAddress);
 
         if (userAddress && userAddress.length > 0) {
           const address = userAddress[0]; // Récupère la première adresse
@@ -91,26 +91,31 @@ export default function ItemsOrder() {
     fetchuserAdress();
   }, [user, setValue]);
 
-  // Initialiser les valeurs par défaut du formulaire
-  // const initialValues: CheckoutFormData = {
-  //   contactEmail: user?.email || "",
-  //   contactPhone: "",
-  //   address: defaultAddress,
-  //   deliveryMethod: "standard",
-  // };
-
   // SOUMISSION DU FORMULAIRE
   const onSubmit = async (data: CheckoutFormData) => {
     try {
+      const payload = {
+        address: data.address,
+        contactEmail: data.contactEmail,
+        contactPhone: data.contactPhone?.trim() || null, // Transformez les chaînes vides en null
+        deliveryMethod: data.deliveryMethod,
+        items: state.items, // Vérifiez que `state.items` contient des items valides
+      };
+
+      console.log("Payload envoyé :", payload);
+
       const response = await fetch("/api/orders/checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          items: state.items,
-          ...data,
-        }),
+        body: JSON.stringify(payload),
+      });
+
+      console.log("Statut de la réponse :", response.status); // Vérifiez si c'est bien 400
+      console.log("Données envoyées au backend :", {
+        items: state.items,
+        ...data,
       });
 
       const result = await response.json();
@@ -118,6 +123,8 @@ export default function ItemsOrder() {
       if (!response.ok) {
         throw new Error(result.message || "Erreur lors de la validation.");
       }
+
+      console.log("Checkout URL:", result.checkoutUrl);
 
       // Redirection vers Stripe
       window.location.href = result.checkoutUrl;
