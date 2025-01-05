@@ -172,6 +172,7 @@ model Order {
   contactEmail      String?
   contactPhone      String?
   shippingAddress   Json?         // Utilisation du type JSON pour stocker l'adresse de livraison
+  PersonnalInfos    Json?         // Utilisation du type JSON pour stocker les informations personnelles
 
   @@map("order")
 }

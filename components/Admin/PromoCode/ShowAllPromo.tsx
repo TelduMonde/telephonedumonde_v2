@@ -49,7 +49,7 @@ export default function ShowAllPromo() {
     <div>
       <button
         onClick={handleTogglePromoCodes}
-        className="bg-primary-500 text-white px-4 py-2 rounded-md"
+        className="bg-primary-500 text-white px-4 py-2 rounded-md text-xs"
       >
         {showPromoCodes ? "Rétracter la liste" : "Voir tous mes codes"}
       </button>

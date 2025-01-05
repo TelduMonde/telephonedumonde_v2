@@ -29,16 +29,11 @@ export default function SuccessPage() {
   const user = useCurrentUser();
   console.log(user);
 
-  const orderId = localStorage.getItem("orderId");
-  const userEmail = localStorage.getItem("userEmail");
-  const userName = localStorage.getItem("userName");
-
-  console.log(orderId, userEmail, userName);
-
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get("orderNumber");
+  const orderId = searchParams.get("orderId");
 
-  console.log(orderNumber);
+  console.log(orderNumber, orderId);
 
   useEffect(() => {
     if (orderNumber) {

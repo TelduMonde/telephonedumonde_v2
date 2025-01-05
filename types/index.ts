@@ -134,3 +134,38 @@ export interface PromoCode {
   isActive: boolean;
   expiresAt: Date;
 }
+
+//! ORDER
+export type PersonalInfos = {
+  lastName: string;
+  firstName: string;
+};
+
+export type OrderProps = {
+  id: string;
+  orderNumber: string;
+  userId: string;
+  contactEmail: string;
+  contactPhone: string;
+  createdAt: string;
+  updatedAt: string;
+  paymentStatus: string;
+  price: number;
+  promoCodeId: string | null;
+  quantity: number;
+  statut: string;
+  stripeSessionId: string | null;
+  addressId: string | null;
+  PersonnalInfos: PersonalInfos;
+  shippingAddress: Address;
+  items: {
+    Variant: {
+      images: string[];
+      model: { name: string };
+    };
+    id: string;
+    variantId: string;
+    quantity: number;
+    price: number;
+  }[];
+};

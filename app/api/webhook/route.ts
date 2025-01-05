@@ -66,12 +66,11 @@ export async function POST(req: NextRequest) {
       // Récupérez l'ID de commande depuis metadata
       const orderId = session.metadata?.orderId;
 
-      console.log("Order", lineItems);
-      console.log("Customer", customerInfo);
+      console.log("Commande ID :", orderId);
 
       await prisma.order.update({
         where: { id: orderId },
-        data: { statut: "PAID" },
+        data: { paymentStatus: "PAID" },
       });
 
       // Récupérer les informations de la commande
@@ -98,7 +97,6 @@ export async function POST(req: NextRequest) {
           subject: `Résumé de votre commande n°${order?.orderNumber} | Téléphones du Monde`,
           message: `Voici un résumé de votre commande : ${order?.id}, merci de votre achat !
           ${order?.orderNumber}, ${customerInfo.name}, ${customerInfo.email}, ${customerInfo.address}, ${lineItems}
-
           `,
         }),
       });

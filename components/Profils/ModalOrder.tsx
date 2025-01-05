@@ -1,15 +1,24 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import { OrderProps } from "@/types";
+import Image from "next/image";
 import { useCallback, useEffect, useRef } from "react";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  order: OrderProps;
 }
 
-export default function ModalOrder({ isOpen, onClose }: ModalProps) {
+export default function ModalOrder({ isOpen, onClose, order }: ModalProps) {
   if (!isOpen) return null;
 
+  if (!order) {
+    return null;
+  }
+
   const modalRef = useRef<HTMLDivElement>(null);
+
+  console.log(order);
 
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
@@ -50,35 +59,89 @@ export default function ModalOrder({ isOpen, onClose }: ModalProps) {
 
         {/* NUMERO DE COMMANDE */}
         <h3 className="bg-noir-800 rounded-md p-2 text-white font-font1 text-center">
-          C° 17876933
+          C° {order.orderNumber}
         </h3>
 
         {/* INFOS COMMANDE */}
         <div className="flex flex-col gap-2 sm:grid grid-cols-3 items-center justify-center text-white font-font1 text-sm">
-          <p className="text-center">Date : 08/12/2024</p>
-          <p className="text-center">Statut : En Cours</p>
-          <p className="text-center">Total : 987,00 €</p>
+          <p className="text-center">
+            Date : {new Date(order.createdAt).toLocaleDateString()}
+          </p>
+          <p className="text-center">Statut : {order.statut}</p>
+          <p className="text-center">Total : {order.price} €</p>
         </div>
 
         {/* LES PRODUITS COMMANDEES */}
-        <div className="bg-noir-800 text-white font-font1 p-2 rounded-md text-center">
-          LES ARTICLES
+        <div className="bg-noir-800 text-white font-font1 p-4 rounded-md text-center">
+          <p className="mb-2">LES ARTICLES</p>
+          <div className="w-full h-[0.2px] bg-white mb-4 rounded-full" />
+          {order.items && order.items.length > 0 ? (
+            order.items.map((item) => (
+              <div
+                key={item.id}
+                className="grid grid-cols-3 gap-2 items-center"
+              >
+                <Image
+                  src={item.Variant.images[0]}
+                  alt={item.Variant.model.name}
+                  width={100}
+                  height={100}
+                  className="w-16 h-16 object-cover rounded-md"
+                />
+                <div className="flex flex-col">
+                  <p>
+                    <span className="text-xs text-white/70">
+                      {item.quantity} x
+                    </span>{" "}
+                    {item.Variant.model.name}
+                  </p>
+                </div>
+                <p>{item.price} €</p>
+              </div>
+            ))
+          ) : (
+            <p>Aucun article dans la commande</p>
+          )}
         </div>
 
         {/* ADRESSES DE LIVRAISON */}
         <div className="flex flex-col sm:flex-row gap-10 text-white font-font1 text-xs">
-          <div className="flex flex-col gap-2">
-            <p className="uppercase">Adresse de Livraison</p>
-            <p>5 rue Auguste Bernard</p>
-            <p>78320, La Verrière</p>
+          <div className="flex flex-col gap-2 bg-noir-800 p-4 rounded-md w-full">
+            <p className="uppercase text-lg">Infos & Adresse de Livraison</p>
+            <div className="w-full h-[0.2px] bg-white mb-4 rounded-full" />
+            <div className="grid grid-cols-2 gap-10">
+              <div className="flex justify-center flex-col gap-2">
+                {order.PersonnalInfos ? (
+                  <>
+                    <p>Nom : {order.PersonnalInfos.lastName}</p>
+                    <p>Prénom : {order.PersonnalInfos.firstName}</p>
+                    <p>Email : {order.contactEmail}</p>
+                    <p>N° de tel : {order.contactPhone || "Non renseigné"} </p>
+                  </>
+                ) : (
+                  <p>Informations personnelles non disponibles</p>
+                )}
+              </div>
+
+              <div className="flex justify-center flex-col gap-2">
+                {order.shippingAddress ? (
+                  <>
+                    <p>Rue : {order.shippingAddress.street}</p>
+                    <p>
+                      Ville : {order.shippingAddress.postalCode},{" "}
+                      {order.shippingAddress.city}
+                    </p>
+                    <p>Pays : {order.shippingAddress.country}</p>
+                    <p>
+                      Infos Supplémentaires : {order.shippingAddress.typeAdress}
+                    </p>
+                  </>
+                ) : (
+                  <p>Adresse de livraison non disponible</p>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="hidden sm:flex h-[65px] w-[1px] bg-white" />
-          <div className="flex flex-col gap-2">
-            <p className="uppercase">Adresse de facturation</p>
-            <p>5 rue Auguste Bernard</p>
-            <p>78320, La Verrière</p>
-          </div>
-          <div className="hidden sm:flex h-[65px] w-[1px] bg-white" />
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { stripe } from "@/lib/stripe";
 import { currentUser } from "@/lib/auth";
+
 // import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
@@ -11,6 +12,8 @@ export const POST = async (req: NextRequest) => {
   const user = await currentUser();
 
   const {
+    firstName,
+    lastName,
     items,
     contactEmail,
     contactPhone,
@@ -21,7 +24,7 @@ export const POST = async (req: NextRequest) => {
 
   try {
     // Validation des champs obligatoires
-    if (!contactEmail || !address) {
+    if (!contactEmail || !address || !firstName || !lastName) {
       return NextResponse.json(
         {
           error: "Les informations de contact et d'adresse sont obligatoires.",
@@ -80,8 +83,6 @@ export const POST = async (req: NextRequest) => {
     const deliveryCost = deliveryMethod === "express" ? 10 : 0;
     const total = subTotal + deliveryCost - (subTotal * discount) / 100;
 
-    console.log("Before CREATE ORDER");
-
     // Création d'une commande temporaire dans la base de données
     const order = await prisma.order.create({
       data: {
@@ -89,6 +90,10 @@ export const POST = async (req: NextRequest) => {
         contactEmail,
         contactPhone: contactPhone || "",
         shippingAddress: address,
+        PersonnalInfos: {
+          firstName,
+          lastName,
+        },
         promoCodeId: promoCode || null,
         statut: "pending",
         paymentStatus: "pending",
@@ -142,7 +147,7 @@ export const POST = async (req: NextRequest) => {
         "origin"
       )}/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${
         order.orderNumber
-      }`,
+      }&orderId=${order.id}`,
       cancel_url: `${req.headers.get("origin")}/checkout`,
       metadata: {
         orderId: order.id,

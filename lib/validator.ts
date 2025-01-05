@@ -147,6 +147,8 @@ export const userAdressSchema = z.object({
 
 //! ORDER
 export const checkoutSchema = z.object({
+  firstName: z.string().min(2, "Le prénom est requis"),
+  lastName: z.string().min(2, "Le nom est requis"),
   contactEmail: z.string().email("Veuillez entrer un email valide"),
   contactPhone: z.string().optional(),
   address: z.object({

@@ -4,7 +4,7 @@ import { OrderProps } from "@/types";
 import ModalOrder from "@/components/Profils/ModalOrder";
 import classNames from "classnames";
 
-export default function OrdersPage() {
+export default function LastOrder() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderProps | null>(null);
 
@@ -17,16 +17,14 @@ export default function OrdersPage() {
     setSelectedOrder(null);
     setIsModalOpen(false);
   };
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const [orders, setOrders] = useState<OrderProps[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setIsLoading(true);
     const fetchOrders = async () => {
       try {
-        const response = await fetch(`/api/orders`, {
+        const response = await fetch(`/api/orders/dashboard`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -78,13 +76,7 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="wrapper flex flex-col gap-8">
-      <div>
-        <h2 className="font-font1 text-white">
-          Toutes les commandes ({orders.length})
-        </h2>
-      </div>
-
+    <div className="">
       <div className="flex flex-col gap-4">
         {isLoading ? (
           <p className="bg-noir-800 p-4 rounded-md text-white font-font1 flex-center">
