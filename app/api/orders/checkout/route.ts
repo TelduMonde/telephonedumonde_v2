@@ -130,10 +130,6 @@ export const POST = async (req: NextRequest) => {
       })),
       allow_promotion_codes: true,
       mode: "payment",
-      customer_update: {
-        address: "auto",
-        name: "auto",
-      },
       success_url: `${req.headers.get(
         "origin"
       )}/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${
