@@ -4,11 +4,21 @@ import ModalOrder from "./ModalOrder";
 import { Transition } from "../shared/Transition";
 import { useCurrentUser } from "@/lib/utils/use-current-user";
 import { OrderProps } from "@/types";
+import { BottomGradient } from "../ui/BottomGradient";
 
 export default function OrderCard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const handleOpenModal = () => setIsModalOpen(true);
-  const handleCloseModal = () => setIsModalOpen(false);
+  const [selectedOrder, setSelectedOrder] = useState<OrderProps | null>(null);
+
+  const handleOpenModal = (order: OrderProps) => {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedOrder(null);
+    setIsModalOpen(false);
+  };
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -47,7 +57,22 @@ export default function OrderCard() {
     fetchOrders();
   }, [userId]);
 
-  console.log("ORDERS", orders);
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "Traitement";
+      case "processing":
+        return "En cours de préparation";
+      case "shipped":
+        return "Envoyée";
+      case "delivered":
+        return "Livrée";
+      case "cancelled":
+        return "Annulée";
+      default:
+        return status;
+    }
+  };
 
   return (
     <Transition>
@@ -73,20 +98,26 @@ export default function OrderCard() {
                 {order.items[0].Variant.model.name}
               </p>
               <p>{order.price} €</p>
-              <p>Statut : {order.statut}</p>
+              <p>
+                Statut :{" "}
+                <span className="font-bold">{getStatusText(order.statut)}</span>
+              </p>
               <button
-                onClick={handleOpenModal}
-                className="bg-noir-500 rounded-md p-1"
+                onClick={() => handleOpenModal(order)}
+                className="bg-gradient-to-t px-2 relative group/btn from-primary-900  to-primary-500 block w-full text-white rounded-md h-8 font-medium font-font1 uppercase tracking-widest"
               >
                 Voir
+                <BottomGradient />
               </button>
-              <ModalOrder
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                order={order}
-              />
             </div>
           ))
+        )}
+        {selectedOrder && (
+          <ModalOrder
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            order={selectedOrder}
+          />
         )}
       </div>
     </Transition>

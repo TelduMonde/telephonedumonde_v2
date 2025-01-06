@@ -124,7 +124,7 @@ export const DELETE = async (req: NextRequest) => {
       where: { id },
     });
 
-    revalidatePath("http://localhost:3000/admin-tel-du-monde/produits");
+    revalidatePath("/admin-tel-du-monde/produits");
 
     return NextResponse.json(deletedModel, { status: 200 });
   } catch (error) {

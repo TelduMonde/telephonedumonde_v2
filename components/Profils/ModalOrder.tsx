@@ -16,9 +16,8 @@ export default function ModalOrder({ isOpen, onClose, order }: ModalProps) {
     return null;
   }
 
+  //! Gestion modal
   const modalRef = useRef<HTMLDivElement>(null);
-
-  console.log(order);
 
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
@@ -44,6 +43,24 @@ export default function ModalOrder({ isOpen, onClose, order }: ModalProps) {
     };
   }, [isOpen, handleClickOutside]);
 
+  //! Fonction pour afficher le statut de la commande
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "Traitement";
+      case "processing":
+        return "En cours de préparation";
+      case "shipped":
+        return "Envoyée";
+      case "delivered":
+        return "Livrée";
+      case "cancelled":
+        return "Annulée";
+      default:
+        return status;
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
       <div
@@ -67,7 +84,10 @@ export default function ModalOrder({ isOpen, onClose, order }: ModalProps) {
           <p className="text-center">
             Date : {new Date(order.createdAt).toLocaleDateString()}
           </p>
-          <p className="text-center">Statut : {order.statut}</p>
+          <p className="text-center">
+            Statut :{" "}
+            <span className="font-bold">{getStatusText(order.statut)}</span>
+          </p>
           <p className="text-center">Total : {order.price} €</p>
         </div>
 
@@ -113,6 +133,9 @@ export default function ModalOrder({ isOpen, onClose, order }: ModalProps) {
               <div className="flex justify-center flex-col gap-2">
                 {order.PersonnalInfos ? (
                   <>
+                    <p className="font-bold text-primary-500">
+                      LIVRAISON : {order.deliveryInfos.cost} €
+                    </p>
                     <p>Nom : {order.PersonnalInfos.lastName}</p>
                     <p>Prénom : {order.PersonnalInfos.firstName}</p>
                     <p>Email : {order.contactEmail}</p>

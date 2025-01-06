@@ -113,8 +113,6 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
-    console.log("Commande créée :", order);
-
     if (!order || !order.id) {
       throw new Error("La commande n'a pas été correctement créée.");
     }
@@ -152,11 +150,9 @@ export const POST = async (req: NextRequest) => {
       metadata: {
         orderId: order.id,
         orderNumber: order.orderNumber,
-        // shippingAdress: order.shippingAddress,
+        shippingRate: deliveryCost,
       },
     });
-
-    console.log("Stripe session created:", session);
 
     // Retournez l'URL de paiement Stripe
     return NextResponse.json({ checkoutUrl: session.url });
@@ -169,3 +165,30 @@ export const POST = async (req: NextRequest) => {
     );
   }
 };
+
+// {
+//   shipping_rate_data: {
+//     display_name: "Standard",
+//     delivery_estimate: {
+//       minimum: { unit: "business_day", value: 7 },
+//       maximum: { unit: "business_day", value: 10 },
+//     },
+//     fixed_amount: {
+//       amount: 1000, // 5€ en centimes
+//       currency: "eur",
+//     },
+//   },
+// },
+// {
+//   shipping_rate_data: {
+//     display_name: "Express",
+//     delivery_estimate: {
+//       minimum: { unit: "business_day", value: 3 },
+//       maximum: { unit: "business_day", value: 5 },
+//     },
+//     fixed_amount: {
+//       amount: 1500, // 15€ en centimes
+//       currency: "eur",
+//     },
+//   },
+// },

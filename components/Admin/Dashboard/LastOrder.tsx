@@ -121,7 +121,7 @@ export default function LastOrder() {
               </select>
               <button
                 onClick={() => handleOpenModal(order)}
-                className="bg-noir-500 rounded-md p-1"
+                className="bg-gradient-to-t px-2 relative group/btn from-primary-900 to-primary-500 block w-full font-font1 uppercase text-white rounded-md h-7 font-medium text-xs"
               >
                 Voir
               </button>

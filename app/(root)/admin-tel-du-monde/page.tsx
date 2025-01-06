@@ -2,21 +2,30 @@ import LastOrder from "@/components/Admin/Dashboard/LastOrder";
 import AddPromoCodeBtn from "@/components/Admin/PromoCode/AddPromoCode";
 import ShowActifPromo from "@/components/Admin/PromoCode/ShowActifPromo";
 import ShowAllPromo from "@/components/Admin/PromoCode/ShowAllPromo";
+import { getTotalRevenu } from "@/lib/actions/order.actions";
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const revenuTotal = await getTotalRevenu();
+
   return (
     <div className="flex flex-col gap-10">
       <section className="wrapper">
         <div className="flex gap-8">
           <div className="bg-noir-800 w-full p-2 rounded-md">
-            <h2 className="text-white font-font1">Revenu total</h2>
+            <h2 className="text-white font-font1">
+              Revenu total{" "}
+              <span className="text-xs text-white/70">
+                (Toutes les commandes effectuées)
+              </span>{" "}
+              : {revenuTotal} €
+            </h2>
           </div>
-          <div className="bg-noir-800 w-full p-2 rounded-md">
+          {/* <div className="bg-noir-800 w-full p-2 rounded-md">
             <h2 className="text-white font-font1">Total Commandes</h2>
           </div>
           <div className="bg-noir-800 w-full p-2 rounded-md">
             <h2 className="text-white font-font1">Total Clients</h2>
-          </div>
+          </div> */}
         </div>
       </section>
 

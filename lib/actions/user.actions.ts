@@ -4,18 +4,11 @@ import * as z from "zod";
 import { db } from "../db";
 import { userProfileSchema, userSettingSchema } from "../validator";
 
-import { revalidatePath } from "next/cache";
-import {
-  Address,
-  // CreateUserParams,
-  // DeleteUserParams,
-  // GetSuscriptionEvent,
-  // UpdateUserParams,
-} from "@/types";
-import { generateVerificationToken } from "../token";
-// import { generateVerificationToken } from "../token";
+import { currentRole } from "@/lib/auth";
 
-// import { generateVerificationToken } from "../token";
+import { revalidatePath } from "next/cache";
+import { Address } from "@/types";
+import { generateVerificationToken } from "../token";
 
 //! GET USER BY ID ----- PRISMA MODE
 export async function getUserById(id: string) {
@@ -42,11 +35,79 @@ export const getUserByEmail = async (email: string) => {
 };
 
 //! TOUS LES USERS
-export async function getAllUsers() {
+export async function getAllUsersWithOrders({
+  page,
+  query,
+  limit,
+}: {
+  page: number;
+  query: string;
+  limit: number;
+}) {
   try {
-    const users = await db.user.findMany();
-    return users;
-  } catch {
+    const role = await currentRole();
+    if (role !== "admin") {
+      console.error("Error fetching users:", "Vous n'êtes pas autorisé.");
+      return null;
+    }
+
+    const skipAmount = (Number(page) - 1) * limit;
+
+    const users = await db.user.findMany({
+      where: {
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { email: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      include: {
+        _count: {
+          select: { Order: true },
+        },
+        Order: {
+          include: {
+            items: {
+              include: {
+                Variant: {
+                  select: {
+                    images: true,
+                    model: {
+                      select: {
+                        name: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      skip: skipAmount,
+      take: limit,
+    });
+
+    const totalUsers = await db.user.count({
+      where: {
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { email: { contains: query, mode: "insensitive" } },
+        ],
+      },
+    });
+
+    // Map users to include the number of orders
+    const usersWithOrderCount = users.map((user) => ({
+      ...user,
+      orderCount: user._count.Order,
+    }));
+
+    return {
+      data: usersWithOrderCount,
+      totalPages: Math.ceil(totalUsers / limit),
+    };
+  } catch (error) {
+    console.error("Error fetching users:", error);
     return null;
   }
 }

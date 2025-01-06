@@ -108,13 +108,13 @@ export default function ProductsPage() {
             </Link>
           </div>
         ))}
-        <div className="bg-gradient-to-l from-noir-800 to-noir-900 flex justify-end p-1 rounded-md">
-          {models.totalPages > 1 && (
+        {models.totalPages > 1 && (
+          <div className="bg-gradient-to-l from-noir-800 to-noir-900 flex justify-end p-1 rounded-md">
             <div className="">
               <Pagination page={page} totalPages={models.totalPages} />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );

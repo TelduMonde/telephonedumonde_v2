@@ -39,7 +39,7 @@ export const Search = () => {
     <div className="overflow-hidden rounded-md border-none">
       <Input
         type="text"
-        placeholder="Rechercher un modèle"
+        placeholder="Rechercher..."
         onChange={(e) => setQuery(e.target.value)}
         className="bg-noir-900 text-white h-fit text-xs placeholder:text-xs"
       />

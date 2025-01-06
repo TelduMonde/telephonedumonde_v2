@@ -3,6 +3,11 @@ import { useEffect, useState } from "react";
 import { OrderProps } from "@/types";
 import ModalOrder from "@/components/Profils/ModalOrder";
 import classNames from "classnames";
+import { useSearchParams } from "next/navigation";
+import FilterStatut from "@/components/Admin/Orders/FilterStatut";
+import { Pagination } from "@/components/shared/Pagination";
+import FilterDate from "@/components/Admin/Orders/FilterDate";
+import DeleteModalOrderBtn from "@/components/Admin/Orders/DeleteModalOrderBtn";
 
 export default function OrdersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,17 +26,27 @@ export default function OrdersPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [orders, setOrders] = useState<OrderProps[]>([]);
+  const [totalPages, setTotalPages] = useState();
+
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get("page")) || 1;
+  const [orderBy, setOrderBy] = useState<string>("desc");
+  const statut = searchParams.get("statut") || "";
+  const dateRange = searchParams.get("dateRange") || "";
 
   useEffect(() => {
     setIsLoading(true);
     const fetchOrders = async () => {
       try {
-        const response = await fetch(`/api/orders`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          `/api/orders?statut=${statut}&dateRange=${dateRange}&orderBy=${orderBy}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -40,7 +55,9 @@ export default function OrdersPage() {
         }
 
         const data = await response.json();
-        setOrders(data);
+        console.log("Fetched orders:", data); // Log the fetched orders
+        setOrders(data.data);
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error("Error fetching orders:", error);
       } finally {
@@ -50,7 +67,10 @@ export default function OrdersPage() {
 
     // Fetch order
     fetchOrders();
-  }, []);
+  }, [statut, dateRange, orderBy]);
+
+  console.log(orders);
+  console.log(totalPages);
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
@@ -85,17 +105,29 @@ export default function OrdersPage() {
         </h2>
       </div>
 
+      <div className="flex gap-2">
+        <FilterStatut />
+        <FilterDate />
+        <select
+          onChange={(event) => setOrderBy(event.target.value)}
+          className="p-1 px-4 rounded-md bg-noir-900 text-xs text-white border border-white/70"
+        >
+          <option value="desc">Date de création: décroissant</option>
+          <option value="asc">Date de création: croissant</option>
+        </select>
+      </div>
+
       <div className="flex flex-col gap-4">
         {isLoading ? (
           <p className="bg-noir-800 p-4 rounded-md text-white font-font1 flex-center">
             Chargement...
           </p>
-        ) : (
+        ) : orders.length > 0 ? (
           orders.map((order) => (
             <div
               key={order.id}
               className={classNames(
-                "grid lg:grid-cols-6 gap-2 items-center p-2 font-font1 rounded-md border-2 bg-noir-700 text-white",
+                "grid md:grid-cols-7 gap-2 items-center p-2 font-font1 rounded-md border-2 bg-noir-700 text-white",
                 {
                   "border-yellow-500": order.statut === "pending",
                   "border-orange-500": order.statut === "processing",
@@ -108,7 +140,9 @@ export default function OrdersPage() {
               <p className="text-center font-bold underline">
                 C° {order.orderNumber}
               </p>
-              <p>{new Date(order.createdAt).toLocaleDateString()}</p>
+              <p className="text-xs">
+                {new Date(order.createdAt).toLocaleDateString()}
+              </p>
               <p>
                 <span className="text-xs text-white/70">
                   x {order.quantity}{" "}
@@ -116,25 +150,36 @@ export default function OrdersPage() {
                 {order.items[0].Variant.model.name}
               </p>
               <p>{order.price} €</p>
-              <select
-                value={order.statut}
-                onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                className="bg-noir-500 rounded-md p-1 text-center"
-              >
-                <option value="pending">Traitement</option>
-                <option value="processing">En cours de préparation</option>
-                <option value="shipped">Envoyée</option>
-                <option value="delivered">Livrée</option>
-                <option value="cancelled">Annulée</option>
-              </select>
-              <button
-                onClick={() => handleOpenModal(order)}
-                className="bg-noir-500 rounded-md p-1"
-              >
-                Voir
-              </button>
+              <div className="text-center">
+                <select
+                  value={order.statut}
+                  onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                  className="bg-noir-500 rounded-md p-1 text-center text-xs"
+                >
+                  <option value="pending">Traitement</option>
+                  <option value="processing">En cours de préparation</option>
+                  <option value="shipped">Envoyée</option>
+                  <option value="delivered">Livrée</option>
+                  <option value="cancelled">Annulée</option>
+                </select>
+              </div>
+              <div className="text-center">
+                <button
+                  onClick={() => handleOpenModal(order)}
+                  className="bg-gradient-to-t px-2 relative group/btn from-primary-900 to-primary-500 block w-full font-font1 uppercase text-white rounded-md h-7 font-medium text-xs"
+                >
+                  Voir
+                </button>
+              </div>
+              <div className="text-center">
+                <DeleteModalOrderBtn orderId={order.id} />
+              </div>
             </div>
           ))
+        ) : (
+          <p className="bg-noir-800 p-4 rounded-md text-white font-font1 flex-center">
+            Aucune commande trouvée.
+          </p>
         )}
       </div>
 
@@ -144,6 +189,14 @@ export default function OrdersPage() {
           onClose={handleCloseModal}
           order={selectedOrder}
         />
+      )}
+
+      {totalPages && totalPages > 1 && (
+        <div className="bg-gradient-to-l from-noir-800 to-noir-900 flex justify-end p-1 rounded-md">
+          <div className="">
+            <Pagination page={page} totalPages={totalPages} />
+          </div>
+        </div>
       )}
     </div>
   );

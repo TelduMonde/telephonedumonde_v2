@@ -98,6 +98,26 @@ export interface VariantFav {
 // }
 
 //! ====== USER
+export interface UserPropsAdmin {
+  id: string;
+  email: string | null;
+  emailVerified: Date | null;
+  firstName: string | null;
+  lastName: string | null;
+  name: string | null;
+  image: string | null;
+  isVerified: boolean;
+  role: string;
+  stripeCustomerId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  orderCount: number;
+  Order: OrderProps[];
+  _count: {
+    Order: number;
+  };
+}
+
 export interface Address {
   id?: string;
   street: string;
@@ -168,4 +188,42 @@ export type OrderProps = {
     quantity: number;
     price: number;
   }[];
+  deliveryInfos: {
+    cost: number;
+  };
+};
+
+export type OrderProps2 = {
+  data: {
+    id: string;
+    orderNumber: string;
+    userId: string;
+    contactEmail: string;
+    contactPhone: string;
+    createdAt: string;
+    updatedAt: string;
+    paymentStatus: string;
+    price: number;
+    promoCodeId: string | null;
+    quantity: number;
+    statut: string;
+    stripeSessionId: string | null;
+    addressId: string | null;
+    PersonnalInfos: PersonalInfos;
+    shippingAddress: Address;
+    items: {
+      Variant: {
+        images: string[];
+        model: { name: string };
+      };
+      id: string;
+      variantId: string;
+      quantity: number;
+      price: number;
+    }[];
+    deliveryInfos: {
+      cost: number;
+    };
+  };
+  totalPages: number;
 };
