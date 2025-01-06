@@ -147,6 +147,88 @@ export const register = async (values: z.infer<typeof userRegisterSchema>) => {
 
   // Génération du token et Envoi d'un email de confirmation avec ce token
   const verificationToken = await generateVerificationToken(email);
+
+  const htmlMessage = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <link href="https://fonts.googleapis.com/css2?family=Asap:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Asap', sans-serif;
+        background-color: #0a0a0a;
+        margin: 0;
+        padding: 0;
+        color: #ffffff;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #0a0a0a;
+        padding: 20px;
+        border-radius: 8px;
+        color: #ffffff;
+      }
+      .header {
+        background-color: #b80b07;
+        color: #ffffff;
+        padding: 10px;
+        text-align: center;
+        border-radius: 8px 8px 0 0;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 100;
+        border: 1px solid #fff; /* Bordure blanche */
+        border-radius: 5px; /* Rayon de bordure de 5px */
+        padding: 6px; /* Padding de 4px */
+      }
+      .logo {
+        max-width: 100px;
+        margin: 10px auto;
+      }
+      .content {
+        margin: 20px 0;
+      }
+      .content p {
+        line-height: 1.6;
+        color: #ffffff;
+      }
+      .footer {
+        text-align: center;
+        font-size: 14px;
+        color: #888888;
+        margin-top: 20px;
+      }
+      .product-image {
+        max-width: 100%;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <h1>Téléphones du Monde</h1>
+      </div>
+
+      <div class="content">
+        <p>Cliquez sur le lien suivant pour vérifier votre adresse email : <strong>${process.env.BASE_URL}/auth/new-verification?token=${verificationToken.token}</strong>.</p>
+
+        <p>Merci pour votre confiance. Vous pouvez maintenant vous connecter et accéder à votre espace personnel pour voir vos commandes et vos produits mis en favori.</p>
+
+      </div>
+
+      <div class="footer">
+        © 2025 Téléphones du Monde - Tous droits réservés
+      </div>
+    </div>
+  </body>
+  </html>
+  `;
+
   await fetch(`${process.env.BASE_URL}/api/emails`, {
     method: "POST",
     headers: {
@@ -157,9 +239,9 @@ export const register = async (values: z.infer<typeof userRegisterSchema>) => {
         name: "Téléphone du monde",
         address: "no-reply@telephonedumonde.com",
       },
-      recipient: { name: "CJ", address: verificationToken.email },
-      subject: "Vérifiez votre adresse email",
-      message: `Cliquez sur le lien suivant pour vérifier votre adresse email : ${process.env.BASE_URL}/auth/new-verification?token=${verificationToken.token}`,
+      recipient: { name: "", address: verificationToken.email },
+      subject: "Vérifiez votre adresse email | Téléphones du Monde",
+      message: htmlMessage,
     }),
   });
 
@@ -232,6 +314,84 @@ export const reset = async (values: z.infer<typeof ResetSchema>) => {
   // Générer un token de réinitialisation et envoyer un email
   const passwordResetToken = await generatePasswordResetToken(email);
 
+  const htmlMessage = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <link href="https://fonts.googleapis.com/css2?family=Asap:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Asap', sans-serif;
+        background-color: #0a0a0a;
+        margin: 0;
+        padding: 0;
+        color: #ffffff;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #0a0a0a;
+        padding: 20px;
+        border-radius: 8px;
+        color: #ffffff;
+      }
+      .header {
+        background-color: #b80b07;
+        color: #ffffff;
+        padding: 10px;
+        text-align: center;
+        border-radius: 8px 8px 0 0;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 100;
+        border: 1px solid #fff; /* Bordure blanche */
+        border-radius: 5px; /* Rayon de bordure de 5px */
+        padding: 6px; /* Padding de 4px */
+      }
+      .logo {
+        max-width: 100px;
+        margin: 10px auto;
+      }
+      .content {
+        margin: 20px 0;
+      }
+      .content p {
+        line-height: 1.6;
+        color: #ffffff;
+      }
+      .footer {
+        text-align: center;
+        font-size: 14px;
+        color: #888888;
+        margin-top: 20px;
+      }
+      .product-image {
+        max-width: 100%;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <h1>Téléphones du Monde</h1>
+      </div>
+
+      <div class="content">
+        <p>Cliquez sur le lien suivant afin de réinitialiser votre mot de passe : <strong>${process.env.BASE_URL}/auth/nouveau-mot-de-passe?token=${passwordResetToken.token}</strong>.</p>
+      </div>
+
+      <div class="footer">
+        © 2025 Téléphones du Monde - Tous droits réservés
+      </div>
+    </div>
+  </body>
+  </html>
+  `;
+
   await fetch(`${process.env.BASE_URL}/api/emails`, {
     method: "POST",
     headers: {
@@ -242,9 +402,9 @@ export const reset = async (values: z.infer<typeof ResetSchema>) => {
         name: "Téléphone du monde",
         address: "no-reply@telephonedumonde.com",
       },
-      recipient: { name: "CJ", address: passwordResetToken.email },
-      subject: "Réinitialisation de votre mot de passe",
-      message: `Cliquez sur le lien suivant afin de réinitialiser votre mot de passe :  ${process.env.BASE_URL}/auth/nouveau-mot-de-passe?token=${passwordResetToken.token}`,
+      recipient: { name: existingUser.name, address: passwordResetToken.email },
+      subject: "Réinitialisation de votre mot de passe | Téléphones du Monde",
+      message: htmlMessage,
     }),
   });
 
