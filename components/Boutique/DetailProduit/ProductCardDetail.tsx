@@ -287,7 +287,9 @@ export default function ProductCardDetail({ slug }: { slug: string }) {
         <Gallery imageUrl={selectedVariant?.images || []} />
 
         <div className="text-white flex flex-col justify-between gap-6 px-4">
-          <span className="text-xs font-fontb text-white/20">Apple</span>
+          <span className="text-xs font-fontb text-white/20">
+            {selectedVariant?.model.brand}
+          </span>
           <div className="flex justify-between items-center gap-10">
             <h3 className="font-font1 text-lg">
               {selectedVariant?.model.name || "Produit Indisponible"}

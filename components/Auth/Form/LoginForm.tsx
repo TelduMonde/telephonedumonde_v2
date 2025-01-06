@@ -72,6 +72,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
               form.reset();
               setSuccess(data.success);
               router.refresh();
+              router.push("/");
               toast.success("Vous êtes connecté");
               if (onClose) {
                 onClose();

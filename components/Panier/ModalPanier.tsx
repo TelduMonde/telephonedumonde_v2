@@ -63,7 +63,7 @@ const ModalPanier: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   };
 
   //! PASSER AU PAIEMENT
-  const [promoCode, setPromoCode] = useState(""); // État pour le code promo
+  // const [promoCode, setPromoCode] = useState(""); // État pour le code promo
   const [loading, setLoading] = useState(false); // État pour l'indicateur de chargement
   const [error, setError] = useState<string | null>(null);
 
@@ -79,7 +79,7 @@ const ModalPanier: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         },
         body: JSON.stringify({
           items: state.items,
-          promoCode: promoCode || null,
+          promoCode: null,
         }),
       });
 
@@ -162,7 +162,7 @@ const ModalPanier: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   </li>
                 ))}
               </ul>
-              <div className="flex flex-col gap-2">
+              {/* <div className="flex flex-col gap-2">
                 <input
                   type="text"
                   placeholder="Entrez votre code promo"
@@ -170,7 +170,7 @@ const ModalPanier: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
                 />
-              </div>
+              </div> */}
 
               {/* Erreur */}
               {error && <p className="text-red-500 text-sm">{error}</p>}

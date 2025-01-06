@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 import { useEffect, useState } from "react";
 import ModalOrder from "./ModalOrder";
@@ -76,31 +77,39 @@ export default function OrderCard() {
 
   return (
     <Transition>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap lg:flex-col gap-4">
         {isLoading ? (
           <p className="bg-noir-800 p-4 rounded-md text-white font-font1 flex-center">
             Chargement...
+          </p>
+        ) : orders.length === 0 ? (
+          <p className="bg-noir-800 p-4 rounded-md uppercase text-white font-font1 flex-center">
+            Vous n'avez pas encore passé de commande.
           </p>
         ) : (
           orders.map((order) => (
             <div
               key={order.id}
-              className="grid lg:grid-cols-6 gap-2 items-center bg-noir-800 text-white p-2 font-font1 rounded-md"
+              className="w-full sm:w-1/3 lg:w-full flex flex-col gap-4  lg:grid lg:grid-cols-6 lg:gap-2 items-center bg-noir-700 text-white p-2 font-font1 rounded-md"
             >
-              <p className="text-center font-bold underline">
+              <p className="text-center font-bold text-lg">
                 C° {order.orderNumber}
               </p>
-              <p>{new Date(order.createdAt).toLocaleDateString()}</p>
-              <p>
+              <p className="text-sm sm:text-base">
+                Date : {new Date(order.createdAt).toLocaleDateString()}
+              </p>
+              <p className="text-sm sm:text-base">
                 <span className="text-xs text-white/70">
                   x {order.quantity}{" "}
                 </span>
                 {order.items[0].Variant.model.name}
               </p>
-              <p>{order.price} €</p>
-              <p>
+              <p className="text-sm sm:text-base">{order.price} €</p>
+              <p className="text-sm sm:text-base">
                 Statut :{" "}
-                <span className="font-bold">{getStatusText(order.statut)}</span>
+                <span className="font-bold text-lg">
+                  {getStatusText(order.statut)}
+                </span>
               </p>
               <button
                 onClick={() => handleOpenModal(order)}

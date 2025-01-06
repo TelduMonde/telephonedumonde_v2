@@ -47,6 +47,7 @@ export const GET = async (req: NextRequest) => {
       const firstVariant = model.variants[0];
       return {
         id: model.id,
+        slug: model.slug,
         name: model.name,
         brand: model.brand,
         isActive: model.isActive,

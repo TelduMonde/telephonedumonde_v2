@@ -24,7 +24,7 @@ export default function page() {
   return (
     <section className="wrapper flex flex-col gap-10">
       <h1 className="flex items-center gap-4 sm:mt-2 font-font1 text-white text-xl sm:text-4xl font-extrabold tracking-wide">
-        LE CONCEPT{" "}
+        <span className="hidden sm:block ">LE CONCEPT</span>{" "}
         <span className="text-xl font-thin font-fontb text-center inline-block p-4 border rounded-md text-white tracking-widest">
           Téléphone du monde
         </span>
@@ -56,7 +56,7 @@ export default function page() {
               d'accéder aux meilleurs modèles venant de pays comme le Japon ou
               l’Inde, souvent proposés à des prix beaucoup plus attractifs.{" "}
               <br /> <br />{" "}
-              <span className="text-lg font-bold uppercase">
+              <span className="text-lg font-bold uppercase gradient-text">
                 Pourquoi choisir Téléphones du Monde ?
               </span>{" "}
             </p>

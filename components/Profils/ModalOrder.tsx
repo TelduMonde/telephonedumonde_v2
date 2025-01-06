@@ -65,7 +65,7 @@ export default function ModalOrder({ isOpen, onClose, order }: ModalProps) {
     <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
       <div
         ref={modalRef}
-        className="flex flex-col gap-4 bg-noir-500 p-6 rounded-md shadow-md relative w-4/5 lg:w-2/4"
+        className="flex flex-col gap-4 bg-noir-700 p-6 rounded-md shadow-md relative w-4/5 lg:w-2/4 h-[30rem] overflow-y-auto"
       >
         <button
           onClick={onClose}
@@ -75,7 +75,7 @@ export default function ModalOrder({ isOpen, onClose, order }: ModalProps) {
         </button>
 
         {/* NUMERO DE COMMANDE */}
-        <h3 className="bg-noir-800 rounded-md p-2 text-white font-font1 text-center">
+        <h3 className="bg-noir-900 rounded-md p-2 text-white font-font1 font-bold text-center">
           C° {order.orderNumber}
         </h3>
 
@@ -91,45 +91,14 @@ export default function ModalOrder({ isOpen, onClose, order }: ModalProps) {
           <p className="text-center">Total : {order.price} €</p>
         </div>
 
-        {/* LES PRODUITS COMMANDEES */}
-        <div className="bg-noir-800 text-white font-font1 p-4 rounded-md text-center">
-          <p className="mb-2">LES ARTICLES</p>
-          <div className="w-full h-[0.2px] bg-white mb-4 rounded-full" />
-          {order.items && order.items.length > 0 ? (
-            order.items.map((item) => (
-              <div
-                key={item.id}
-                className="grid grid-cols-3 gap-2 items-center"
-              >
-                <Image
-                  src={item.Variant.images[0]}
-                  alt={item.Variant.model.name}
-                  width={100}
-                  height={100}
-                  className="w-16 h-16 object-cover rounded-md"
-                />
-                <div className="flex flex-col">
-                  <p>
-                    <span className="text-xs text-white/70">
-                      {item.quantity} x
-                    </span>{" "}
-                    {item.Variant.model.name}
-                  </p>
-                </div>
-                <p>{item.price} €</p>
-              </div>
-            ))
-          ) : (
-            <p>Aucun article dans la commande</p>
-          )}
-        </div>
-
         {/* ADRESSES DE LIVRAISON */}
         <div className="flex flex-col sm:flex-row gap-10 text-white font-font1 text-xs">
-          <div className="flex flex-col gap-2 bg-noir-800 p-4 rounded-md w-full">
-            <p className="uppercase text-lg">Infos & Adresse de Livraison</p>
+          <div className="flex flex-col gap-2 bg-noir-700 p-4 rounded-md w-full">
+            <p className="uppercase text-base md:text-lg">
+              Infos & Adresse de Livraison
+            </p>
             <div className="w-full h-[0.2px] bg-white mb-4 rounded-full" />
-            <div className="grid grid-cols-2 gap-10">
+            <div className="flex flex-col lg:grid lg:grid-cols-2 gap-10">
               <div className="flex justify-center flex-col gap-2">
                 {order.PersonnalInfos ? (
                   <>
@@ -165,6 +134,39 @@ export default function ModalOrder({ isOpen, onClose, order }: ModalProps) {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* LES PRODUITS COMMANDEES */}
+        <div className="bg-noir-900 text-white font-font1 p-4 rounded-md text-center">
+          <p className="mb-2">LES ARTICLES</p>
+          <div className="w-full h-[0.2px] bg-white mb-4 rounded-full" />
+          {order.items && order.items.length > 0 ? (
+            order.items.map((item) => (
+              <div
+                key={item.id}
+                className="grid grid-cols-3 gap-2 items-center"
+              >
+                <Image
+                  src={item.Variant.images[0]}
+                  alt={item.Variant.model.name}
+                  width={100}
+                  height={100}
+                  className="w-12 h-12 lg:w-16 lg:h-16 object-cover rounded-md"
+                />
+                <div className="flex flex-col text-sm">
+                  <p>
+                    <span className="text-xs text-white/70">
+                      {item.quantity} x
+                    </span>{" "}
+                    {item.Variant.model.name}
+                  </p>
+                </div>
+                <p className="text-sm">{item.price} €</p>
+              </div>
+            ))
+          ) : (
+            <p>Aucun article dans la commande</p>
+          )}
         </div>
       </div>
     </div>

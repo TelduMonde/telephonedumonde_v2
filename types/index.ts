@@ -46,7 +46,7 @@ export type VariantProps = {
   description: string;
   isActive: boolean;
   images: string[];
-  model: { id: string; name: string };
+  model: { id: string; name: string; brand: string };
 };
 
 //! FAVORITE VARIANT

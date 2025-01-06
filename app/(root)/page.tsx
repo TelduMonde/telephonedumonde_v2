@@ -170,7 +170,7 @@ export default function Home() {
                 plus une fortune pour un smartphone dernier cri : faites le bon
                 choix avec Téléphones du Monde et économisez dès aujourd'hui.
               </p>
-              <button className="bg-gradient-to-t px-2 relative group/btn font-font1 from-primary-900  to-primary-500 block w-full text-white uppercase rounded-md h-10 font-medium">
+              <button className="bg-gradient-to-t px-2 relative group/btn font-font1 from-primary-900 font-bold to-primary-500 block w-full text-white uppercase rounded-md h-10">
                 <Link href="/concept">En savoir plus</Link>
                 <BottomGradient />
               </button>
