@@ -45,6 +45,7 @@ export const NewVerificationForm = () => {
       headerLabel="Confirmation de votre adresse mail"
       backButtonLabel="Retourner à la page de connexion"
       backButtonHref="/se-connecter"
+      showSocial={false}
     >
       <div className="flex items-center w-full justify-center">
         {/* {!success && !error && <BeatLoader color="purple" />} */}
