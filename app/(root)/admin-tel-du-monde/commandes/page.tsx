@@ -69,9 +69,6 @@ export default function OrdersPage() {
     fetchOrders();
   }, [statut, dateRange, orderBy]);
 
-  console.log(orders);
-  console.log(totalPages);
-
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
       const response = await fetch(`/api/orders/statut`, {
@@ -127,7 +124,7 @@ export default function OrdersPage() {
             <div
               key={order.id}
               className={classNames(
-                "grid md:grid-cols-7 gap-2 items-center p-2 font-font1 rounded-md border-2 bg-noir-700 text-white",
+                "grid md:grid-cols-8 gap-2 items-center p-2 font-font1 rounded-md border-2 bg-noir-700 text-white",
                 {
                   "border-yellow-500": order.statut === "pending",
                   "border-orange-500": order.statut === "processing",
@@ -150,6 +147,16 @@ export default function OrdersPage() {
                 {order.items[0].Variant.model.name}
               </p>
               <p>{order.price} €</p>
+              <p className="text-sm">
+                <span className="text-xs text-white/70">Paiement :</span>{" "}
+                {order.paymentStatus === "pending"
+                  ? "En attente"
+                  : order.paymentStatus === "paid"
+                  ? "Réussi"
+                  : order.paymentStatus === "failed"
+                  ? "Échec"
+                  : order.paymentStatus}
+              </p>
               <div className="text-center">
                 <select
                   value={order.statut}
