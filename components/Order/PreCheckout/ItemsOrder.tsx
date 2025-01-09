@@ -53,7 +53,7 @@ export default function ItemsOrder() {
         country: "",
         typeAdress: "",
       },
-      deliveryMethod: "standard",
+      // deliveryMethod: "standard",
     },
     mode: "onSubmit",
   });
@@ -104,7 +104,7 @@ export default function ItemsOrder() {
         address: data.address,
         contactEmail: data.contactEmail,
         contactPhone: data.contactPhone?.trim() || null, // Transformez les chaînes vides en null
-        deliveryMethod: data.deliveryMethod,
+        // deliveryMethod: data.deliveryMethod,
         items: state.items, // Vérifiez que `state.items` contient des items valides
       };
 
@@ -358,7 +358,7 @@ export default function ItemsOrder() {
             </div>
           </div>
 
-          <div className="w-full lg:w-2/4 mx-auto bg-noir-800 p-2 rounded-md">
+          {/* <div className="w-full lg:w-2/4 mx-auto bg-noir-800 p-2 rounded-md">
             <h3 className="text-base text-white font-semibold mb-2">
               Mode de livraison
             </h3>
@@ -372,7 +372,7 @@ export default function ItemsOrder() {
             {errors.deliveryMethod && (
               <p className="text-red-500">{errors.deliveryMethod.message}</p>
             )}
-          </div>
+          </div> */}
 
           <button
             type="submit"

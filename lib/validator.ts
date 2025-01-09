@@ -159,5 +159,5 @@ export const checkoutSchema = z.object({
     typeAdress: z.string().optional(),
   }),
   promoCode: z.string().optional(), // Le code promo est facultatif
-  deliveryMethod: z.enum(["standard", "express"]),
+  // deliveryMethod: z.enum(["standard", "express"]),
 });

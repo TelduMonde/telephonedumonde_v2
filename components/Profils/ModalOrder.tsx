@@ -103,7 +103,11 @@ export default function ModalOrder({ isOpen, onClose, order }: ModalProps) {
                 {order.PersonnalInfos ? (
                   <>
                     <p className="font-bold text-primary-500">
-                      LIVRAISON : {order.deliveryInfos.cost} €
+                      LIVRAISON :{" "}
+                      {order.deliveryInfos && order.deliveryInfos.cost !== null
+                        ? order.deliveryInfos.cost
+                        : "N/A"}{" "}
+                      €
                     </p>
                     <p>Nom : {order.PersonnalInfos.lastName}</p>
                     <p>Prénom : {order.PersonnalInfos.firstName}</p>
