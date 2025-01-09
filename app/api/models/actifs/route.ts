@@ -17,10 +17,20 @@ export const GET = async (req: NextRequest) => {
     const models = await prisma.phoneModel.findMany({
       where: {
         isActive: true,
-        name: {
-          contains: query ?? "",
-          mode: "insensitive",
-        },
+        OR: [
+          {
+            name: {
+              contains: query ?? "",
+              mode: "insensitive",
+            },
+          },
+          {
+            brand: {
+              contains: query ?? "",
+              mode: "insensitive",
+            },
+          },
+        ],
         brand: brand
           ? {
               contains: brand,

@@ -22,8 +22,6 @@ type CheckoutFormData = z.infer<typeof checkoutSchema>;
 export default function ItemsOrder() {
   const user = useCurrentUser();
 
-  console.log("User in checkout:", user);
-
   const [firstName, lastName] = user?.name ? user.name.split(" ") : ["", ""];
 
   //! ARTICLES DU PANIER
