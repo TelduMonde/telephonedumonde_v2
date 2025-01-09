@@ -87,7 +87,7 @@ export default function LastOrder() {
             <div
               key={order.id}
               className={classNames(
-                "grid lg:grid-cols-6 gap-2 items-center p-2 font-font1 rounded-md border-2 bg-noir-700 text-white",
+                "grid lg:grid-cols-7 gap-2 items-center p-2 font-font1 rounded-md border-2 bg-noir-700 text-white",
                 {
                   "border-yellow-500": order.statut === "pending",
                   "border-orange-500": order.statut === "processing",
@@ -100,7 +100,9 @@ export default function LastOrder() {
               <p className="text-center font-bold underline">
                 C° {order.orderNumber}
               </p>
-              <p>{new Date(order.createdAt).toLocaleDateString()}</p>
+              <p className="text-xs">
+                {new Date(order.createdAt).toLocaleDateString()}
+              </p>
               <p>
                 <span className="text-xs text-white/70">
                   x {order.quantity}{" "}
@@ -108,10 +110,20 @@ export default function LastOrder() {
                 {order.items[0].Variant.model.name}
               </p>
               <p>{order.price} €</p>
+              <p className="text-sm">
+                <span className="text-xs text-white/70">Paiement :</span>{" "}
+                {order.paymentStatus === "pending"
+                  ? "En attente"
+                  : order.paymentStatus === "paid"
+                  ? "Réussi"
+                  : order.paymentStatus === "failed"
+                  ? "Échec"
+                  : order.paymentStatus}
+              </p>
               <select
                 value={order.statut}
                 onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                className="bg-noir-500 rounded-md p-1 text-center"
+                className="bg-noir-500 rounded-md p-1 text-center text-xs"
               >
                 <option value="pending">Traitement</option>
                 <option value="processing">En cours de préparation</option>
