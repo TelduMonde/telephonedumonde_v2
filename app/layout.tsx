@@ -45,6 +45,13 @@ export default async function RootLayout({
 
   return (
     <html lang="fr">
+      <head>
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="1439cf05-e33d-4e94-8cef-d0b68baf109c"
+        ></script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-noir-900 min-h-screen`}
       >
