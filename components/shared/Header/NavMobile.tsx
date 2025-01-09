@@ -47,7 +47,7 @@ export const NavMobile = ({ session }: NavItemsProps) => {
 
       <div
         ref={navRef}
-        className={`fixed top-0 right-0 w-64 h-full bg-black/10 backdrop-blur-lg text-white transform flex flex-col justify-center ${
+        className={`fixed top-0 right-0 w-64 h-full bg-black/90 backdrop-blur-lg text-white transform flex flex-col justify-center ${
           isOpen ? "translate-x-0" : "translate-x-full"
         } transition-transform duration-300 ease-in-out`}
       >
@@ -60,10 +60,10 @@ export const NavMobile = ({ session }: NavItemsProps) => {
             <MdClose />
           </button>
         </div>
-        <ul className="flex flex-col p-4 space-y-8 font-font1 text-2xl tracking-widest">
+        <ul className="flex flex-col p-4 space-y-8 font-fontb font-bold uppercase text-2xl tracking-widest">
           <li>
             <Link href="/" onClick={handleClose}>
-              Home
+              Accueil
             </Link>
           </li>
           <div className="h-[1px] bg-white" />
