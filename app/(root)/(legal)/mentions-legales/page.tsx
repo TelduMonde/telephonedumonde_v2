@@ -71,7 +71,6 @@ export default function MentionsLegales() {
               </span>
             </p>
           </div>
-
           <div className="flex flex-col gap-2">
             <h2 className="text-[2rem] font-bold">Propriété intellectuelle</h2>
             <p className="text-sm">
@@ -109,7 +108,6 @@ export default function MentionsLegales() {
               l&apos;autorisation expresse de leurs auteurs est interdite.
             </p>
           </div>
-
           <div className="flex flex-col gap-2">
             <h2 className="text-[2rem] font-bold">
               Protection des données personnelles
@@ -149,7 +147,6 @@ export default function MentionsLegales() {
               l&apos;autorisation expresse de leurs auteurs est interdite.
             </p>
           </div>
-
           <div className="flex flex-col gap-2">
             <h2 className="text-[2rem] font-bold">Avertissement Général</h2>
             <p className="text-sm">
@@ -171,7 +168,7 @@ export default function MentionsLegales() {
               les prix, la conformité des produits.
             </p>
           </div>
-
+          954298
           <div className="flex flex-col gap-2">
             <h2 className="text-[2rem] font-bold">Crédit & Copyright</h2>
             <p className="text-sm">
@@ -180,7 +177,6 @@ export default function MentionsLegales() {
               proviennent d&apos;un professionnel avec son accord.
             </p>
           </div>
-
           <div className="flex flex-col gap-2">
             <h2 className="text-[2rem] font-bold">
               Loi applicable et juridiction compétente

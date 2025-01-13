@@ -133,7 +133,10 @@ export const POST = async (req: NextRequest) => {
       })),
       shipping_options: [
         {
-          shipping_rate: "shr_1QfQz0DIPjvaNYnzPnta99xw", // Livraison standard
+          shipping_rate: "shr_1QfQz6DIPjvaNYnzwOUzgQnB", // Livraison standard
+        },
+        {
+          shipping_rate: "shr_1QgtYVDIPjvaNYnzdlGhHLN0", // Livraison standard
         },
       ],
       mode: "payment",
