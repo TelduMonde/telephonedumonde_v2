@@ -11,7 +11,7 @@ export default async function Layout({
 
   return (
     <>
-      <section className="wrapper flex justify-between items-center ">
+      <section className="wrapper flex flex-col gap-4 md:flex-row justify-between items-center ">
         <h1 className=" text-white font-font1 tracking-widest text-xl">
           Mon Compte | <span className="font-bold">{user?.name}</span>
         </h1>

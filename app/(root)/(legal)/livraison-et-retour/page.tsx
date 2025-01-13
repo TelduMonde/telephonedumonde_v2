@@ -10,7 +10,7 @@ export default function LivraisonRetour() {
 
       <div className="font-font1 text-white flex flex-col gap-10">
         <div className="flex flex-col gap-2">
-          <h2 className="text-[2rem]">1. Modes de Livraison</h2>
+          <h2 className="text-[2rem] font-bold">1. Modes de Livraison</h2>
           <p className="text-sm">
             Nous proposons plusieurs modes de livraison pour répondre à vos
             besoins :
@@ -28,7 +28,7 @@ export default function LivraisonRetour() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h2 className="text-[2rem]">2. Frais de Livraison</h2>
+          <h2 className="text-[2rem] font-bold">2. Frais de Livraison</h2>
           <p className="text-sm">
             Les frais de livraison sont calculés en fonction du mode de
             livraison choisi et du montant total de la commande. Les frais de
@@ -37,7 +37,7 @@ export default function LivraisonRetour() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h2 className="text-[2rem]">3. Délais de Livraison</h2>
+          <h2 className="text-[2rem] font-bold">3. Délais de Livraison</h2>
           <p className="text-sm">
             Les délais de livraison indiqués sont des estimations et peuvent
             varier en fonction des disponibilités des produits et des
@@ -47,7 +47,7 @@ export default function LivraisonRetour() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h2 className="text-[2rem]">4. Suivi de Commande</h2>
+          <h2 className="text-[2rem] font-bold">4. Suivi de Commande</h2>
           <p className="text-sm">
             Dès que votre commande est expédiée, vous recevrez un email de
             confirmation avec un numéro de suivi. Vous pourrez suivre
@@ -57,7 +57,7 @@ export default function LivraisonRetour() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h2 className="text-[2rem]">5. Problèmes de Livraison</h2>
+          <h2 className="text-[2rem] font-bold">5. Problèmes de Livraison</h2>
           <p className="text-sm">
             Si vous rencontrez un problème avec la livraison de votre commande
             (retard, colis endommagé, etc.), veuillez contacter notre service
@@ -67,7 +67,7 @@ export default function LivraisonRetour() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h2 className="text-[2rem]">6. Droit de Rétractation</h2>
+          <h2 className="text-[2rem] font-bold">6. Droit de Rétractation</h2>
           <p className="text-sm">
             Conformément à la législation en vigueur, vous disposez d&aops;un
             délai de 14 jours à compter de la réception de votre commande pour
@@ -77,7 +77,7 @@ export default function LivraisonRetour() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h2 className="text-[2rem]">7. Procédure de Retour</h2>
+          <h2 className="text-[2rem] font-bold">7. Procédure de Retour</h2>
           <p className="text-sm">
             Pour retourner un produit, veuillez suivre les étapes suivantes :
             <ol>
@@ -98,7 +98,7 @@ export default function LivraisonRetour() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h2 className="text-[2rem]">8. Conditions de Retour</h2>
+          <h2 className="text-[2rem] font-bold">8. Conditions de Retour</h2>
           <p className="text-sm">
             Les produits doivent être retournés dans leur état d&apos;origine,
             non portés et non lavés, avec toutes les étiquettes attachées. Les
@@ -108,7 +108,7 @@ export default function LivraisonRetour() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h2 className="text-[2rem]">9. Frais de Retour</h2>
+          <h2 className="text-[2rem] font-bold">9. Frais de Retour</h2>
           <p className="text-sm">
             Les frais de retour sont à la charge du Client, sauf en cas de
             produit défectueux ou non conforme. Dans ce cas, le Vendeur prendra
@@ -117,7 +117,7 @@ export default function LivraisonRetour() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h2 className="text-[2rem]">10. Remboursements</h2>
+          <h2 className="text-[2rem] font-bold">10. Remboursements</h2>
           <p className="text-sm">
             Une fois le retour reçu et inspecté, nous vous enverrons un email
             pour vous notifier de la réception de votre article retourné. Nous
@@ -130,7 +130,7 @@ export default function LivraisonRetour() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h2 className="text-[2rem]">1. Modes de Livraison</h2>
+          <h2 className="text-[2rem] font-bold">1. Modes de Livraison</h2>
           <p className="text-sm">
             Si vous souhaitez échanger un produit, veuillez suivre la procédure
             de retour et indiquer que vous souhaitez un échange. Une fois votre

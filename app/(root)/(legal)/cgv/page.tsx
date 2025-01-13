@@ -12,7 +12,9 @@ export default function CGV() {
       <div className="font-font1 text-white">
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-2">
-            <h2 className="font-font-1 text-[2rem]">1. Introduction</h2>
+            <h2 className="font-font-1 text-[2rem] font-bold">
+              1. Introduction
+            </h2>
             <p className="text-sm">
               {" "}
               Les présentes conditions générales de vente (CGV) régissent les
@@ -26,7 +28,9 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">2. Acceptation des conditions</h2>
+            <h2 className="text-[2rem] font-bold">
+              2. Acceptation des conditions
+            </h2>
             <p className="text-sm">
               En passant commande sur le Site, le Client accepte sans réserve
               les présentes CGV. Ces CGV prévaudront sur toutes autres
@@ -36,7 +40,7 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">3. Produits</h2>
+            <h2 className="text-[2rem] font-bold">3. Produits</h2>
             <p className="text-sm">
               Les produits proposés à la vente sont ceux figurant sur le Site,
               dans la limite des stocks disponibles. Le Vendeur se réserve le
@@ -59,7 +63,7 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">4. Commandes</h2>
+            <h2 className="text-[2rem] font-bold">4. Commandes</h2>
             <p className="text-sm">
               Le Client passe commande sur le Site en suivant le processus en
               ligne. La commande ne peut être enregistrée sur le Site que si le
@@ -71,7 +75,7 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">5. Prix</h2>
+            <h2 className="text-[2rem] font-bold">5. Prix</h2>
             <p className="text-sm">
               Les prix des produits sont indiqués en euros, toutes taxes
               comprises (TTC), hors frais de livraison qui seront précisés lors
@@ -83,7 +87,7 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">6. Paiement</h2>
+            <h2 className="text-[2rem] font-bold">6. Paiement</h2>
             <p className="text-sm">
               Le paiement des achats s&apos;effectue par carte bancaire, PayPal,
               ou tout autre moyen de paiement proposé sur le Site. Le paiement
@@ -94,7 +98,7 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">7. Livraison</h2>
+            <h2 className="text-[2rem] font-bold">7. Livraison</h2>
             <p className="text-sm">
               Les produits sont livrés à l&apos;adresse de livraison indiquée
               par le Client lors de sa commande. Le Vendeur s&apos;engage à
@@ -109,7 +113,7 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">8. Droit de rétractation</h2>
+            <h2 className="text-[2rem] font-bold">8. Droit de rétractation</h2>
             <p className="text-sm">
               Conformément à la législation en vigueur, le Client dispose
               d&apos;un délai de 14 jours à compter de la réception de sa
@@ -124,7 +128,7 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">9. Retour et échange</h2>
+            <h2 className="text-[2rem] font-bold">9. Retour et échange</h2>
             <p className="text-sm">
               En cas de produit défectueux ou non conforme, le Client peut
               demander un échange (hors pièce unique) ou un remboursement en
@@ -137,7 +141,7 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">10. Garantie</h2>
+            <h2 className="text-[2rem] font-bold">10. Garantie</h2>
             <p className="text-sm">
               Tous les produits fournis par Téléphone du monde bénéficient de la
               garantie légale de conformité et de la garantie contre les vices
@@ -148,7 +152,7 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">11. Responsabilité</h2>
+            <h2 className="text-[2rem] font-bold">11. Responsabilité</h2>
             <p className="text-sm">
               Le Vendeur, dans le processus de vente en ligne, n&apos;est tenu
               que par une obligation de moyens. Sa responsabilité ne pourra être
@@ -159,7 +163,9 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">12. Propriété intellectuelle</h2>
+            <h2 className="text-[2rem] font-bold">
+              12. Propriété intellectuelle
+            </h2>
             <p className="text-sm">
               Tous les éléments du Site sont et restent la propriété
               intellectuelle et exclusive du Vendeur. Personne n&apos;est
@@ -170,7 +176,7 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">13. Données personnelles</h2>
+            <h2 className="text-[2rem] font-bold">13. Données personnelles</h2>
             <p className="text-sm">
               Le Vendeur s&apos;engage à préserver la confidentialité des
               informations fournies par le Client. Ces informations seront
@@ -180,7 +186,9 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">14. Droit applicable et litiges</h2>
+            <h2 className="text-[2rem] font-bold">
+              14. Droit applicable et litiges
+            </h2>
             <p className="text-sm">
               Les présentes CGV sont soumises à la loi française. En cas de
               litige, une solution amiable sera recherchée avant toute action
@@ -190,7 +198,7 @@ export default function CGV() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <h2 className="text-[2rem]">
+            <h2 className="text-[2rem] font-bold">
               {" "}
               15. Modifications des conditions générales de vente
             </h2>
