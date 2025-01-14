@@ -35,11 +35,9 @@ export const RegisterForm = () => {
 
   //! Fonction de soumission du formulaire
   const onSubmit = (values: z.infer<typeof userRegisterSchema>) => {
-    // Reset des messages d'erreur et de succès
     setError("");
     setSuccess("");
 
-    // Server Action (je peux aussi utiliser fetch ici)
     startTransition(() => {
       register(values).then((data: { error?: string; success?: string }) => {
         setError(data.error);

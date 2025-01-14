@@ -18,7 +18,7 @@ export const POST = async (req: NextRequest) => {
     // Parse le corps de la requête
     const body = await req.json();
 
-    const { code, discount, isActive, expiresAt, userId } = body;
+    const { code, discount, isActive, isShippedFree, expiresAt, userId } = body;
 
     // Validation des données
     if (!code || typeof code !== "string") {
@@ -31,7 +31,6 @@ export const POST = async (req: NextRequest) => {
     if (
       discount === undefined ||
       typeof discount !== "number" ||
-      discount <= 0 ||
       discount > 100
     ) {
       return NextResponse.json(
@@ -63,6 +62,7 @@ export const POST = async (req: NextRequest) => {
         code,
         discount,
         isActive: isActive ?? true, // Par défaut actif
+        isShippedFree: isShippedFree ?? false, // Par défaut non
         expiresAt: new Date(expiresAt),
         createdAt: new Date(),
         updatedAt: new Date(),

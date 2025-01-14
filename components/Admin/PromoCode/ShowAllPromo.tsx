@@ -3,6 +3,7 @@
 import { PromoCode } from "@/types";
 import { useState } from "react";
 import EditPromoCodeBtn from "./EditPromoCodeBtn";
+import DeletePromoCodeBtn from "./DeletePromoCodeBtn";
 
 export default function ShowAllPromo() {
   const [showPromoCodes, setShowPromoCodes] = useState(false);
@@ -81,7 +82,7 @@ export default function ShowAllPromo() {
                       promoCode={promo}
                       promoCodeId={promo.id}
                     />
-                    {/* <DeletePromoCodeBtn promoCode={promo.id} /> */}
+                    <DeletePromoCodeBtn promoCodeId={promo.id} />
                   </div>
                 </li>
               ))}

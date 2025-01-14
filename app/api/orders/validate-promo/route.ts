@@ -7,9 +7,9 @@ const prisma = new PrismaClient();
 
 //! VALIDATION DU PANIER
 export const POST = async (req: NextRequest) => {
-  const { items, promoCode } = await req.json();
+  const { items, promoCode, shippingMethodId } = await req.json();
 
-  console.log(items, promoCode);
+  console.log(items, promoCode, shippingMethodId);
 
   try {
     // Validation des articles
@@ -34,6 +34,8 @@ export const POST = async (req: NextRequest) => {
 
     // Validation du code promo (si fourni)
     let discount = 0;
+    let isShippedFree = false;
+
     if (promoCode) {
       const code = await prisma.promoCode.findUnique({
         where: { code: promoCode },
@@ -47,15 +49,31 @@ export const POST = async (req: NextRequest) => {
       }
 
       // Calculer la réduction
-      discount = (total * code.discount) / 100;
+      discount = (total * (code.discount ?? 0)) / 100;
+
+      // Vérifier si la livraison est gratuite
+      isShippedFree = code.isShippedFree ?? false;
     }
 
-    // Calculer le total après réduction
-    const totalAfterDiscount = total - discount;
+    // Calculer le coût de la livraison
+    const shippingMethod = await prisma.shippingMethod.findUnique({
+      where: { id: shippingMethodId },
+    });
+
+    let shippingCost = shippingMethod ? shippingMethod.cost : 0;
+    if (isShippedFree && shippingMethod?.name === "Livraison Standard") {
+      shippingCost = 0;
+    }
+
+    // Calculer le total après réduction et frais de livraison
+    const totalAfterDiscount = total - discount + shippingCost;
 
     return NextResponse.json({
       message: "Validation réussie",
       total: totalAfterDiscount,
+      isShippedFree,
+      discount,
+      shippingCost,
     });
   } catch (err) {
     console.error(err);

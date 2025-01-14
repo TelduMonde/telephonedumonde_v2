@@ -152,7 +152,16 @@ export interface PromoCode {
   code: string;
   discount: number;
   isActive: boolean;
+  isShippedFree: boolean;
   expiresAt: Date;
+}
+
+//! SHIPPING METHOD
+export interface ShippingMethod {
+  id: string;
+  name: string;
+  cost: number;
+  description: string | null;
 }
 
 //! ORDER

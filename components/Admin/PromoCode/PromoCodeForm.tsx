@@ -28,6 +28,7 @@ type PromoCodeFormProps = {
     discount: number;
     isActive: boolean;
     expiresAt: Date;
+    isShippedFree: boolean;
   };
   promoCodeId?: string;
 };
@@ -54,17 +55,19 @@ export default function PromoCodeForm({
     type === "edit"
       ? {
           code: promoCode?.code,
-          discount: promoCode?.discount || 1,
+          discount: promoCode?.discount || 0,
           isActive: promoCode?.isActive,
           expiresAt: promoCode?.expiresAt
             ? new Date(promoCode.expiresAt)
             : new Date(),
+          isShippedFree: promoCode?.isShippedFree,
         }
       : {
           code: "",
-          discount: 1, // Minimum valide
+          discount: 0, // Minimum valide
           isActive: true,
           expiresAt: new Date(),
+          isShippedFree: false,
         };
 
   const form = useForm<z.infer<typeof promoCodeFormSchema>>({
@@ -88,7 +91,6 @@ export default function PromoCodeForm({
     setSuccess("");
 
     if (type === "add") {
-      console.log("Données du formulaire :", values);
       try {
         if (!userId) {
           setError("Une erreur est survenue");
@@ -122,6 +124,7 @@ export default function PromoCodeForm({
         setIsModalOpen(false);
         router.refresh();
         toast.success("Code promo créé avec succès");
+        window.location.href = window.location.href;
       } catch (error) {
         console.log(error);
         setError("Erreur lors de l'ajout du modèle");
@@ -155,6 +158,7 @@ export default function PromoCodeForm({
         setSuccess("Code promo modifié avec succès");
         setIsModalOpen(false);
         toast.success("Code promo modifié avec succès");
+        window.location.href = window.location.href;
       } catch (error) {
         console.log(error);
         setError("Erreur lors de la modification du modèle");
@@ -223,6 +227,21 @@ export default function PromoCodeForm({
               type="number"
               className="text-noir-900 p-1 rounded-md"
               {...form.register("discount")}
+            />
+          </div>
+          <div className="w-full flex items-center gap-1 bg-noir-700 px-2 rounded-md">
+            <label
+              className="text-white text-sm w-full"
+              htmlFor="isShippedFree"
+            >
+              Activer la livraison gratuite :
+            </label>
+            <input
+              id="isActive"
+              type="checkbox"
+              className="h-5 w-5"
+              defaultChecked={initialValues.isActive}
+              {...form.register("isShippedFree")}
             />
           </div>
           <div className="w-full flex items-center gap-1 bg-noir-700 px-2 rounded-md">

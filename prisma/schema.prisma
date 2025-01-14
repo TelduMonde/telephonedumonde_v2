@@ -167,6 +167,8 @@ model Order {
   User              User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
   Address           Address?      @relation(fields: [addressId], references: [id], onDelete: Cascade)
   PromoCode         PromoCode?    @relation(fields: [promoCodeId], references: [id])
+  shippingMethodId  String?
+  ShippingMethod    ShippingMethod? @relation("OrderShippingMethod", fields: [shippingMethodId], references: [id])
 
   // Champs pour les commandes sans compte
   contactEmail      String?
@@ -190,6 +192,16 @@ model OrderItem {
   @@map("order_item")
 }
 
+model ShippingMethod {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  cost        Float
+  description String?
+  orders      Order[]  @relation("OrderShippingMethod")
+
+  @@map("shipping_method")
+}
+
 model Address {
   id           String   @id @default(cuid())
   street       String
@@ -204,14 +216,15 @@ model Address {
 }
 
 model PromoCode {
-  id          String   @id @default(cuid()) // ID du code promo
-  code        String   @unique // Code du code promo
-  discount    Float    // Le pourrcentage de réduction appliqué par le code promo
-  expiresAt   DateTime  // Date d'expiration du code promo
-  isActive    Boolean  @default(true) // Indique si le code promo est actif
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  orders      Order[]
+  id            String   @id @default(cuid()) // ID du code promo
+  code          String   @unique // Code du code promo
+  discount      Float?    // Le pourrcentage de réduction appliqué par le code promo
+  isShippedFree Boolean? // Indique si le code promo offre la livraison gratuite
+  expiresAt     DateTime  // Date d'expiration du code promo
+  isActive      Boolean  @default(true) // Indique si le code promo est actif
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  orders        Order[]
 
   @@map("promo_code")
 }

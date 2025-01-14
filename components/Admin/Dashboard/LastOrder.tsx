@@ -140,6 +140,11 @@ export default function LastOrder() {
             </div>
           ))
         )}
+        {!isLoading && orders.length === 0 && (
+          <p className="bg-noir-800 text-white font-font1 p-2 text-xs text-center rounded-md">
+            Aucune commande.
+          </p>
+        )}
       </div>
 
       {selectedOrder && (

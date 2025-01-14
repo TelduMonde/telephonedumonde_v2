@@ -16,6 +16,7 @@ import { getUserAddress } from "@/lib/actions/user.actions";
 import { toast } from "sonner";
 import Image from "next/image";
 import { BottomGradient } from "@/components/ui/BottomGradient";
+import { ShippingMethod } from "@/types";
 
 type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
@@ -32,6 +33,8 @@ export default function ItemsOrder() {
   );
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [promoShipped, setPromoShipped] = useState(false);
+  const [promoApplied, setPromoApplied] = useState(false);
 
   //! GESTION FORM
   // const [error, setError] = useState<string | undefined>("");
@@ -46,6 +49,7 @@ export default function ItemsOrder() {
       lastName: lastName || "",
       contactEmail: user?.email || "",
       contactPhone: "",
+      shippingMethodId: "",
       address: {
         street: "",
         city: "",
@@ -53,7 +57,6 @@ export default function ItemsOrder() {
         country: "",
         typeAdress: "",
       },
-      // deliveryMethod: "standard",
     },
     mode: "onSubmit",
   });
@@ -62,9 +65,41 @@ export default function ItemsOrder() {
     handleSubmit,
     register,
     setValue,
+    watch,
     formState: { errors },
   } = form;
 
+  //! GET LIVRAISON
+  const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>([]);
+  useEffect(() => {
+    const fetchShippingMethods = async () => {
+      try {
+        const methods = await fetch("/api/orders/shippingMethod"); // Remplacez par votre endpoint réel
+        const data = await methods.json();
+
+        // Ajuster le prix de la livraison standard si promoShipped est vrai
+        const adjustedMethods = data.map((method: ShippingMethod) => {
+          if (method.name === "Livraison Standard" && promoShipped) {
+            return { ...method, cost: 0 };
+          }
+          return method;
+        });
+
+        setShippingMethods(adjustedMethods);
+
+        // Définir la valeur par défaut pour le mode de livraison
+        if (adjustedMethods.length > 0) {
+          setValue("shippingMethodId", adjustedMethods[0].id);
+        }
+      } catch (error) {
+        console.error("Failed to fetch shipping methods:", error);
+      }
+    };
+
+    fetchShippingMethods();
+  }, [setValue, promoShipped]);
+
+  //! GET ADRESSE UTILISATEUR
   useEffect(() => {
     const fetchuserAdress = async () => {
       if (!user) {
@@ -95,7 +130,68 @@ export default function ItemsOrder() {
     fetchuserAdress();
   }, [user, setValue]);
 
-  // SOUMISSION DU FORMULAIRE
+  //! CHANGEMEMENT DU TOTAL EN FONCTION DE LA LIVRAISON
+  const shippingMethodId = watch("shippingMethodId");
+
+  useEffect(() => {
+    const selectedShippingMethod = shippingMethods.find(
+      (method) => method.id === shippingMethodId
+    );
+    const shippingCost = selectedShippingMethod
+      ? promoShipped && selectedShippingMethod.name === "Livraison Standard"
+        ? 0
+        : selectedShippingMethod.cost
+      : 0;
+    const itemsTotalPrice = state.items.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+    setTotalPrice(itemsTotalPrice + shippingCost - discount);
+  }, [shippingMethodId, shippingMethods, state.items, promoShipped, discount]);
+
+  //! APPLIQUER LE CODE PROMO
+  const applyPromoCode = async () => {
+    if (promoCode) {
+      try {
+        const response = await fetch("/api/orders/validate-promo", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            items: state.items,
+            promoCode: promoCode,
+            shippingMethodId,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          toast.error(errorData.error);
+          return;
+        }
+
+        const data = await response.json();
+        setPromoApplied(true);
+        setDiscount(data.discount);
+        setTotalPrice(data.total);
+        setPromoShipped(data.isShippedFree);
+        if (data.isShippedFree) {
+          toast.success("Vous avez accès à une livraison gratuite !");
+        } else {
+          toast.success("Code promo appliqué avec succès !");
+        }
+      } catch (error) {
+        console.error("Error applying promo code:", error);
+        toast.error("Erreur lors de l'application du code promo.");
+      }
+    } else {
+      setDiscount(0);
+      setPromoShipped(false);
+    }
+  };
+
+  //! SOUMISSION DU FORMULAIRE
   const onSubmit = async (data: CheckoutFormData) => {
     try {
       const payload = {
@@ -104,8 +200,9 @@ export default function ItemsOrder() {
         address: data.address,
         contactEmail: data.contactEmail,
         contactPhone: data.contactPhone?.trim() || null, // Transformez les chaînes vides en null
-        // deliveryMethod: data.deliveryMethod,
+        shippingMethodId: data.shippingMethodId,
         items: state.items, // Vérifiez que `state.items` contient des items valides
+        totalPrice,
       };
 
       const response = await fetch("/api/orders/checkout", {
@@ -116,55 +213,17 @@ export default function ItemsOrder() {
         body: JSON.stringify(payload),
       });
 
-      console.log("Statut de la réponse :", response.status); // Vérifiez si c'est bien 400
-      console.log("Données envoyées au backend :", {
-        items: state.items,
-        ...data,
-      });
-
       const result = await response.json();
 
       if (!response.ok) {
         throw new Error(result.message || "Erreur lors de la validation.");
       }
 
-      console.log("Checkout URL:", result.checkoutUrl);
-
       // Redirection vers Stripe
       window.location.href = result.checkoutUrl;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error.message);
-    }
-  };
-
-  //! APPLIQUER LE CODE PROMO
-  const handleApplyPromoCode = async () => {
-    try {
-      const response = await fetch("/api/orders/validate-promo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          items: state.items,
-          promoCode,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        toast.error(errorData.error);
-        return;
-      }
-
-      const data = await response.json();
-      setDiscount(data.discount);
-      setTotalPrice(data.total);
-      toast.success("Code promo appliqué avec succès !");
-    } catch (error) {
-      console.error("Error applying promo code:", error);
-      toast.error("Erreur lors de l'application du code promo.");
     }
   };
 
@@ -204,11 +263,14 @@ export default function ItemsOrder() {
               type="text"
               id="promoCode"
               value={promoCode}
+              disabled={promoApplied}
               onChange={(e) => setPromoCode(e.target.value)}
-              className="text-xs rounded-md px-2 h-8 w-40"
+              className="text-xs font-font1 rounded-md px-2 h-8 w-40"
             />
             <button
-              onClick={handleApplyPromoCode}
+              type="button"
+              onClick={applyPromoCode}
+              disabled={promoApplied}
               className="bg-gradient-to-t px-2 relative group/btn from-primary-900 to-primary-500 block text-white rounded-md h-8 w-28 font-medium font-font1"
             >
               Appliquer
@@ -238,10 +300,10 @@ export default function ItemsOrder() {
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div className="w-full lg:w-2/4 mx-auto bg-noir-800 p-2 rounded-md">
-            <h3 className="text-base text-white font-semibold mb-2">
+            <h3 className="text-base font-font1 text-white font-semibold mb-2">
               Informations Personnelles
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-4 font-font1 text-sm">
               <input
                 type="text"
                 placeholder="Nom"
@@ -265,10 +327,10 @@ export default function ItemsOrder() {
           </div>
 
           <div className="w-full lg:w-2/4 mx-auto bg-noir-800 p-2 rounded-md">
-            <h3 className="text-base text-white font-semibold mb-2">
+            <h3 className="text-base font-font1 text-white font-semibold mb-2">
               Informations de contact
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-4 font-font1 text-sm">
               <input
                 type="email"
                 placeholder="Email"
@@ -292,10 +354,10 @@ export default function ItemsOrder() {
           </div>
 
           <div className="w-full lg:w-2/4 mx-auto bg-noir-800 p-2 rounded-md">
-            <h3 className="text-base text-white font-semibold mb-2">
+            <h3 className="text-base font-font1 text-white font-semibold mb-2">
               Adresse de livraison
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-4 font-font1 text-sm">
               <input
                 id="street"
                 type="text"
@@ -358,21 +420,37 @@ export default function ItemsOrder() {
             </div>
           </div>
 
-          {/* <div className="w-full lg:w-2/4 mx-auto bg-noir-800 p-2 rounded-md">
+          <div className="w-full lg:w-2/4 mx-auto bg-noir-800 p-2 rounded-md">
             <h3 className="text-base text-white font-semibold mb-2">
               Mode de livraison
             </h3>
             <select
-              {...register("deliveryMethod")}
-              className="w-full border rounded-md p-2"
+              id="shippingMethodId"
+              {...register("shippingMethodId")}
+              className="w-full rounded-md p-2 font-font1 text-sm"
             >
-              <option value="standard">Standard (10 €)</option>
-              <option value="express">Rapide (15 €)</option>
+              {shippingMethods.map((method) => (
+                <option key={method.id} value={method.id}>
+                  {method.name} | {method.description} | {method.cost} €
+                </option>
+              ))}
             </select>
-            {errors.deliveryMethod && (
-              <p className="text-red-500">{errors.deliveryMethod.message}</p>
+            {errors.shippingMethodId && (
+              <p>{errors.shippingMethodId.message}</p>
             )}
-          </div> */}
+          </div>
+
+          <div className="w-full lg:w-2/4 mx-auto flex flex-col gap-4 bg-noir-800 p-2 rounded-md text-center">
+            {discount > 0 && (
+              <p className="text-white">Réduction: -{discount}€</p>
+            )}
+            <p className="pb-4 pt-2 lg:p-0 font-bold text-white font-font1">
+              <span className="text-white/80 font-normal">
+                TOTAL DE LA COMMANDE :
+              </span>{" "}
+              {totalPrice} €
+            </p>
+          </div>
 
           <button
             type="submit"

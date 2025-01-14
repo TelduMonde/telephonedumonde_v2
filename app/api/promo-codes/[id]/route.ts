@@ -52,10 +52,10 @@ export const PUT = async (req: NextRequest) => {
 
     // Lire et parser le corps de la requête
     const body = await req.json();
-    const { code, discount, isActive, expiresAt } = body;
+    const { code, discount, isActive, isShippedFree, expiresAt } = body;
 
     // Vérification des données reçues
-    if (!code || !discount || typeof isActive === "undefined" || !expiresAt) {
+    if (!code || typeof isActive === "undefined" || !expiresAt) {
       return NextResponse.json(
         { error: "Données manquantes ou invalides." },
         { status: 400 }
@@ -69,6 +69,7 @@ export const PUT = async (req: NextRequest) => {
         code,
         discount,
         isActive,
+        isShippedFree,
         expiresAt: new Date(expiresAt),
       },
     });

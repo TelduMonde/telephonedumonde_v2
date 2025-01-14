@@ -19,12 +19,21 @@ export const POST = async (req: NextRequest) => {
     contactPhone,
     address,
     promoCode,
-    deliveryMethod,
+    shippingMethodId,
+    totalPrice,
   } = await req.json();
 
   try {
     // Validation des champs obligatoires
-    if (!contactEmail || !address || !firstName || !lastName) {
+    if (
+      !contactEmail ||
+      !address ||
+      !firstName ||
+      !lastName ||
+      !items ||
+      !totalPrice ||
+      !shippingMethodId
+    ) {
       return NextResponse.json(
         {
           error: "Les informations de contact et d'adresse sont obligatoires.",
@@ -58,7 +67,7 @@ export const POST = async (req: NextRequest) => {
       // }
     }
 
-    // Validation du code promo (si fourni)
+    //! Validation du code promo (si fourni)
     let discount = 0;
     if (promoCode) {
       const code = await prisma.promoCode.findUnique({
@@ -72,18 +81,15 @@ export const POST = async (req: NextRequest) => {
         );
       }
 
-      discount = code.discount;
+      discount = code.discount ?? 0;
     }
 
-    // Calcul des coûts
-    const subTotal = items.reduce(
-      (total: number, item: any) => total + item.price * item.quantity,
-      0
-    );
-    const deliveryCost = deliveryMethod === "express" ? 10 : 0;
-    const total = subTotal + deliveryCost - (subTotal * discount) / 100;
+    //! Calcul des coûts avec livraison
+    const shippingMethod = await prisma.shippingMethod.findUnique({
+      where: { id: shippingMethodId },
+    });
 
-    // Création d'une commande temporaire dans la base de données
+    //! Création d'une commande temporaire dans la base de données
     const order = await prisma.order.create({
       data: {
         userId: user?.id || null,
@@ -102,7 +108,7 @@ export const POST = async (req: NextRequest) => {
           (total: number, item: any) => total + item.quantity,
           0
         ),
-        price: total,
+        price: totalPrice,
         items: {
           create: items.map((item: any) => ({
             variantId: item.id,
@@ -117,28 +123,50 @@ export const POST = async (req: NextRequest) => {
       throw new Error("La commande n'a pas été correctement créée.");
     }
 
-    // Création d'une session Stripe
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: items.map((item: any) => ({
+    //! Création d'une session Stripe
+    const lineItems = items.map((item: any) => ({
+      price_data: {
+        currency: "eur",
+        product_data: {
+          name: item.name,
+          images: [item.image],
+        },
+        unit_amount: item.price * 100,
+      },
+      quantity: item.quantity,
+    }));
+
+    // Ajouter les frais de livraison comme une ligne séparée
+    if (shippingMethod && shippingMethod.cost > 0) {
+      lineItems.push({
         price_data: {
           currency: "eur",
           product_data: {
-            name: item.name,
-            images: [item.image],
+            name: "Frais de livraison",
           },
-          unit_amount: item.price * 100,
+          unit_amount: shippingMethod.cost * 100,
         },
-        quantity: item.quantity,
-      })),
-      shipping_options: [
-        {
-          shipping_rate: "shr_1QfQz6DIPjvaNYnzwOUzgQnB", // Livraison standard
+        quantity: 1,
+      });
+    }
+
+    // Ajouter la réduction comme une ligne séparée (montant négatif)
+    if (discount > 0) {
+      lineItems.push({
+        price_data: {
+          currency: "eur",
+          product_data: {
+            name: "Réduction",
+          },
+          unit_amount: -discount * 100,
         },
-        {
-          shipping_rate: "shr_1QgtYVDIPjvaNYnzdlGhHLN0", // Livraison standard
-        },
-      ],
+        quantity: 1,
+      });
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
       mode: "payment",
       billing_address_collection: "required",
       success_url: `${req.headers.get(
@@ -150,7 +178,8 @@ export const POST = async (req: NextRequest) => {
       metadata: {
         orderId: order.id,
         orderNumber: order.orderNumber,
-        shippingRate: deliveryCost,
+        shippingRate: shippingMethod ? shippingMethod.name : "N/A",
+        promoCode: promoCode ? promoCode.name + promoCode.discount : "N/A",
       },
     });
 
@@ -165,30 +194,3 @@ export const POST = async (req: NextRequest) => {
     );
   }
 };
-
-// {
-//   shipping_rate_data: {
-//     display_name: "Standard",
-//     delivery_estimate: {
-//       minimum: { unit: "business_day", value: 7 },
-//       maximum: { unit: "business_day", value: 10 },
-//     },
-//     fixed_amount: {
-//       amount: 1000, // 5€ en centimes
-//       currency: "eur",
-//     },
-//   },
-// },
-// {
-//   shipping_rate_data: {
-//     display_name: "Express",
-//     delivery_estimate: {
-//       minimum: { unit: "business_day", value: 3 },
-//       maximum: { unit: "business_day", value: 5 },
-//     },
-//     fixed_amount: {
-//       amount: 1500, // 15€ en centimes
-//       currency: "eur",
-//     },
-//   },
-// },

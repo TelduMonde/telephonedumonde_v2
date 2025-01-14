@@ -9,6 +9,7 @@ export default function CodePromo() {
     discount: 0,
     isActive: false,
     expiresAt: new Date(),
+    isShippedFree: false,
   });
 
   useEffect(() => {
@@ -41,6 +42,18 @@ export default function CodePromo() {
 
   if (!promoCode || !promoCode.isActive || isExpired) {
     return null;
+  }
+
+  if (promoCode.isShippedFree) {
+    return (
+      <div className="bg-gradient-to-r from-primary-500 to-primary-900 p-1">
+        <p className="text-center text-white font-font1 uppercase text-xs sm:text-sm tracking-widest font-bold">
+          Livraison gratuite avec le code{" "}
+          <span className="underline">{promoCode.code}</span> ! PROFITEZ-EN dès
+          maintenant
+        </p>
+      </div>
+    );
   }
 
   return (

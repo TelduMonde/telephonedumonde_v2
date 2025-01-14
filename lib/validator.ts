@@ -29,13 +29,11 @@ export const promoCodeFormSchema = z.object({
   code: z.string().min(1, "Le code promo est requis."),
   discount: z.preprocess(
     (val) => Number(val),
-    z
-      .number()
-      .min(1, "Le pourcentage doit être supérieur à 0.")
-      .max(100, "Le pourcentage doit être inférieur ou égal à 100.")
+    z.number().max(100, "Le pourcentage doit être inférieur ou égal à 100.")
   ),
   isActive: z.boolean().optional(),
   expiresAt: z.date({ required_error: "La date d'expiration est requise." }),
+  isShippedFree: z.boolean().optional(),
 });
 
 //! COUNTRY
@@ -151,6 +149,7 @@ export const checkoutSchema = z.object({
   lastName: z.string().min(2, "Le nom est requis"),
   contactEmail: z.string().email("Veuillez entrer un email valide"),
   contactPhone: z.string().optional(),
+  shippingMethodId: z.string(),
   address: z.object({
     street: z.string().min(1, "La rue est obligatoire"),
     city: z.string().min(1, "La ville est obligatoire"),
@@ -160,4 +159,11 @@ export const checkoutSchema = z.object({
   }),
   promoCode: z.string().optional(), // Le code promo est facultatif
   // deliveryMethod: z.enum(["standard", "express"]),
+});
+
+//! LIVRAISON
+export const createDeliverySchema = z.object({
+  name: z.string().min(2, "Le nom de la méthode de livraison est requis"),
+  cost: z.number().min(0, "Le prix doit être supérieur ou égal à 0"),
+  description: z.string().min(2, "La description est requise"),
 });
