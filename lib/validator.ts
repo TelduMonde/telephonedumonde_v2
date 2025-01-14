@@ -157,7 +157,7 @@ export const checkoutSchema = z.object({
     country: z.string().min(1, "Le pays est obligatoire"),
     typeAdress: z.string().optional(),
   }),
-  promoCode: z.string().optional(), // Le code promo est facultatif
+  promoCodeId: z.string().optional(), // Le code promo est facultatif
   // deliveryMethod: z.enum(["standard", "express"]),
 });
 

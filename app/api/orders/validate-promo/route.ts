@@ -35,6 +35,7 @@ export const POST = async (req: NextRequest) => {
     // Validation du code promo (si fourni)
     let discount = 0;
     let isShippedFree = false;
+    let promoCodeId = null;
 
     if (promoCode) {
       const code = await prisma.promoCode.findUnique({
@@ -48,6 +49,7 @@ export const POST = async (req: NextRequest) => {
         );
       }
 
+      promoCodeId = code.id;
       // Calculer la réduction
       discount = (total * (code.discount ?? 0)) / 100;
 
@@ -74,6 +76,7 @@ export const POST = async (req: NextRequest) => {
       isShippedFree,
       discount,
       shippingCost,
+      promoCodeId,
     });
   } catch (err) {
     console.error(err);

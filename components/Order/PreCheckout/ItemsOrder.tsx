@@ -35,6 +35,7 @@ export default function ItemsOrder() {
   const [discount, setDiscount] = useState(0);
   const [promoShipped, setPromoShipped] = useState(false);
   const [promoApplied, setPromoApplied] = useState(false);
+  const [promoCodeId, setPromoCodeId] = useState<string | null>(null);
 
   //! GESTION FORM
   // const [error, setError] = useState<string | undefined>("");
@@ -57,6 +58,7 @@ export default function ItemsOrder() {
         country: "",
         typeAdress: "",
       },
+      promoCodeId: "",
     },
     mode: "onSubmit",
   });
@@ -173,6 +175,7 @@ export default function ItemsOrder() {
 
         const data = await response.json();
         setPromoApplied(true);
+        setPromoCodeId(data.promoCodeId);
         setDiscount(data.discount);
         setTotalPrice(data.total);
         setPromoShipped(data.isShippedFree);
@@ -203,6 +206,7 @@ export default function ItemsOrder() {
         shippingMethodId: data.shippingMethodId,
         items: state.items, // Vérifiez que `state.items` contient des items valides
         totalPrice,
+        promoCodeId,
       };
 
       const response = await fetch("/api/orders/checkout", {

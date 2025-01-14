@@ -21,6 +21,7 @@ export const POST = async (req: NextRequest) => {
     promoCode,
     shippingMethodId,
     totalPrice,
+    promoCodeId,
   } = await req.json();
 
   try {
@@ -69,9 +70,11 @@ export const POST = async (req: NextRequest) => {
 
     //! Validation du code promo (si fourni)
     let discount = 0;
-    if (promoCode) {
+    let isShippedFree = false;
+
+    if (promoCodeId) {
       const code = await prisma.promoCode.findUnique({
-        where: { code: promoCode },
+        where: { id: promoCodeId },
       });
 
       if (!code || !code.isActive || new Date(code.expiresAt) < new Date()) {
@@ -82,6 +85,7 @@ export const POST = async (req: NextRequest) => {
       }
 
       discount = code.discount ?? 0;
+      isShippedFree = code.isShippedFree ?? false;
     }
 
     //! Calcul des coûts avec livraison
@@ -100,7 +104,7 @@ export const POST = async (req: NextRequest) => {
           firstName,
           lastName,
         },
-        promoCodeId: promoCode || null,
+        promoCodeId: promoCodeId || null,
         statut: "pending",
         paymentStatus: "pending",
         orderNumber: Math.floor(Math.random() * 1000000).toString(), // Generate a random order number
@@ -136,8 +140,19 @@ export const POST = async (req: NextRequest) => {
       quantity: item.quantity,
     }));
 
-    // Ajouter les frais de livraison comme une ligne séparée
-    if (shippingMethod && shippingMethod.cost > 0) {
+    if (isShippedFree) {
+      // Ajouter les frais de livraison comme une ligne séparée
+      lineItems.push({
+        price_data: {
+          currency: "eur",
+          product_data: {
+            name: "Frais de livraison",
+          },
+          unit_amount: 0,
+        },
+        quantity: 1,
+      });
+    } else if (shippingMethod && shippingMethod.cost > 0) {
       lineItems.push({
         price_data: {
           currency: "eur",
