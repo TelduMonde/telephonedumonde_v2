@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { currentRole } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
-// import { use } from "react";
 
 const prisma = new PrismaClient();
 
@@ -273,7 +272,6 @@ export const DELETE = async (
     }
 
     const { variantId } = await req.json();
-    console.log("VARIANT ID", variantId);
     const { slug } = await params;
 
     if (!variantId) {

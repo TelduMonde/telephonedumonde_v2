@@ -28,8 +28,6 @@ export const GET = async (
       where: { slug },
     });
 
-    console.log("MODEL", model);
-
     if (!model) {
       return NextResponse.json(
         { error: "Modèle non trouvé." },

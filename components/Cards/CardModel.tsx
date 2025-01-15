@@ -7,7 +7,7 @@ export default function CardModel({ model }: { model: CardsModelProps }) {
   return (
     <Link
       href={`/boutique/${model.slug}`}
-      className="relative group w-full lg:min-w-[300px] lg:min-h-[400px] pt-4 hover:shadow-2xl transition-all ease-in-out duration-300 rounded-md"
+      className="relative group w-full lg:min-w-[250px] lg:min-h-[400px] pt-4 hover:shadow-2xl transition-all ease-in-out duration-300 rounded-md"
     >
       {/* IMAGE TEL */}
       <div className="w-full h-[200px] z-20 flex flex-center flex-col overflow-hidden">

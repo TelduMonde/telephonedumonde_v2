@@ -219,12 +219,12 @@ export default function ProductCardDetail({ slug }: { slug: string }) {
 
   if (isLoading) {
     return (
-      <div className="wrapper flex flex-col justify-center items-center gap-20">
+      <div className="wrapper flex flex-col justify-center items-center gap-20 ">
         <div className="flex flex-col gap-2 md:flex-row md:gap-6">
           {/* Galerie d'images */}
           <Gallery imageUrl={[]} />
 
-          <div className="text-white flex flex-col justify-between gap-6 px-4">
+          <div className="text-white flex flex-col justify-between gap-6 px-4 ">
             <span className="text-xs font-fontb text-white/20"></span>
             <div className="flex justify-between items-center gap-10">
               <h3 className="font-font1 text-lg">Chargement...</h3>
@@ -267,6 +267,9 @@ export default function ProductCardDetail({ slug }: { slug: string }) {
         </div>
 
         <section className="wrapper bg-noir-800 rounded-md">
+          <p className="bg-gradient-to-r from-primary-500 to-primary-900 p-2 px-8 w-fit mx-auto -mt-10 text-xs text-white font-font1 font-bold uppercase rounded-md">
+            TOUS NOS PRODUITS SONT NEUFS
+          </p>
           <h4 className="wrapper text-white underline-offset-2 font-font1 text-lg uppercase font-bold">
             Description du produit :
           </h4>
@@ -282,12 +285,12 @@ export default function ProductCardDetail({ slug }: { slug: string }) {
 
   return (
     <div className="wrapper flex flex-col justify-center items-center gap-20">
-      <div className="flex flex-col gap-2 md:flex-row md:gap-6">
+      <div className="flex flex-col gap-2 md:flex-row md:gap-6 justify-center w-full lg:w-fit">
         {/* Galerie d'images */}
         <Gallery imageUrl={selectedVariant?.images || []} />
 
-        <div className="text-white flex flex-col justify-between gap-6 px-4">
-          <span className="text-xs font-fontb text-white/20">
+        <div className="text-white flex flex-col justify-between gap-6 px-4 lg:min-w-[400px]">
+          <span className="text-xs font-font1 text-white/40">
             {selectedVariant?.model.brand}
           </span>
           <div className="flex justify-between items-center gap-10">
@@ -328,7 +331,7 @@ export default function ProductCardDetail({ slug }: { slug: string }) {
               {options.colors.map((color) => (
                 <button
                   key={color}
-                  className={`font-font1 border rounded-md px-4 lg:py-1 w-24 ${
+                  className={`font-font1 border rounded-md px-4 py-1 w-24 ${
                     selectedColor === color
                       ? "bg-primary-500 text-white border-none hover:bg-none"
                       : "hover:bg-noir-800 duration-300"
@@ -364,7 +367,7 @@ export default function ProductCardDetail({ slug }: { slug: string }) {
           <div className="flex gap-2">
             <button
               onClick={handleAddToCart}
-              className="font-font1 text-lg uppercase bg-gradient-to-t px-2 relative group/btn from-primary-900 to-primary-500 block w-full text-white rounded-md h-10 font-medium  "
+              className="font-font1 text-lg uppercase bg-gradient-to-t px-2 relative group/btn from-primary-900 to-primary-500 block w-full text-white rounded-md h-10 font-medium"
             >
               Ajouter au panier
               <BottomGradient />
@@ -384,9 +387,14 @@ export default function ProductCardDetail({ slug }: { slug: string }) {
       </div>
 
       <section className="wrapper bg-noir-800 rounded-md">
-        <h4 className="wrapper text-white underline-offset-2 font-font1 text-lg uppercase font-bold">
-          Description du produit :
-        </h4>
+        <div className="sm:wrapper flex flex-col-reverse lg:flex-row lg:justify-between items-center gap-2">
+          <h4 className="wrapper text-white underline-offset-2 font-font1 text-lg uppercase font-bold">
+            Description du produit :
+          </h4>
+          <p className="bg-gradient-to-r from-primary-500 to-primary-900 mx-auto whitespace-nowrap px-8 py-2 uppercase text-xs text-white font-font1 font-bold rounded-md text-nowrap">
+            Tous les produits sont neufs
+          </p>
+        </div>
         <p className="wrapper text-white font-font1 text-xs">
           {formatDescription(
             selectedVariant?.description || "Description non disponible"

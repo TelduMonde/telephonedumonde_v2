@@ -168,7 +168,6 @@ export default function MentionsLegales() {
               les prix, la conformité des produits.
             </p>
           </div>
-          954298
           <div className="flex flex-col gap-2">
             <h2 className="text-[2rem] font-bold">Crédit & Copyright</h2>
             <p className="text-sm">

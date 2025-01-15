@@ -17,8 +17,6 @@ export default function Gallery({ imageUrl }: { imageUrl: string[] }) {
     }
   }, [imageUrl]);
 
-  console.log("images", images);
-
   return (
     <div className="flex flex-col justify-center items-center gap-2 h-[450px] sm:h-full w-full lg:w-[300px]">
       <Image
