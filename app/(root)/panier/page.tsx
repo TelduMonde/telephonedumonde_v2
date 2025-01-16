@@ -2,9 +2,9 @@ import PanierMobile from "@/components/Panier/PanierMobile";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Votre Panier | Téléphones du Monde",
+  title: "Votre Panier | Téléphone du Monde",
   description:
-    "Consultez votre panier sur Téléphones du Monde pour finaliser votre commande. Découvrez des smartphones internationaux de qualité à des prix compétitifs. Livraison rapide et sécurité garantie.",
+    "Consultez votre panier sur Téléphone du Monde pour finaliser votre commande. Découvrez des smartphones internationaux de qualité à des prix compétitifs. Livraison rapide et sécurité garantie.",
   keywords: [
     "panier téléphones",
     "acheter smartphone",

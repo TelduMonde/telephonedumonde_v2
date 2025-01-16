@@ -18,9 +18,9 @@ import { BiWorld } from "react-icons/bi";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Téléphones du Monde | Smartphones Internationaux à Prix Réduits",
+  title: "Téléphone du Monde | Smartphones Internationaux à Prix Réduits",
   description:
-    "Découvrez Téléphones du Monde, votre plateforme pour acheter des smartphones internationaux neufs et performants à des prix imbattables. Économisez dès aujourd'hui !",
+    "Découvrez Téléphone du Monde, votre plateforme pour acheter des smartphones internationaux neufs et performants à des prix imbattables. Économisez dès aujourd'hui !",
   keywords: [
     "smartphones internationaux",
     "téléphones pas chers",

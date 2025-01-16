@@ -3,9 +3,9 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Connexion | Téléphones du Monde",
+  title: "Connexion | Téléphone du Monde",
   description:
-    "Connectez-vous à votre compte Téléphones du Monde pour gérer vos commandes, consulter vos informations personnelles et accéder à vos offres exclusives. Une expérience simple et rapide.",
+    "Connectez-vous à votre compte Téléphone du Monde pour gérer vos commandes, consulter vos informations personnelles et accéder à vos offres exclusives. Une expérience simple et rapide.",
   keywords: [
     "connexion téléphones",
     "se connecter",

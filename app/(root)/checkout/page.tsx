@@ -2,9 +2,9 @@ import ItemsOrder from "@/components/Order/PreCheckout/ItemsOrder";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Paiement | Téléphones du Monde",
+  title: "Paiement | Téléphone du Monde",
   description:
-    "Finalisez votre achat en toute sécurité sur Téléphones du Monde. Vérifiez vos articles, choisissez votre mode de livraison et effectuez un paiement sécurisé pour recevoir vos smartphones internationaux rapidement.",
+    "Finalisez votre achat en toute sécurité sur Téléphone du Monde. Vérifiez vos articles, choisissez votre mode de livraison et effectuez un paiement sécurisé pour recevoir vos smartphones internationaux rapidement.",
   keywords: [
     "paiement téléphones",
     "checkout téléphones",

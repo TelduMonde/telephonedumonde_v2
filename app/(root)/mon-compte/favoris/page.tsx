@@ -4,9 +4,9 @@ import { currentUser } from "@/lib/auth";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mes Favoris | Téléphones du Monde",
+  title: "Mes Favoris | Téléphone du Monde",
   description:
-    "Retrouvez vos smartphones favoris sur Téléphones du Monde. Consultez votre liste de produits préférés et achetez-les facilement à des prix compétitifs.",
+    "Retrouvez vos smartphones favoris sur Téléphone du Monde. Consultez votre liste de produits préférés et achetez-les facilement à des prix compétitifs.",
   keywords: [
     "mes favoris téléphones",
     "produits favoris",

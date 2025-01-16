@@ -3,9 +3,9 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Inscription | Téléphones du Monde | Rejoignez-nous",
+  title: "Inscription | Téléphone du Monde | Rejoignez-nous",
   description:
-    "Rejoignez Téléphones du Monde pour accéder à une large sélection de smartphones internationaux de qualité à prix compétitifs. Inscrivez-vous dès maintenant pour ne pas manquer nos offres exclusives.",
+    "Rejoignez Téléphone du Monde pour accéder à une large sélection de smartphones internationaux de qualité à prix compétitifs. Inscrivez-vous dès maintenant pour ne pas manquer nos offres exclusives.",
   keywords: [
     "inscription téléphones",
     "créer un compte",
