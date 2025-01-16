@@ -68,10 +68,13 @@ export default function ShowAllPromo() {
               {promoCodes.map((promo) => (
                 <li
                   key={promo.id}
-                  className="bg-noir-700 grid grid-cols-5 p-2 rounded-md"
+                  className="bg-noir-700 grid grid-cols-6 p-2 rounded-md"
                 >
                   <p>Code: {promo.code}</p>
                   <p>Réduction: {promo.discount}%</p>
+                  <p>
+                    Livraison gratuite : {promo.isShippedFree ? "OUI" : "NON"}
+                  </p>
                   <p>Statut: {promo.isActive ? "Actif" : "Expiré"}</p>
                   <p>
                     Date d&apos;expiration:{" "}

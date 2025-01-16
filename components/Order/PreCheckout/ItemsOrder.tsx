@@ -22,6 +22,7 @@ type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
 export default function ItemsOrder() {
   const user = useCurrentUser();
+  const [loading, setLoading] = useState(false);
 
   const [firstName, lastName] = user?.name ? user.name.split(" ") : ["", ""];
 
@@ -196,6 +197,7 @@ export default function ItemsOrder() {
 
   //! SOUMISSION DU FORMULAIRE
   const onSubmit = async (data: CheckoutFormData) => {
+    setLoading(true);
     try {
       const payload = {
         firstName: data.firstName,
@@ -228,6 +230,8 @@ export default function ItemsOrder() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error.message);
+      toast.error("Erreur lors de la validation de la commande.");
+      setLoading(false);
     }
   };
 
@@ -458,9 +462,10 @@ export default function ItemsOrder() {
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full lg:w-2/4 mx-auto bg-gradient-to-t px-2 relative group/btn from-primary-900  to-primary-500 block text-white rounded-md h-10 font-bold font-font1 uppercase tracking-widest"
           >
-            Confirmer et payer
+            {loading ? "CONFIRMATION...." : "Confirmer et payer"}
             <BottomGradient />
           </button>
         </form>

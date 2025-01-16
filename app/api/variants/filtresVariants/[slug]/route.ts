@@ -67,7 +67,7 @@ export const GET = async (
 
     // Collecter toutes les variantes pour obtenir les options uniques
     const allVariants = await prisma.phoneVariant.findMany({
-      where: { modelId },
+      where: { modelId, isActive: true },
       include: {
         country: true, // Inclure les relations avec le pays
       },

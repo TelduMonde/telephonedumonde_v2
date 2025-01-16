@@ -36,7 +36,15 @@ export const GET = async () => {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json(orders, { status: 200 });
+    // Filtrer les items sans Variant et les commandes sans items valides
+    const filteredOrders = orders
+      .map((order) => ({
+        ...order,
+        items: order.items.filter((item) => item.Variant !== null),
+      }))
+      .filter((order) => order.items.length > 0);
+
+    return NextResponse.json(filteredOrders, { status: 200 });
   } catch (error) {
     console.error("Erreur lors de la récupération des commandes :", error);
     return NextResponse.json(

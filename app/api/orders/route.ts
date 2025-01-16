@@ -107,6 +107,14 @@ export const GET = async (req: NextRequest) => {
       take: limit,
     });
 
+    // Filtrer les items sans Variant et les commandes sans items valides
+    const filteredOrders = orders
+      .map((order) => ({
+        ...order,
+        items: order.items.filter((item) => item.Variant !== null),
+      }))
+      .filter((order) => order.items.length > 0);
+
     const ordersCount = await prisma.order.count({
       where: {
         statut: statut
@@ -115,11 +123,12 @@ export const GET = async (req: NextRequest) => {
               mode: "insensitive",
             }
           : undefined,
+        AND: [dateFilter],
       },
     });
 
     return NextResponse.json({
-      data: orders,
+      data: filteredOrders,
       totalPages: Math.ceil(ordersCount / limit),
     });
   } catch (error) {

@@ -55,7 +55,6 @@ export default function OrdersPage() {
         }
 
         const data = await response.json();
-        console.log("Fetched orders:", data); // Log the fetched orders
         setOrders(data.data);
         setTotalPages(data.totalPages);
       } catch (error) {

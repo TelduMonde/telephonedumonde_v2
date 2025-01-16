@@ -258,6 +258,13 @@ export default function VariantForm({
           return;
         }
 
+        console.log("values", values);
+
+        const countryId =
+          values.country === initialValues.country
+            ? initialValues.countryId
+            : values.country;
+
         // Modifier la variante
         const response = await fetch(`/api/variants/${modelSlug}`, {
           method: "PUT",
@@ -268,7 +275,7 @@ export default function VariantForm({
             variantId: variantId,
             memory: values.memory,
             color: values.color,
-            countryId: values.countryId || selectedCountry?.id,
+            countryId: countryId,
             price: values.price,
             description: values.description || "",
             stock: values.stock || 0,
