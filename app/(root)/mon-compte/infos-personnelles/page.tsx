@@ -9,23 +9,23 @@ import { Address } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Mes Informations Personnelles | Téléphone du Monde",
-  description:
-    "Gérez vos informations personnelles sur Téléphone du Monde. Mettez à jour vos coordonnées, vos préférences, et sécurisez votre compte en toute simplicité.",
-  keywords: [
-    "informations personnelles",
-    "gestion compte",
-    "modifier profil",
-    "mise à jour coordonnées",
-    "sécurité compte",
-    "téléphones internationaux",
-    "téléphones pas chers",
-    "préférences utilisateur",
-  ],
-};
+// export const metadata: Metadata = {
+//   title: "Mes Informations Personnelles | Téléphone du Monde",
+//   description:
+//     "Gérez vos informations personnelles sur Téléphone du Monde. Mettez à jour vos coordonnées, vos préférences, et sécurisez votre compte en toute simplicité.",
+//   keywords: [
+//     "informations personnelles",
+//     "gestion compte",
+//     "modifier profil",
+//     "mise à jour coordonnées",
+//     "sécurité compte",
+//     "téléphones internationaux",
+//     "téléphones pas chers",
+//     "préférences utilisateur",
+//   ],
+// };
 
 interface User {
   id: string;
