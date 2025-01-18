@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -40,8 +41,8 @@ export default function ShowVariant({
   };
 
   const closeModal = () => {
-    setSelectedVariantImages([]);
     setIsModalImageOpen(false);
+    setSelectedVariantImages([]);
   };
 
   useEffect(() => {
@@ -224,7 +225,6 @@ export default function ShowVariant({
             </div>
           </div>
         ))}
-
         {isModalImageOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md bg-black bg-opacity-50">
             <div className="relative flex flex-col bg-noir-800 max-w-4xl w-full p-5 rounded-lg shadow-lg">
@@ -243,6 +243,34 @@ export default function ShowVariant({
               <button
                 onClick={closeModal}
                 className="bg-white text-noir-800 rounded-md tracking-widest font-semibold mt-5 py-2 px-4 mx-auto"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        )}{" "}
+        {isModalImageOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md bg-black bg-opacity-50">
+            <div className="relative flex flex-col gap-20 bg-noir-800 max-w-4xl p-5 rounded-lg shadow-lg w-fit">
+              <div className="flex flex-wrap gap-2 justify-center items-center">
+                {selectedVariantImages.map((image, index) => (
+                  <div key={image} className="relative">
+                    <div className="rounded-md object-cover h-40 w-40 mx-auto">
+                      <Image
+                        src={image}
+                        alt={`Image ${index + 1}`}
+                        width={200}
+                        height={200}
+                        className="rounded-md object-cover h-48 w-48 mx-auto"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={closeModal}
+                className="bg-white text-noir-800 rounded-md tracking-widest font-semibold py-2 px-4 mx-auto"
               >
                 Fermer
               </button>

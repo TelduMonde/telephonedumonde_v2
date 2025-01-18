@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import DottedMap from "dotted-map";
 import Image from "next/image";
-// import { useTheme } from "next-themes";
 
 interface MapProps {
   dots?: Array<{
@@ -21,19 +20,45 @@ export default function WorldMap({
   lineColor = "#b80b07",
 }: MapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-
+  const containerRef = useRef<HTMLDivElement>(null); // Ref pour observer la visibilité
+  const [isVisible, setIsVisible] = useState(false); // État pour le lazy loading
   const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
 
+  // Initialiser Intersection Observer pour le lazy loading
   useEffect(() => {
-    if (svgRef.current) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setIsVisible(true); // Déclencher le rendu lorsque visible
+      },
+      { threshold: 0.1 } // Chargement lorsque 10% de la carte est visible
+    );
+
+    if (containerRef.current) observer.observe(containerRef.current);
+
+    return () => {
+      if (containerRef.current) observer.unobserve(containerRef.current);
+    };
+  }, []);
+
+  // Déterminer les dimensions du SVG une fois visible
+  useEffect(() => {
+    if (svgRef.current && isVisible) {
       const { width, height } = svgRef.current.getBoundingClientRect();
       setSvgDimensions({ width, height });
     }
-  }, []);
+  }, [isVisible]);
+
+  if (!isVisible) {
+    // Afficher un placeholder tant que le composant n'est pas visible
+    return (
+      <div
+        ref={containerRef}
+        className="w-full aspect-[2/1] bg-noir-900 rounded-md"
+      />
+    );
+  }
 
   const map = new DottedMap({ height: 100, grid: "diagonal" });
-
-  // const { theme } = useTheme();
 
   const svgMap = map.getSVG({
     radius: 0.22,
@@ -43,16 +68,10 @@ export default function WorldMap({
   });
 
   const projectPoint = (lat: number, lng: number) => {
-    const x = (lng + 180) * (svgDimensions.width / 360); // Utiliser la largeur réelle de l'image SVG
-    const y = (90 - lat) * (svgDimensions.height / 180); // Utiliser la hauteur réelle de l'image SVG
+    const x = (lng + 180) * (svgDimensions.width / 360);
+    const y = (90 - lat) * (svgDimensions.height / 180);
     return { x, y };
   };
-
-  // const projectPoint = (lat: number, lng: number) => {
-  //   const x = (lng + 180) * (1056 / 360); // Utiliser la largeur réelle de l'image SVG
-  //   const y = (90 - lat) * (495 / 180); // Utiliser la hauteur réelle de l'image SVG
-  //   return { x, y };
-  // };
 
   const createCurvedPath = (
     start: { x: number; y: number },
@@ -64,20 +83,20 @@ export default function WorldMap({
   };
 
   return (
-    <div className="w-full aspect-[2/1] bg-noir-900 rounded-md relative font-sans">
+    <div
+      ref={containerRef}
+      className="w-full aspect-[2/1] bg-noir-900 rounded-md relative font-sans"
+    >
       <Image
         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
         className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none"
         alt="world map"
-        // height="495"
-        // width="1056"
         height={svgDimensions.height}
         width={svgDimensions.width}
         draggable={false}
       />
       <svg
         ref={svgRef}
-        // viewBox="0 800 400"
         viewBox={`0 0 ${svgDimensions.width} ${svgDimensions.height}`}
         className="w-full h-full absolute inset-0 pointer-events-none select-none"
       >
@@ -102,7 +121,6 @@ export default function WorldMap({
                   delay: 0.5 * i,
                   ease: "easeOut",
                 }}
-                key={`start-upper-${i}`}
               ></motion.path>
             </g>
           );

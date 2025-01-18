@@ -18,6 +18,7 @@ import { FormError } from "@/components/shared/Form/FormError";
 import { FormSuccess } from "@/components/shared/Form/FormSucess";
 import { BottomGradient } from "@/components/ui/BottomGradient";
 import { toast } from "sonner";
+import { MdDeleteOutline } from "react-icons/md";
 
 type CountryProps = {
   id: string;
@@ -59,13 +60,6 @@ export default function VariantForm({
 
   const [countries, setCountries] = useState<CountryProps[]>([]);
 
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Fichiers sélectionnés
-  const [existingImages, setExistingImages] = useState<string[]>(
-    variant?.imageUrl || []
-  );
-  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]); // Images à supprimer
-  const { startUpload } = useUploadThing("imageUploader");
-
   const variantId = variant?.id;
 
   //! Récupérer les pays
@@ -92,6 +86,50 @@ export default function VariantForm({
     fetchCountry();
   }, []);
 
+  //! GESTION & ORDRE DES IMAGES
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Fichiers sélectionnés
+  // const [existingImages, setExistingImages] = useState<string[]>(
+  //   variant?.imageUrl || []
+  // );
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]); // Images à supprimer
+  const { startUpload } = useUploadThing("imageUploader");
+  const [imageUrls, setImageUrls] = useState<string[]>(variant?.imageUrl || []);
+
+  const moveImageLeft = (index: number) => {
+    if (index === 0) return;
+    const newOrder = [...imageUrls];
+    [newOrder[index - 1], newOrder[index]] = [
+      newOrder[index],
+      newOrder[index - 1],
+    ];
+    setImageUrls(newOrder);
+  };
+
+  const moveImageRight = (index: number) => {
+    if (index === imageUrls.length - 1) return;
+    const newOrder = [...imageUrls];
+    [newOrder[index + 1], newOrder[index]] = [
+      newOrder[index],
+      newOrder[index + 1],
+    ];
+    setImageUrls(newOrder);
+  };
+
+  //! Supprimer une image sélectionnée
+  const handleRemoveExistingImage = (imageUrl: string) => {
+    setImageUrls((prevUrls) => prevUrls.filter((image) => image !== imageUrl));
+    setImagesToDelete((prevImages) => [...prevImages, imageUrl]);
+  };
+
+  useEffect(() => {
+    if (selectedFiles.length > 0) {
+      const newImageUrls = selectedFiles.map((file) =>
+        URL.createObjectURL(file)
+      );
+      setImageUrls((prevUrls) => [...prevUrls, ...newImageUrls]);
+    }
+  }, [selectedFiles]);
+
   //! Initialiser les valeurs du formulaire
   const initialValues =
     variant && type === "edit"
@@ -103,7 +141,7 @@ export default function VariantForm({
           country: variant?.country,
           countryId: variant?.countryId,
           description: variant?.description,
-          imageUrl: variant?.imageUrl,
+          imageUrl: imageUrls,
           stock: variant?.stock,
           isActive: variant?.isActive,
           modelSlug: modelSlug,
@@ -137,6 +175,8 @@ export default function VariantForm({
   const selectedCountry =
     countries.find((country) => country.id === variant?.countryId) || null;
 
+  console.log("IMAGE URLS", imageUrls);
+
   //! Soumettre le formulaire
   async function onSubmit(values: z.infer<typeof variantFormSchema>) {
     setError("");
@@ -150,31 +190,32 @@ export default function VariantForm({
           return;
         }
 
-        // Upload des fichiers
-        let imageUrls: string[] = [];
-        if (selectedFiles.length > 0) {
-          const uploadedImages = await startUpload(selectedFiles, {
-            variantId: modelSlug,
-          });
-
-          // console.log("Images uploadées :", uploadedImages);
-
-          if (!uploadedImages || uploadedImages.length === 0) {
-            throw new Error("Échec de l'upload des images.");
-          }
-
-          imageUrls = uploadedImages.map((file) => file.url);
-          // console.log("URLs des images uploadées :", imageUrls);
-        }
-
         if (imageUrls.length === 0) {
           setError("Aucune image n'a été uploadée.");
           toast.error("Aucune image n'a été uploadée.");
           return;
         }
 
-        // Ajoute les URLs au formulaire
-        values.imageUrl = imageUrls;
+        // Étape 1 : Upload des nouvelles images **
+        const imageUploadUrls: string[] = [];
+        if (selectedFiles.length > 0) {
+          const uploadedImages = await startUpload(selectedFiles, {
+            variantId: modelSlug,
+          });
+
+          if (!uploadedImages || uploadedImages.length === 0) {
+            throw new Error("Échec de l'upload des images.");
+          }
+
+          uploadedImages.forEach((file) => imageUploadUrls.push(file.url));
+        }
+
+        // Étape 2 : Assigner les images dans le bon ordre **
+        const finalImageUrls = [
+          ...imageUploadUrls, // Images uploadées (nouvelles)
+          ...imageUrls.filter((url) => !url.startsWith("blob:")), // Images existantes
+        ];
+        values.imageUrl = finalImageUrls;
 
         // Crée la variante
         const response = await fetch(`/api/variants/${modelSlug}`, {
@@ -223,7 +264,6 @@ export default function VariantForm({
 
     //! Modifier une variante
     if (type === "edit") {
-      console.log("values", values);
       try {
         if (!modelSlug) {
           setError("modelSlug est requis pour ajouter une variante.");
@@ -235,8 +275,8 @@ export default function VariantForm({
           return;
         }
 
-        let imageUrls = values.imageUrl || [];
-
+        // Étape 1 : Upload des nouvelles images (si existantes) **
+        const newUploadedUrls: string[] = [];
         if (selectedFiles.length > 0) {
           const uploadedImages = await startUpload(selectedFiles, {
             variantId: modelSlug,
@@ -247,18 +287,20 @@ export default function VariantForm({
             throw new Error("Échec de l'upload des images.");
           }
 
-          const newImageUrls = uploadedImages.map((file) => file.url);
-          imageUrls = [...newImageUrls];
+          uploadedImages.forEach((file) => newUploadedUrls.push(file.url));
         }
 
-        values.imageUrl = imageUrls;
+        //  Étape 2 : Assigner les images dans le bon ordre **
+        const finalImageUrls = [
+          ...newUploadedUrls, // Images uploadées
+          ...imageUrls.filter((url) => !url.startsWith("blob:")), // Images existantes
+        ];
+        values.imageUrl = finalImageUrls;
 
         if (!variantId) {
           setError("variantId est requis pour éditer une variante.");
           return;
         }
-
-        console.log("values", values);
 
         const countryId =
           values.country === initialValues.country
@@ -280,7 +322,7 @@ export default function VariantForm({
             description: values.description || "",
             stock: values.stock || 0,
             isActive: values.isActive ?? true,
-            images: imageUrls,
+            images: values.imageUrl, // Images dans l'ordre défini
             imagesToDelete,
           }),
         });
@@ -310,20 +352,6 @@ export default function VariantForm({
       }
     }
   }
-
-  //! Supprimer une image sélectionnée
-  const handleRemoveSelectedFile = (fileName: string) => {
-    setSelectedFiles((prevFiles) =>
-      prevFiles.filter((file) => file.name !== fileName)
-    );
-  };
-
-  const handleRemoveExistingImage = (imageUrl: string) => {
-    setExistingImages((prevImages) =>
-      prevImages.filter((url) => url !== imageUrl)
-    );
-    setImagesToDelete((prevImages) => [...prevImages, imageUrl]);
-  };
 
   //! Afficher le formulaire
   return (
@@ -462,52 +490,88 @@ export default function VariantForm({
             className="text-noir-900 text-xs rounded-md"
           />
           <div className="flex gap-1">
-            <div className="flex gap-1">
-              {selectedFiles.map((file) => (
-                <div key={file.name} className="flex items-center gap-2 ">
+            {imageUrls.map((image, index) => (
+              <div key={image} className="relative flex flex-col gap-1">
+                <div className="rounded-md object-cover h-40 w-40 mx-auto ">
                   <Image
-                    src={URL.createObjectURL(file)}
-                    alt={file.name}
-                    className="w-16 h-16 object-cover"
-                    width={64}
-                    height={64}
+                    src={image}
+                    alt={`Image ${index + 1}`}
+                    width={200}
+                    height={200}
+                    className="rounded-md object-cover h-48 w-48 mx-auto"
                   />
-
+                </div>
+                <div className="flex gap-4">
                   <button
                     type="button"
-                    onClick={() => handleRemoveSelectedFile(file.name)}
-                    className="text-red-500 text-xs"
+                    onClick={() => moveImageLeft(index)}
+                    className="bg-white text-noir-800 rounded-md tracking-widest font-semibold text-xs mt-1 py-1 px-1"
                   >
-                    Supp
+                    ←
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveImageRight(index)}
+                    className="bg-white text-noir-800 rounded-md tracking-widest font-semibold text-xs mt-1 py-1 px-1"
+                  >
+                    →
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveExistingImage(image)}
+                    className="text-red-500 text-xs bg-primary-900 rounded-md tracking-widest font-semibold mt-2 p-1"
+                  >
+                    <MdDeleteOutline
+                      size={10}
+                      className="text-white hover:text-white/80"
+                    />
                   </button>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
 
           {/* Afficher les images existantes */}
-          {type === "edit" && (
+          {/* {type === "edit" && (
             <div className="flex gap-1">
-              {existingImages.map((url) => (
-                <div key={url} className="flex items-center gap-2">
-                  <Image
-                    src={url}
-                    alt="Image existante"
-                    className="w-16 h-16 object-cover"
-                    width={64}
-                    height={64}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveExistingImage(url)}
-                    className="text-red-500 text-xs"
-                  >
-                    Supp
-                  </button>
+              {imageUrls.map((image, index) => (
+                <div key={image} className="relative">
+                  <div className="rounded-md object-cover h-48 w-48 mx-auto">
+                    <Image
+                      src={image}
+                      alt={`Image ${index + 1}`}
+                      width={200}
+                      height={200}
+                      className="rounded-md object-cover h-48 w-48 mx-auto"
+                    />
+                  </div>
+                  <div className="absolute top-0 right-0 flex flex-col">
+                    <button
+                      type="button"
+                      onClick={() => moveImageUp(index)}
+                      className="bg-white text-noir-800 rounded-md tracking-widest font-semibold mt-1 py-1 px-2 mx-auto"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveImageDown(index)}
+                      className="bg-white text-noir-800 rounded-md tracking-widest font-semibold mt-1 py-1 px-2 mx-auto"
+                    >
+                      ↓
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveExistingImage(image)}
+                      className="text-red-500 text-xs"
+                    >
+                      Supp
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
-          )}
+          )} */}
         </div>
 
         <FormError message={error} />

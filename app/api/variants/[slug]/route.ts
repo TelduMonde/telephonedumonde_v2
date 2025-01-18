@@ -221,17 +221,10 @@ export const PUT = async (req: NextRequest) => {
     }
 
     // Supprimer les images marquées pour suppression
-    const remainingImages = variant.images.filter(
-      (url) => !imagesToDelete.includes(url)
-    );
-
-    // Ajouter uniquement les nouvelles images qui ne sont pas à supprimer
-    const filteredNewImages: string[] = (images || []).filter(
+    // Respecter l'ordre défini par le client
+    const updatedImages = images.filter(
       (url: string) => !imagesToDelete.includes(url)
     );
-    const updatedImages = [
-      ...new Set([...remainingImages, ...filteredNewImages]),
-    ];
 
     // Mettre à jour la variante
     const updatedVariant = await prisma.phoneVariant.update({

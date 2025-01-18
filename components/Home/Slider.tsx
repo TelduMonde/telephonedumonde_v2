@@ -132,7 +132,7 @@ export default function Slider() {
               <span className="block sm:mt-2 font-fontb text-base sm:text-4xl text-white uppercase font-extrabold">
                 Made in{" "}
                 <span className="text-white font-extrabold">
-                  Ja<span className="text-primary-600">pon</span>
+                  Ja<span className="text-primary-600">pan</span>
                 </span>
               </span>
             </h2>
