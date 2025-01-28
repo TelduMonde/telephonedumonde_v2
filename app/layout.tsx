@@ -46,7 +46,7 @@ export default async function RootLayout({
 
   return (
     <html lang="fr">
-      <Head>
+      <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -89,7 +89,8 @@ export default async function RootLayout({
           sizes="180x180"
           href="/apple-touch-icon.png"
         />
-      </Head>
+      </head>
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-noir-900 min-h-screen`}
       >
