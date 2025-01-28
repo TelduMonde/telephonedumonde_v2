@@ -16,24 +16,30 @@ export default function CookieConsentWrapper() {
         display: "flex",
         alignItems: "center",
         fontSize: "12px",
+        padding: "10px 20px",
+        flexWrap: "wrap",
       }}
       buttonStyle={{
         color: "#fff",
         background: "#2a2a2a",
         fontSize: "10px",
         borderRadius: "5px",
+        margin: "5px",
       }}
       declineButtonStyle={{
         color: "#fff",
         background: "#0a0a0a",
         fontSize: "10px",
         borderRadius: "5px",
+        margin: "5px",
       }}
       expires={150}
-      // enableDeclineButton
+      enableDeclineButton
     >
-      Ce site utilise des cookies pour améliorer l'expérience utilisateur.{" "}
-      <span style={{ fontSize: "8px" }}>En savoir plus</span>
+      <div style={{ flex: "1 1 auto", minWidth: "200px" }}>
+        Ce site utilise des cookies pour améliorer l'expérience utilisateur.{" "}
+        <span style={{ fontSize: "8px" }}>En savoir plus</span>
+      </div>
     </CookieConsent>
   );
 }
