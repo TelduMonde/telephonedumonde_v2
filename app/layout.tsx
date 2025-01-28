@@ -12,7 +12,6 @@ import Footer from "@/components/shared/Footer";
 import { Toaster } from "@/components/shared/Sonner";
 import CodePromo from "@/components/shared/CodePromo";
 import { initializeServerTasks } from "@/lib/cron";
-import Head from "next/head";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
