@@ -46,12 +46,13 @@ export default async function RootLayout({
   return (
     <html lang="fr">
       <head>
-        <script>
-          {`
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
             !function (w, d, t) {
               w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];
               ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],
-              ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};
+              ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}; 
               for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);
               ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},
               ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;
@@ -61,8 +62,9 @@ export default async function RootLayout({
               ttq.load('CUCEJ5RC77U7V3T8KQJG');
               ttq.page();
             }(window, document, 'ttq');
-          `}
-        </script>
+          `,
+          }}
+        />
 
         <script
           defer
